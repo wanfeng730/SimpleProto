@@ -1,0 +1,12 @@
+package cn.wanfeng.sp.proto.value;
+
+/**
+ * @date: 2024-02-06 23:26
+ * @author: luozh
+ * @since: 1.0
+ */
+public class ValueConstants {
+
+    public static final byte BOOLEAN_TRUE = 1;
+    public static final byte BOOLEAN_FALSE = 0;
+}

@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: simpleproto
+  profiles:
+    active: dev
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://120.27.150.100:5432/simpleproto
+    username: postgres
+    password: Lzh200127
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        hbm2ddl:
+          auto: create
+
+# 日志配置
+logging:
+  level:
+    root: INFO
