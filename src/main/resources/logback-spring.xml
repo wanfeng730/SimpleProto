@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <contextName>simpleprotoContext</contextName>
+
+    <!-- 日志的输出目录 -->
+    <springProperty name="LOG_HOME" source="logging.file.path"/>
+    <springProperty name="APP_NAME" source="spring.application.name"/>
+    <property name="ENCODING" value="UTF-8"/>
+
+    <!--自定义颜色配置 此处converterClass引用的是日志颜色类的路径， 此匹配的是第二种控制台色彩输出方式-->
+    <conversionRule conversionWord="logColor" converterClass="cn.wanfeng.sp.config.LogColorConfiguration"/>
+
+    <!-- 控制台日志 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %green([%thread]) %logColor(%-5level) %boldMagenta(%logger): %msg%n
+            </pattern>
+            <charset>${ENCODING}</charset>
+        </encoder>
+    </appender>
+
+    <appender name="ROLLING_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--  要区别于其他的appender中的文件名字  -->
+        <file>${LOG_HOME}/log-rolling.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread]-[%-5level] [%logger{50}: %-5line]: %msg%n</pattern>
+            <charset>${ENCODING}</charset>
+        </encoder>
+        <!-- 设置滚动日志记录的滚动策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 日志归档路径以及格式 -->
+            <fileNamePattern>${LOG_HOME}/info/log-rolling-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!--归档日志文件保留的最大数量-->
+            <maxHistory>50</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>1KB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <springProfile name="dev,test">
+        <logger name="cn.wanfeng.sp" level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ROLLING_LOG"/>
+        </logger>
+    </springProfile>
+
+</configuration>

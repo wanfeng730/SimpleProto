@@ -9,9 +9,10 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @date: 2024-06-19 11:23
  * @author: luozh
- * @description:
- * @since:
+ * @description: 日志统一使用的工具类
+ * @since: 1.0
  */
+
 public class LogUtils {
 
     private static final Map<String, Logger> LOGGER_CACHE = new ConcurrentHashMap<>(128);

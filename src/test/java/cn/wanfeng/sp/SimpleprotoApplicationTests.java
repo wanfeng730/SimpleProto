@@ -1,9 +1,8 @@
 package cn.wanfeng.sp;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@SpringBootTest(classes = SimpleprotoApplication.class)
 public class SimpleprotoApplicationTests {
 
 

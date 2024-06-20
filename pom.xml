@@ -31,7 +31,6 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j.version>1.7.26</slf4j.version>
     </properties>
     <dependencies>
         <dependency>
@@ -52,6 +51,8 @@
         </dependency>
 
         <!-- logback -->
+        <!-- 添加slf4j的jar包时如果报错，先确定版本，版本要和项目maven的slf4j-log4j12 版本保持一致-->
+
 
         <!-- 连接postgresql所需依赖 -->
         <dependency>
