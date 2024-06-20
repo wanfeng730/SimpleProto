@@ -26,10 +26,59 @@ public class LogUtils {
         return LOGGER_CACHE.get(className);
     }
 
+    public static void debug(String message) {
+        Logger logger = getCurrentThreadClassLogger();
+        if (logger.isDebugEnabled()) {
+            logger.debug(message);
+        }
+    }
+
+    public static void debug(String message, Object... vars) {
+        Logger logger = getCurrentThreadClassLogger();
+        if (logger.isDebugEnabled()) {
+            logger.debug(message, vars);
+        }
+    }
+
     public static void info(String message) {
         Logger logger = getCurrentThreadClassLogger();
         if (logger.isInfoEnabled()) {
             logger.info(message);
+        }
+    }
+
+    public static void info(String message, Object... vars) {
+        Logger logger = getCurrentThreadClassLogger();
+        if (logger.isInfoEnabled()) {
+            logger.info(message, vars);
+        }
+    }
+
+    public static void warn(String message) {
+        Logger logger = getCurrentThreadClassLogger();
+        if (logger.isWarnEnabled()) {
+            logger.warn(message);
+        }
+    }
+
+    public static void warn(String message, Object... vars) {
+        Logger logger = getCurrentThreadClassLogger();
+        if (logger.isWarnEnabled()) {
+            logger.warn(message, vars);
+        }
+    }
+
+    public static void error(String message) {
+        Logger logger = getCurrentThreadClassLogger();
+        if (logger.isErrorEnabled()) {
+            logger.error(message);
+        }
+    }
+
+    public static void error(String message, Object... vars) {
+        Logger logger = getCurrentThreadClassLogger();
+        if (logger.isErrorEnabled()) {
+            logger.error(message, vars);
         }
     }
 

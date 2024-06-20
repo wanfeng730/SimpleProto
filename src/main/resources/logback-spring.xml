@@ -39,7 +39,7 @@
     </appender>
 
     <springProfile name="dev,test">
-        <logger name="cn.wanfeng.sp" level="INFO">
+        <logger name="cn.wanfeng.sp" level="DEBUG">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="ROLLING_LOG"/>
         </logger>
