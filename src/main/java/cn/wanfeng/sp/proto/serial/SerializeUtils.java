@@ -1,6 +1,6 @@
 package cn.wanfeng.sp.proto.serial;
 
-import cn.wanfeng.sp.proto.value.ValueConstants;
+import cn.wanfeng.sp.proto.value.ProtoValueConstants;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -49,7 +49,7 @@ public class SerializeUtils {
 
     public static byte[] boolean2Bytes(boolean value) {
         byte[] bytes = new byte[1];
-        bytes[0] = value ? ValueConstants.BOOLEAN_TRUE : ValueConstants.BOOLEAN_FALSE;
+        bytes[0] = value ? ProtoValueConstants.BOOLEAN_TRUE : ProtoValueConstants.BOOLEAN_FALSE;
         return bytes;
     }
 

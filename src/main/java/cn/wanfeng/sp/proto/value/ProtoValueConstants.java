@@ -5,7 +5,7 @@ package cn.wanfeng.sp.proto.value;
  * @author: luozh
  * @since: 1.0
  */
-public class ValueConstants {
+public class ProtoValueConstants {
 
     public static final byte BOOLEAN_TRUE = 1;
     public static final byte BOOLEAN_FALSE = 0;

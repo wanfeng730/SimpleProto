@@ -1,6 +1,6 @@
 package cn.wanfeng.sp.proto.serial;
 
-import cn.wanfeng.sp.proto.type.TypeConstants;
+import cn.wanfeng.sp.proto.type.ProtoTypeConstants;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class SerializeMethodContainer {
 
-    @SerializeValue(flag = TypeConstants.SMALL_INT_FLAG)
+    @SerializeValue(flag = ProtoTypeConstants.SMALL_INT_FLAG)
     public static byte[] serializeSmallInt2Bytes(Byte value) {
         if (value == null) {
             return null;
@@ -23,7 +23,7 @@ public class SerializeMethodContainer {
         return new byte[]{value};
     }
 
-    @SerializeValue(flag = TypeConstants.INT_FLAG)
+    @SerializeValue(flag = ProtoTypeConstants.INT_FLAG)
     public static byte[] serializeInt2Bytes(Integer value) {
         if (value == null) {
             return null;
@@ -31,7 +31,7 @@ public class SerializeMethodContainer {
         return SerializeUtils.int2Bytes(value);
     }
 
-    @SerializeValue(flag = TypeConstants.LONG_FLAG)
+    @SerializeValue(flag = ProtoTypeConstants.LONG_FLAG)
     public static byte[] serializeLong2Bytes(Long value) {
         if (value == null) {
             return null;
@@ -39,7 +39,7 @@ public class SerializeMethodContainer {
         return SerializeUtils.long2Bytes(value);
     }
 
-    @SerializeValue(flag = TypeConstants.DOUBLE_FLAG)
+    @SerializeValue(flag = ProtoTypeConstants.DOUBLE_FLAG)
     public static byte[] serializeDouble2Bytes(Double value) {
         if (value == null) {
             return null;
@@ -47,7 +47,7 @@ public class SerializeMethodContainer {
         return SerializeUtils.double2Bytes(value);
     }
 
-    @SerializeValue(flag = TypeConstants.DATE_FLAG)
+    @SerializeValue(flag = ProtoTypeConstants.DATE_FLAG)
     public static byte[] serializeDate2Bytes(Date value) {
         if (value == null) {
             return null;
@@ -55,7 +55,7 @@ public class SerializeMethodContainer {
         return SerializeUtils.date2Bytes(value);
     }
 
-    @SerializeValue(flag = TypeConstants.BOOLEAN_FLAG)
+    @SerializeValue(flag = ProtoTypeConstants.BOOLEAN_FLAG)
     public static byte[] serializeBoolean2Bytes(Boolean value) {
         if (value == null) {
             return null;
@@ -63,7 +63,7 @@ public class SerializeMethodContainer {
         return SerializeUtils.boolean2Bytes(value);
     }
 
-    @SerializeValue(flag = TypeConstants.STRING_FLAG)
+    @SerializeValue(flag = ProtoTypeConstants.STRING_FLAG)
     public static byte[] serializeString2Bytes(String value) {
         if (value == null) {
             return null;

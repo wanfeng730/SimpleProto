@@ -13,6 +13,9 @@ public class ProtoRecordContainer {
     private List<ProtoRecord> recordList;
     private int totalSize;
 
+    private ProtoRecordContainer() {
+    }
+
     public static ProtoRecordContainer emptyContainer() {
         ProtoRecordContainer container = new ProtoRecordContainer();
         container.setRecordList(new ArrayList<>());

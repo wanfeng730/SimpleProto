@@ -1,6 +1,6 @@
 package cn.wanfeng.sp.proto.serial;
 
-import cn.wanfeng.sp.proto.value.ValueConstants;
+import cn.wanfeng.sp.proto.value.ProtoValueConstants;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -56,7 +56,7 @@ public class DeserializeUtils {
     }
 
     public static boolean bytes2Boolean(byte[] data) {
-        return data[0] == ValueConstants.BOOLEAN_TRUE ? Boolean.TRUE : Boolean.FALSE;
+        return data[0] == ProtoValueConstants.BOOLEAN_TRUE ? Boolean.TRUE : Boolean.FALSE;
     }
 
     public static String bytes2String(byte[] data) {

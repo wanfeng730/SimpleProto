@@ -1,13 +1,14 @@
 package cn.wanfeng.sp.proto.record;
 
+import cn.wanfeng.sp.proto.constant.ProtoConstants;
 import cn.wanfeng.sp.proto.exception.ProtoException;
 import cn.wanfeng.sp.proto.serial.DeserializeMethodContainer;
 import cn.wanfeng.sp.proto.serial.DeserializeUtils;
 import cn.wanfeng.sp.proto.serial.SerializeMethodContainer;
 import cn.wanfeng.sp.proto.serial.SerializeUtils;
 import cn.wanfeng.sp.proto.type.ProtoType;
+import cn.wanfeng.sp.proto.type.ProtoTypeConstants;
 import cn.wanfeng.sp.proto.type.ProtoTypeUtils;
-import cn.wanfeng.sp.proto.type.TypeConstants;
 import cn.wanfeng.sp.proto.type.TypeMapContainer;
 import cn.wanfeng.sp.util.ByteArrayUtils;
 
@@ -91,7 +92,7 @@ public class ProtoRecordFactory {
             Object value;
             try {
                 byte[] valueBytes = ByteArrayUtils.subByteArray(data, 3, valueLen);
-                value = DESERIAL_VALUE_METHOD_MAP.get(TypeConstants.STRING_FLAG).invoke(builder, (Object) valueBytes);
+                value = DESERIAL_VALUE_METHOD_MAP.get(ProtoTypeConstants.STRING_FLAG).invoke(builder, (Object) valueBytes);
             } catch (Exception e) {
                 throw new ProtoException(e);
             }
@@ -158,7 +159,7 @@ public class ProtoRecordFactory {
             // string len to 2 byte
             byte[] typeData = SerializeUtils.stringLen2Bytes(record.getValueLen());
             // add string flag
-            typeData[0] = (byte) (typeData[0] | TypeConstants.STRING_FLAG);
+            typeData[0] = (byte) (typeData[0] | ProtoTypeConstants.STRING_FLAG);
             System.arraycopy(typeData, 0, data, 1, 2);
             // if value is null
             if (record.isEmptyValue()) {
@@ -187,5 +188,27 @@ public class ProtoRecordFactory {
         return data;
     }
 
+    public static ProtoRecord buildProtoRecordByIndexAndValue(int index, Object value) {
+        ProtoRecordBuilder builder = ProtoRecord.newBuilder();
+        builder.indexNo(index);
+        builder.value(value);
+        if (value instanceof String) {
+            builder.type(ProtoType.STRING);
+            int valueLen = ((String) value).getBytes(ProtoConstants.UTF8_CHARSET).length;
+            if (valueLen > ProtoTypeConstants.STRING_MAX_LENGTH) {
+                // LzhTODO: 升级为text类型
+            } else {
+                builder.valueLen(valueLen);
+                builder.len(valueLen + 3);
+            }
+            return builder.build();
+        }
+        ProtoType type = TypeMapContainer.CLASS_ENUM_MAP.get(value.getClass());
+        builder.type(type);
+        Integer valueLen = TypeMapContainer.CLASS_LENGTH_MAP.get(value.getClass());
+        builder.valueLen(valueLen);
+        builder.len(valueLen + 2);
+        return builder.build();
+    }
 
 }
