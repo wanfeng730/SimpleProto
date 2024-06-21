@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.object.base;
+package cn.wanfeng.sp.base.object;
 
 /**
  * @date: 2024-04-02 23:48

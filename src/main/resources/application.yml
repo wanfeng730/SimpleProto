@@ -5,7 +5,7 @@ spring:
     active: dev
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://120.27.150.100:5432/simpleproto
+    url: jdbc:postgresql://120.27.150.100:5432/${spring.application.name}?currentSchema=${spring.profiles.active}&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
     username: postgres
     password: Lzh200127
   jpa:
@@ -14,6 +14,22 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         hbm2ddl:
           auto: create
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+
+mybatis-plus:
+  configuration:
+    cache-enabled: true
+    use-generated-keys: true
+    default-executor-type: REUSE
+    use-actual-param-name: true
+
+
+cn:
+  wanfeng:
+    sp:
+      tableName: sp_object_table
+
 
 # 日志配置
 logging:

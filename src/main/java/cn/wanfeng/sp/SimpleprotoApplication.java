@@ -1,10 +1,15 @@
 package cn.wanfeng.sp;
 
 import cn.wanfeng.sp.util.LogUtils;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * @author wanfeng
+ */
 @SpringBootApplication
+@MapperScan(basePackages = {"cn.wanfeng.sp.**.mapper"})
 public class SimpleprotoApplication {
 
     public static void main(String[] args) {
