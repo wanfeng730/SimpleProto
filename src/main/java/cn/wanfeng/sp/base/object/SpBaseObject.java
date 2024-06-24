@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SpBaseObject implements ISpBaseObject {
 
-    private Class<?> id;
+    private Long id;
 
     private String type;
 
@@ -105,7 +105,7 @@ public class SpBaseObject implements ISpBaseObject {
             switch (record.getIndexNo()) {
                 //基础对象字段
                 case ID_INDEX -> {
-                    id = (Class<?>) record.getValue();
+                    id = (Long) record.getValue();
                     DATA_MAP.put(ID_INDEX, id);
                 }
                 case TYPE_INDEX -> {
