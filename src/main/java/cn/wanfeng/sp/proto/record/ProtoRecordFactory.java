@@ -1,7 +1,7 @@
 package cn.wanfeng.sp.proto.record;
 
+import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.proto.constant.ProtoConstants;
-import cn.wanfeng.sp.proto.exception.ProtoException;
 import cn.wanfeng.sp.proto.serial.DeserializeMethodContainer;
 import cn.wanfeng.sp.proto.serial.DeserializeUtils;
 import cn.wanfeng.sp.proto.serial.SerializeMethodContainer;
@@ -86,7 +86,8 @@ public class ProtoRecordFactory {
             valueLen = len1 * 256 + len2;
             // value[3]... : value
             if (data.length - 3 < valueLen) {
-                throw new ProtoException("the length of value(string) in value is not enough");
+                // LzhTODO: 异常原因统一格式化
+                throw new SpException("the length of value(string) in value is not enough");
             }
 
             Object value;
@@ -94,7 +95,7 @@ public class ProtoRecordFactory {
                 byte[] valueBytes = ByteArrayUtils.subByteArray(data, 3, valueLen);
                 value = DESERIAL_VALUE_METHOD_MAP.get(ProtoTypeConstants.STRING_FLAG).invoke(builder, (Object) valueBytes);
             } catch (Exception e) {
-                throw new ProtoException(e);
+                throw new SpException(e);
             }
 
             builder = builder.type(ProtoType.STRING).valueLen(valueLen).len(valueLen + 3).value(value);
@@ -112,33 +113,32 @@ public class ProtoRecordFactory {
             valueLen = TypeMapContainer.FLAG_LENGTH_MAP.get(flag);
             // value[2]... : value
             if (data.length - 2 < valueLen) {
-                throw new ProtoException("the length of value in value is not enough");
+                // LzhTODO: 异常原因统一格式化
+                throw new SpException("the length of value in value is not enough");
             }
             Object value;
             try {
                 byte[] valueBytes = ByteArrayUtils.subByteArray(data, 2, valueLen);
                 value = DESERIAL_VALUE_METHOD_MAP.get(flag).invoke(valueBytes, new Object[]{valueBytes});
             } catch (Exception e) {
-                throw new ProtoException(e);
+                throw new SpException(e);
             }
 
             builder = builder.type(type).valueLen(valueLen).len(valueLen + 2).value(value);
             byte[] nextData = ByteArrayUtils.consumeByteArrayHead(data, 2 + valueLen);
             return RecordReadResult.buildSuccessResult(nextData, builder.build());
         } else {
-            throw new ProtoException("the type of record can not resolve!");
+            throw new SpException("the type of record can not resolve!");
         }
     }
 
     public static byte[] writeRecordListToBytes(ProtoRecordContainer container) {
-        // LzhTODO: recordList转为byte数组
         if (container.isEmpty()) {
             return null;
         }
         // get total size
         byte[] data = new byte[container.getTotalSize()];
         int cursor = 0;
-        // LzhTODO: 每写入一个记录，计算下一个记录的开始位置
         for (int i = 0; i < container.getRecordList().size(); i++) {
             ProtoRecord record = container.getRecordList().get(i);
             byte[] recordData = writeRecordToBytes(record);
@@ -181,7 +181,7 @@ public class ProtoRecordFactory {
                 byte[] valueData = (byte[]) SERIAL_VALUE_METHOD_MAP.get(flag).invoke(record, record.getValue());
                 System.arraycopy(valueData, 0, data, 2, record.getValueLen());
             } catch (Exception e) {
-                throw new ProtoException(e);
+                throw new SpException(e);
             }
         }
 

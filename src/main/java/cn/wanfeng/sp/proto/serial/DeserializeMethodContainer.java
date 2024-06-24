@@ -1,6 +1,6 @@
 package cn.wanfeng.sp.proto.serial;
 
-import cn.wanfeng.sp.proto.exception.ProtoException;
+import cn.wanfeng.sp.proto.exception.SpException;
 import cn.wanfeng.sp.proto.type.ProtoTypeConstants;
 
 import java.lang.reflect.Method;
@@ -19,7 +19,7 @@ public class DeserializeMethodContainer {
     @DeserializeValue(flag = ProtoTypeConstants.SMALL_INT_FLAG)
     public static Byte deserializeBytes2SmallInt(byte[] value) {
         if (value.length != ProtoTypeConstants.SMALL_INT_LENGTH) {
-            throw new ProtoException("The length of small int value MUST BE " + ProtoTypeConstants.SMALL_INT_LENGTH + " but now is " + value.length);
+            throw new SpException("The length of small int value MUST BE " + ProtoTypeConstants.SMALL_INT_LENGTH + " but now is " + value.length);
         }
         return value[0];
     }
@@ -27,7 +27,7 @@ public class DeserializeMethodContainer {
     @DeserializeValue(flag = ProtoTypeConstants.INT_FLAG)
     public static Integer deserializeBytes2Int(byte[] value) {
         if (value.length != ProtoTypeConstants.INT_LENGTH) {
-            throw new ProtoException("The length of int value MUST BE " + ProtoTypeConstants.INT_LENGTH + " but now is " + value.length);
+            throw new SpException("The length of int value MUST BE " + ProtoTypeConstants.INT_LENGTH + " but now is " + value.length);
         }
         return DeserializeUtils.bytes2Int(value);
     }
@@ -35,7 +35,7 @@ public class DeserializeMethodContainer {
     @DeserializeValue(flag = ProtoTypeConstants.LONG_FLAG)
     public static Long deserializeBytes2Long(byte[] value) {
         if (value.length != ProtoTypeConstants.LONG_LENGTH) {
-            throw new ProtoException("The length of long value MUST BE " + ProtoTypeConstants.LONG_LENGTH + " but now is " + value.length);
+            throw new SpException("The length of long value MUST BE " + ProtoTypeConstants.LONG_LENGTH + " but now is " + value.length);
         }
         return DeserializeUtils.bytes2Long(value);
     }
@@ -43,7 +43,7 @@ public class DeserializeMethodContainer {
     @DeserializeValue(flag = ProtoTypeConstants.DOUBLE_FLAG)
     public static Double deserializeBytes2Double(byte[] value) {
         if (value.length != ProtoTypeConstants.DOUBLE_LENGTH) {
-            throw new ProtoException("The length of double value MUST BE " + ProtoTypeConstants.DOUBLE_LENGTH + " but now is " + value.length);
+            throw new SpException("The length of double value MUST BE " + ProtoTypeConstants.DOUBLE_LENGTH + " but now is " + value.length);
         }
         return DeserializeUtils.bytes2Double(value);
     }
@@ -51,7 +51,7 @@ public class DeserializeMethodContainer {
     @DeserializeValue(flag = ProtoTypeConstants.DATE_FLAG)
     public static Date deserializeBytes2Date(byte[] value) {
         if (value.length != ProtoTypeConstants.DATE_LENGTH) {
-            throw new ProtoException("The length of date value MUST BE " + ProtoTypeConstants.DATE_LENGTH + " but now is " + value.length);
+            throw new SpException("The length of date value MUST BE " + ProtoTypeConstants.DATE_LENGTH + " but now is " + value.length);
         }
         return DeserializeUtils.bytes2Date(value);
     }
@@ -59,7 +59,7 @@ public class DeserializeMethodContainer {
     @DeserializeValue(flag = ProtoTypeConstants.BOOLEAN_FLAG)
     public static Boolean deserializeBytes2Boolean(byte[] value) {
         if (value.length != ProtoTypeConstants.BOOLEAN_LENGTH) {
-            throw new ProtoException("The length of boolean value MUST BE " + ProtoTypeConstants.BOOLEAN_LENGTH + " but now is " + value.length);
+            throw new SpException("The length of boolean value MUST BE " + ProtoTypeConstants.BOOLEAN_LENGTH + " but now is " + value.length);
         }
         return DeserializeUtils.bytes2Boolean(value);
     }

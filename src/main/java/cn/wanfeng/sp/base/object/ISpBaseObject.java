@@ -30,6 +30,8 @@ public interface ISpBaseObject {
     ProtoType MODIFY_DATE_PROTO_TYPE = ProtoType.DATE;
     ProtoType IS_DELETE_PROTO_TYPE = ProtoType.BOOLEAN;
 
+    int EMPTY_OBJECT_VALUE = -999;
+
 
     /**
      * 将对象持久化

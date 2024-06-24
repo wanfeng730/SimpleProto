@@ -55,6 +55,10 @@ public class ProtoRecord {
         return value == null;
     }
 
+    public boolean equalsIndexNo(int indexNo) {
+        return this.indexNo == indexNo;
+    }
+
     public boolean equals(ProtoRecord record) {
         return this.indexNo == record.getIndexNo() && this.type.equals(record.getType()) && this.value.equals(record.getValue());
     }
