@@ -85,7 +85,7 @@ public class SpBaseObject implements ISpBaseObject {
         int indexNo = protoField.index();
         String name = protoField.name();
         if (existIndexMap.containsKey(indexNo)) {
-            throw new SpException(SpFailedReason.protoFieldDuplicate(indexNo, name, existIndexMap.get(indexNo).index(), existIndexMap.get(indexNo).name());
+            throw new SpException(SpFailedReason.protoFieldDuplicate(indexNo, name, existIndexMap.get(indexNo).index(), existIndexMap.get(indexNo).name()));
         }
         existIndexMap.put(indexNo, protoField);
     }
