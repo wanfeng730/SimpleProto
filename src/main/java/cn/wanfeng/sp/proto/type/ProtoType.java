@@ -18,7 +18,8 @@ public enum ProtoType {
     DOUBLE(ProtoTypeConstants.DOUBLE_FLAG, Double.class, ProtoTypeConstants.DOUBLE_LENGTH),
     BOOLEAN(ProtoTypeConstants.BOOLEAN_FLAG, Boolean.class, ProtoTypeConstants.BOOLEAN_LENGTH),
     DATE(ProtoTypeConstants.DATE_FLAG, Date.class, ProtoTypeConstants.DATE_LENGTH),
-    STRING(ProtoTypeConstants.STRING_FLAG, String.class, ProtoTypeConstants.STRING_MAX_LENGTH);
+    STRING(ProtoTypeConstants.STRING_FLAG, String.class, ProtoTypeConstants.STRING_MAX_LENGTH),
+    TEXT(ProtoTypeConstants.TEXT_FLAG, Text.class, ProtoTypeConstants.TEXT_MAX_LENGTH);
 
     private final byte flag;
     private final Class<?> typeClass;

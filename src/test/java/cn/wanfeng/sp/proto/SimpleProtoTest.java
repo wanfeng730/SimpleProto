@@ -90,10 +90,15 @@ public class SimpleProtoTest {
         System.out.println();
     }
 
+    @Test
+    public void testMaxTextAndStringLength() {
+        // LzhTODO: 最大长度测试
+    }
+
 
     @Test
     public void test_print() {
-        byte b = -65;
+        byte b = 31;
         System.out.println(byteToBineryString(b));
 
     }

@@ -1,5 +1,6 @@
 package cn.wanfeng.sp.proto.record;
 
+import cn.wanfeng.sp.constants.SpFailedReason;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.proto.constant.ProtoConstants;
 import cn.wanfeng.sp.proto.serial.DeserializeMethodContainer;
@@ -10,6 +11,7 @@ import cn.wanfeng.sp.proto.type.ProtoType;
 import cn.wanfeng.sp.proto.type.ProtoTypeConstants;
 import cn.wanfeng.sp.proto.type.ProtoTypeUtils;
 import cn.wanfeng.sp.proto.type.TypeMapContainer;
+import cn.wanfeng.sp.proto.value.ProtoValueConstants;
 import cn.wanfeng.sp.util.ByteArrayUtils;
 
 import java.lang.reflect.Method;
@@ -73,15 +75,48 @@ public class ProtoRecordFactory {
         // last 6 bits of value[1]
         byte flag = ProtoTypeUtils.getTypeFlagFromData1(data[1]);
 
-        if (flag < 0) {
+        // LzhTODO: 代码优化
+        if (ProtoTypeConstants.TEXT_FLAG == flag) {
             // type: string
             if (ProtoTypeUtils.isEmptyValue(data[1])) {
-                builder = builder.type(ProtoType.STRING).len(0).value(null);
+                builder = builder.type(ProtoType.TEXT).len(0).value(ProtoValueConstants.EMPTY_TEXT);
+                byte[] nextData = ByteArrayUtils.consumeByteArrayHead(data, 4);
+                return RecordReadResult.buildSuccessResult(nextData, builder.build());
+            }
+            //value[1] + value[2] + value[3] = len
+            //get last 6 bit to a positive number
+            int len1 = ProtoTypeUtils.getFlagByteLengthFromData1(data[1]);
+            int len2 = DeserializeUtils.oneByte2Int(data[2]);
+            int len3 = DeserializeUtils.oneByte2Int(data[3]);
+            valueLen = len1 * 256 * 256 + len2 * 256 + len3;
+            // value[4]... : value
+            if (data.length - 4 < valueLen) {
+                // LzhTODO: 异常原因统一格式化
+                throw new SpException("the length of value(text) in value is not enough");
+            }
+
+            Object value;
+            try {
+                byte[] valueBytes = ByteArrayUtils.subByteArray(data, 4, valueLen);
+                value = DESERIAL_VALUE_METHOD_MAP.get(ProtoTypeConstants.TEXT_FLAG).invoke(builder, (Object) valueBytes);
+            } catch (Exception e) {
+                throw new SpException(e);
+            }
+
+            builder = builder.type(ProtoType.TEXT).valueLen(valueLen).len(valueLen + 4).value(value);
+            byte[] nextData = ByteArrayUtils.consumeByteArrayHead(data, 4 + valueLen);
+            return RecordReadResult.buildSuccessResult(nextData, builder.build());
+
+        } else if (ProtoTypeConstants.STRING_FLAG == flag) {
+            // type: string
+            if (ProtoTypeUtils.isEmptyValue(data[1])) {
+                builder = builder.type(ProtoType.STRING).len(0).value(ProtoValueConstants.EMPTY_STRING);
                 byte[] nextData = ByteArrayUtils.consumeByteArrayHead(data, 3);
                 return RecordReadResult.buildSuccessResult(nextData, builder.build());
             }
             //value[1] + value[2] = len
-            int len1 = data[1] & FLAG_MAT;    //get last 6 bit to a positive number
+            //get last 6 bit to a positive number
+            int len1 = ProtoTypeUtils.getFlagByteLengthFromData1(data[1]);
             int len2 = DeserializeUtils.oneByte2Int(data[2]);
             valueLen = len1 * 256 + len2;
             // value[3]... : value
@@ -195,8 +230,11 @@ public class ProtoRecordFactory {
         if (value instanceof String) {
             builder.type(ProtoType.STRING);
             int valueLen = ((String) value).getBytes(ProtoConstants.UTF8_CHARSET).length;
-            if (valueLen > ProtoTypeConstants.STRING_MAX_LENGTH) {
+            if (valueLen > ProtoTypeConstants.TEXT_MAX_LENGTH) {
+                throw new SpException(SpFailedReason.stringValueLengthTooLong(valueLen));
+            } else if (valueLen > ProtoTypeConstants.STRING_MAX_LENGTH) {
                 // LzhTODO: 升级为text类型
+
             } else {
                 builder.valueLen(valueLen);
                 builder.len(valueLen + 3);

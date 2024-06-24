@@ -62,4 +62,8 @@ public class DeserializeUtils {
     public static String bytes2String(byte[] data) {
         return new String(data, DEFAULT_CHARSET);
     }
+
+    public static String bytes2Text(byte[] data) {
+        return bytes2String(data);
+    }
 }

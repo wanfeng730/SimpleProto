@@ -72,6 +72,14 @@ public class DeserializeMethodContainer {
         return DeserializeUtils.bytes2String(value);
     }
 
+    @DeserializeValue(flag = ProtoTypeConstants.TEXT_FLAG)
+    public static String deserializeBytes2Text(byte[] value) {
+        if (value == null || value.length == 0) {
+            return null;
+        }
+        return DeserializeUtils.bytes2Text(value);
+    }
+
     public static Map<Byte, Method> toFlagMethodMap() {
         HashMap<Byte, Method> methodMap = new HashMap<>();
         Arrays.stream(DeserializeMethodContainer.class.getMethods()).forEach(method -> {

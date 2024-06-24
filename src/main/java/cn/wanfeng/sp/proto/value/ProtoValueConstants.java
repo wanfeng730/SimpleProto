@@ -9,4 +9,7 @@ public class ProtoValueConstants {
 
     public static final byte BOOLEAN_TRUE = 1;
     public static final byte BOOLEAN_FALSE = 0;
+
+    public static final String EMPTY_STRING = "";
+    public static final String EMPTY_TEXT = "";
 }
