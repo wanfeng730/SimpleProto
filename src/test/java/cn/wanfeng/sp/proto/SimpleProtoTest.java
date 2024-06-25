@@ -1,5 +1,6 @@
 package cn.wanfeng.sp.proto;
 
+import cn.wanfeng.sp.proto.constant.ProtoConstants;
 import cn.wanfeng.sp.proto.record.ProtoRecord;
 import cn.wanfeng.sp.proto.record.ProtoRecordContainer;
 import cn.wanfeng.sp.proto.record.ProtoRecordFactory;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -105,13 +107,24 @@ public class SimpleProtoTest {
 
     private static ProtoRecordContainer buildTestContainer() {
         ProtoRecordContainer container = ProtoRecordContainer.emptyContainer();
-        ProtoRecord record1 = ProtoRecord.newBuilder().indexNo(5).type(ProtoType.INT).valueLen(ProtoTypeConstants.INT_LENGTH).len(ProtoTypeConstants.INT_LENGTH + 2).value(-3452553).build();
-        ProtoRecord record2 = ProtoRecord.newBuilder().indexNo(15).type(ProtoType.LONG).valueLen(ProtoTypeConstants.LONG_LENGTH).len(ProtoTypeConstants.LONG_LENGTH + 2).value(-323234452553L).build();
-        ProtoRecord record3 = ProtoRecord.newBuilder().indexNo(50).type(ProtoType.DOUBLE).valueLen(ProtoTypeConstants.DOUBLE_LENGTH).len(ProtoTypeConstants.DOUBLE_LENGTH + 2).value(9845.2553).build();
-        ProtoRecord record4 = ProtoRecord.newBuilder().indexNo(90).type(ProtoType.DATE).valueLen(ProtoTypeConstants.DATE_LENGTH).len(ProtoTypeConstants.DATE_LENGTH + 2).value(new Date()).build();
-        ProtoRecord record5 = ProtoRecord.newBuilder().indexNo(175).type(ProtoType.BOOLEAN).valueLen(ProtoTypeConstants.BOOLEAN_LENGTH).len(ProtoTypeConstants.BOOLEAN_LENGTH + 2).value(Boolean.FALSE).build();
-        //ProtoRecord record6 = ProtoRecord.newBuilder().indexNo(255).type(ProtoType.STRING).valueLen(8745).len(8745 + 3).value(LONG_TEXT + LONG_TEXT + LONG_TEXT).build();
-        container.addRecords(Arrays.asList(record1, record2, record3, record4, record5));
+        //ProtoRecord record1 = ProtoRecord.newBuilder().indexNo(5).type(ProtoType.INT).valueLen(ProtoTypeConstants.INT_LENGTH).len(ProtoTypeConstants.INT_LENGTH + 2).value(-3452553).build();
+        //ProtoRecord record2 = ProtoRecord.newBuilder().indexNo(15).type(ProtoType.LONG).valueLen(ProtoTypeConstants.LONG_LENGTH).len(ProtoTypeConstants.LONG_LENGTH + 2).value(-323234452553L).build();
+        //ProtoRecord record3 = ProtoRecord.newBuilder().indexNo(50).type(ProtoType.DOUBLE).valueLen(ProtoTypeConstants.DOUBLE_LENGTH).len(ProtoTypeConstants.DOUBLE_LENGTH + 2).value(9845.2553).build();
+        //ProtoRecord record4 = ProtoRecord.newBuilder().indexNo(90).type(ProtoType.DATE).valueLen(ProtoTypeConstants.DATE_LENGTH).len(ProtoTypeConstants.DATE_LENGTH + 2).value(new Date()).build();
+        //ProtoRecord record5 = ProtoRecord.newBuilder().indexNo(175).type(ProtoType.BOOLEAN).valueLen(ProtoTypeConstants.BOOLEAN_LENGTH).len(ProtoTypeConstants.BOOLEAN_LENGTH + 2).value(Boolean.FALSE).build();
+        StringBuilder builder = new StringBuilder();
+        int valueLen = 0;
+        while (true) {
+            builder.append(LONG_TEXT);
+            valueLen += LONG_TEXT.getBytes(ProtoConstants.UTF8_CHARSET).length;
+            if (valueLen > ProtoTypeConstants.STRING_MAX_LENGTH) {
+                break;
+            }
+        }
+        String tooLongText = builder.toString();
+        valueLen = tooLongText.getBytes(ProtoConstants.UTF8_CHARSET).length;
+        ProtoRecord record6 = ProtoRecord.newBuilder().indexNo(255).type(ProtoType.TEXT).valueLen(valueLen).len(valueLen + 4).value(tooLongText).build();
+        container.addRecords(Collections.singletonList(record6));
         return container;
     }
 

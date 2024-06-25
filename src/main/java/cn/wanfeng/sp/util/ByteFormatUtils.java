@@ -9,10 +9,7 @@ package cn.wanfeng.sp.util;
 public class ByteFormatUtils {
 
     /**
-     * 简洁写法 16进制字符串转成byte数组
-     *
-     * @param hex 16进制字符串，支持大小写
-     * @return byte数组
+     * 16进制字符串转成byte数组
      */
     public static byte[] hexStringToBytes(String hex) {
         byte[] bytes = new byte[hex.length() / 2];
@@ -23,10 +20,7 @@ public class ByteFormatUtils {
     }
 
     /**
-     * 简洁写法 byte数组转成16进制字符串
-     *
-     * @param bytes byte数组
-     * @return 16进制字符串
+     * byte数组转成16进制字符串
      */
     public static String bytesToHexString(byte[] bytes) {
         StringBuilder builder = new StringBuilder();
@@ -36,4 +30,35 @@ public class ByteFormatUtils {
         return builder.toString();
     }
 
+    /**
+     * byte转二进制字符串
+     */
+    public static String byteToBinaryString(byte b) {
+        String result = "";
+        byte a = b;
+        for (int i = 0; i < 8; i++) {
+            byte c = a;
+            a = (byte) (a >> 1);
+            a = (byte) (a << 1);
+            if (a == c) {
+                result = "0" + result;
+            } else {
+                result = "1" + result;
+            }
+            a = (byte) (a >> 1);
+        }
+        return result;
+    }
+
+    /**
+     * 二进制字符串转byte
+     */
+    public static byte binaryStringToByte(String bString) {
+        byte result = 0;
+        for (int i = bString.length() - 1, j = 0; i >= 0; i--, j++) {
+            result += (byte) (Byte.parseByte(bString.charAt(i) + "") * Math.pow(2, j));
+        }
+        return result;
+
+    }
 }

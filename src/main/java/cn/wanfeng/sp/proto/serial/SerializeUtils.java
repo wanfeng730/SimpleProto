@@ -64,5 +64,20 @@ public class SerializeUtils {
         return bytes;
     }
 
+    public static byte[] textLen2Bytes(int len) {
+        byte[] bytes = new byte[3];
+
+        int n1 = len / (256 * 256);
+        bytes[0] = (byte) n1;
+
+        int len2 = len - (n1 * 256 * 256);
+        int n2 = len2 / 256;
+        bytes[1] = (byte) n2;
+
+        int len3 = len2 - (n2 * 256);
+        bytes[2] = (byte) len3;
+        return bytes;
+    }
+
 
 }

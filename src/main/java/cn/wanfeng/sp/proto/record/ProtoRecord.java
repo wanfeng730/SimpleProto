@@ -51,6 +51,10 @@ public class ProtoRecord {
         return type != null && ProtoType.STRING.equals(type);
     }
 
+    public boolean isTextType() {
+        return type != null && ProtoType.TEXT.equals(type);
+    }
+
     public boolean isEmptyValue() {
         return value == null;
     }

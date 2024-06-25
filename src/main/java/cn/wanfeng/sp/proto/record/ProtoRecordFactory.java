@@ -38,6 +38,7 @@ public class ProtoRecordFactory {
      * @param data byte array
      * @return ProtoRecord list
      */
+    // LzhTODO: text类型测试
     public static ProtoRecordContainer readBytesToRecordList(byte[] data) {
         ProtoRecordContainer container = ProtoRecordContainer.emptyContainer();
         boolean success = true;
@@ -167,6 +168,7 @@ public class ProtoRecordFactory {
         }
     }
 
+    // LzhTODO: text类型测试
     public static byte[] writeRecordListToBytes(ProtoRecordContainer container) {
         if (container.isEmpty()) {
             return null;
@@ -190,7 +192,21 @@ public class ProtoRecordFactory {
         // indexNo
         data[0] = (byte) record.getIndexNo();
 
-        if (record.isStringType()) {
+        if (record.isTextType()) {
+            // string len to 3 byte
+            byte[] typeData = SerializeUtils.textLen2Bytes(record.getValueLen());
+            // set text flag
+            typeData[0] = (byte) (typeData[0] | ProtoTypeConstants.TEXT_FLAG);
+            System.arraycopy(typeData, 0, data, 1, 3);
+            // if value is null
+            if (record.isEmptyValue()) {
+                data[1] = ProtoTypeUtils.type0SetEmpty(data[1]);
+                return ByteArrayUtils.subByteArray(data, 0, 3);
+            }
+            // LzhTODO: 改成Text类可行？
+            byte[] valueBytes = SerializeUtils.string2Bytes((String) record.getValue());
+            System.arraycopy(valueBytes, 0, data, 4, record.getValueLen());
+        } else if (record.isStringType()) {
             // string len to 2 byte
             byte[] typeData = SerializeUtils.stringLen2Bytes(record.getValueLen());
             // add string flag
