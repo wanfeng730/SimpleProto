@@ -3,7 +3,7 @@ package cn.wanfeng.sp.base;
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
 import cn.wanfeng.sp.base.object.SpBaseObject;
 import cn.wanfeng.sp.base.object.SpSession;
-import cn.wanfeng.sp.util.LogUtils;
+import cn.wanfeng.sp.util.staticutils.LogUtils;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 
@@ -18,8 +18,14 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
     private SpSession spSession;
 
     @Test
-    public void test1() {
+    public void test_findBaseObjectById() {
         SpBaseObject spBaseObject = new SpBaseObject(spSession, 0L);
         LogUtils.info("SpBaseObjectTest测试完成");
+    }
+
+    @Test
+    public void test_updateBaseObjectById() {
+        SpBaseObject spBaseObject = new SpBaseObject(spSession, 0L);
+
     }
 }

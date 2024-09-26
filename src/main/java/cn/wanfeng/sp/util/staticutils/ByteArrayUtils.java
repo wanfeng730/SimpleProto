@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.util;
+package cn.wanfeng.sp.util.staticutils;
 
 /**
  * @date: 2024-02-15 22:27

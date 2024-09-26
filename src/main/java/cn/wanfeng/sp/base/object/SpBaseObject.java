@@ -6,7 +6,7 @@ import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.proto.record.ProtoRecord;
 import cn.wanfeng.sp.proto.record.ProtoRecordContainer;
 import cn.wanfeng.sp.proto.record.ProtoRecordFactory;
-import cn.wanfeng.sp.util.LogUtils;
+import cn.wanfeng.sp.util.staticutils.LogUtils;
 
 import java.lang.reflect.Field;
 import java.util.Date;
@@ -34,7 +34,14 @@ public class SpBaseObject implements ISpBaseObject {
 
     private Boolean isDelete;
 
-    private static ConcurrentHashMap<Integer, Object> DATA_MAP;
+    /**
+     * 索引号与字段名对应的值
+     * 例: hash
+     * key为indexNo和name用“-”拼接而成
+     * value为该字段对应的值
+     */
+    private static ConcurrentHashMap<Integer, Object> INDEX_FIELD_DATA_MAP;
+
 
     public SpBaseObject(SpSession session, Long id) {
         //从数据库获取此id的字段
@@ -63,7 +70,7 @@ public class SpBaseObject implements ISpBaseObject {
     }
 
     private static void initDataMap() {
-        DATA_MAP = new ConcurrentHashMap<>(16);
+        INDEX_FIELD_DATA_MAP = new ConcurrentHashMap<>(16);
     }
 
     private void verifyProtoFieldDuplicate() {
@@ -106,27 +113,27 @@ public class SpBaseObject implements ISpBaseObject {
                 //基础对象字段
                 case ID_INDEX -> {
                     id = (Long) record.getValue();
-                    DATA_MAP.put(ID_INDEX, id);
+                    INDEX_FIELD_DATA_MAP.put(ID_INDEX, id);
                 }
                 case TYPE_INDEX -> {
                     type = (String) record.getValue();
-                    DATA_MAP.put(TYPE_INDEX, type);
+                    INDEX_FIELD_DATA_MAP.put(TYPE_INDEX, type);
                 }
                 case NAME_INDEX -> {
                     name = (String) record.getValue();
-                    DATA_MAP.put(NAME_INDEX, name);
+                    INDEX_FIELD_DATA_MAP.put(NAME_INDEX, name);
                 }
                 case CREATE_DATE_INDEX -> {
                     createDate = (Date) record.getValue();
-                    DATA_MAP.put(CREATE_DATE_INDEX, createDate);
+                    INDEX_FIELD_DATA_MAP.put(CREATE_DATE_INDEX, createDate);
                 }
                 case MODIFY_DATE_INDEX -> {
                     modifyDate = (Date) record.getValue();
-                    DATA_MAP.put(MODIFY_DATE_INDEX, modifyDate);
+                    INDEX_FIELD_DATA_MAP.put(MODIFY_DATE_INDEX, modifyDate);
                 }
                 case IS_DELETE_INDEX -> {
                     isDelete = (Boolean) record.getValue();
-                    DATA_MAP.put(IS_DELETE_INDEX, isDelete);
+                    INDEX_FIELD_DATA_MAP.put(IS_DELETE_INDEX, isDelete);
                 }
                 //业务对象字段
                 default -> readRecordToBusinessField(record);
@@ -143,7 +150,7 @@ public class SpBaseObject implements ISpBaseObject {
                 }
                 try {
                     field.set(this, record.getValue());
-                    DATA_MAP.put(indexNo, record.getValue());
+                    INDEX_FIELD_DATA_MAP.put(indexNo, record.getValue());
                     return;
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);

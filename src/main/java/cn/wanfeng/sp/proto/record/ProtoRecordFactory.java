@@ -12,7 +12,7 @@ import cn.wanfeng.sp.proto.type.ProtoTypeConstants;
 import cn.wanfeng.sp.proto.type.ProtoTypeUtils;
 import cn.wanfeng.sp.proto.type.TypeMapContainer;
 import cn.wanfeng.sp.proto.value.ProtoValueConstants;
-import cn.wanfeng.sp.util.ByteArrayUtils;
+import cn.wanfeng.sp.util.staticutils.ByteArrayUtils;
 
 import java.lang.reflect.Method;
 import java.util.Map;

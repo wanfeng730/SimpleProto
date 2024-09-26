@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.util;
+package cn.wanfeng.sp.util.staticutils;
 
 import cn.wanfeng.sp.base.object.ISpBaseObject;
 import cn.wanfeng.sp.base.object.SpBaseObjectDO;

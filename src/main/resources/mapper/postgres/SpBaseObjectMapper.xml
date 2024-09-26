@@ -3,8 +3,7 @@
 <mapper namespace="cn.wanfeng.sp.base.mapper.SpBaseObjectMapper">
 
     <sql id="all_field">
-        id
-        , type, name, create_date, modify_date, is_delete, data
+        id, type, name, create_date, modify_date, is_delete, data
     </sql>
 
     <select id="findById" resultMap="mybatis-plus_SpBaseObjectDO">

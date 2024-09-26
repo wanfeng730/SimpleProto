@@ -45,4 +45,9 @@
         </logger>
     </springProfile>
 
+    <logger name="spLogger" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ROLLING_LOG"/>
+    </logger>
+
 </configuration>
