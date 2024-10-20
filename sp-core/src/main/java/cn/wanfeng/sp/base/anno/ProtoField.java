@@ -1,7 +1,9 @@
 package cn.wanfeng.sp.base.anno;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @date: 2024-06-24 09:43
@@ -10,6 +12,7 @@ import java.lang.annotation.RetentionPolicy;
  * @since: 1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface ProtoField {
     int index();
 

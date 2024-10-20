@@ -15,13 +15,18 @@ public class SerializeUtils {
 
     public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
-    public static byte[] int2Bytes(int value) {
+    public static byte[] int2FourBytes(int value) {
         byte[] bytes = new byte[Integer.BYTES];
         bytes[3] = (byte) value;
         bytes[2] = (byte) (value >>> 8);
         bytes[1] = (byte) (value >>> 16);
         bytes[0] = (byte) (value >>> 24);
         return bytes;
+    }
+
+    public static byte[] int2TwoBytes(int value) {
+        byte[] fourBytes = int2FourBytes(value);
+        return new byte[]{fourBytes[2], fourBytes[3]};
     }
 
     public static byte[] long2Bytes(long value) {

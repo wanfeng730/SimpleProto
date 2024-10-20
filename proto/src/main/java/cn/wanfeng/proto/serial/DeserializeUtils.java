@@ -23,6 +23,11 @@ public class DeserializeUtils {
         return bytes2Int(data);
     }
 
+    public static int twoByte2Int(byte[] bytes) {
+        byte[] data = new byte[]{0, 0, bytes[0], bytes[1]};
+        return bytes2Int(data);
+    }
+
     public static int bytes2Int(byte[] data) {
         int value = 0;
         value = value | (data[0] & INT_MAT);

@@ -1,6 +1,7 @@
 package cn.wanfeng.sp.base.object;
 
 import cn.wanfeng.sp.base.mapper.SpBaseObjectMapper;
+import cn.wanfeng.sp.base.mapper.SpSettingsMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,14 @@ public class SpSession {
     @Resource
     private SpBaseObjectMapper baseObjectMapper;
 
-    public SpBaseObjectMapper baseObjectStorage() {
+    @Resource
+    private SpSettingsMapper spSettingsMapper;
+
+    public SpBaseObjectMapper objectStorage() {
         return baseObjectMapper;
+    }
+
+    public SpSettingsMapper settingsStorage() {
+        return spSettingsMapper;
     }
 }

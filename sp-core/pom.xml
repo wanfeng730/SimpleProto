@@ -6,14 +6,13 @@
         <artifactId>simpleproto</artifactId>
         <version>1.0</version>
     </parent>
+
     <artifactId>sp-core</artifactId>
-    <name>Archetype - sp-core</name>
-    <url>http://maven.apache.org</url>
 
     <dependencies>
         <dependency>
             <groupId>cn.wanfeng</groupId>
-            <artifactId>proto-base</artifactId>
+            <artifactId>proto</artifactId>
             <version>1.0</version>
         </dependency>
     </dependencies>

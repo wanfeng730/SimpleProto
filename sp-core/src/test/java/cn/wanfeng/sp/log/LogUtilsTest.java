@@ -1,6 +1,6 @@
 package cn.wanfeng.sp.log;
 
-import cn.wanfeng.proto.util.staticutils.LogUtils;
+import cn.wanfeng.proto.util.LogUtils;
 import cn.wanfeng.sp.SimpleprotoApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,4 +1,4 @@
-package cn.wanfeng.proto.util.staticutils;
+package cn.wanfeng.proto.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

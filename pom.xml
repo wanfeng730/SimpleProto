@@ -8,35 +8,27 @@
         <version>3.3.0</version>
         <relativePath/>
     </parent>
+
     <groupId>cn.wanfeng</groupId>
     <artifactId>simpleproto</artifactId>
     <version>1.0</version>
+
     <packaging>pom</packaging>
     <name>simpleproto</name>
     <description>simpleproto</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
+
     <modules>
-        <module>proto-base</module>
+        <module>proto</module>
         <module>sp-core</module>
     </modules>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
+
     <properties>
         <java.version>21</java.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -54,9 +46,6 @@
             <artifactId>junit-jupiter</artifactId>
             <version>5.10.0</version>
         </dependency>
-
-        <!-- logback -->
-        <!-- 添加slf4j的jar包时如果报错，先确定版本，版本要和项目maven的slf4j-log4j12 版本保持一致-->
 
 
         <!-- 连接postgresql所需依赖 -->
@@ -77,6 +66,22 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
             <version>3.5.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.17.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.f4b6a3</groupId>
+            <artifactId>ulid-creator</artifactId>
+            <version>5.1.0</version>
         </dependency>
     </dependencies>
 

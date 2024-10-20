@@ -28,7 +28,7 @@ public class SerializeMethodContainer {
         if (value == null) {
             return null;
         }
-        return SerializeUtils.int2Bytes(value);
+        return SerializeUtils.int2FourBytes(value);
     }
 
     @SerializeValue(flag = ProtoTypeConstants.LONG_FLAG)

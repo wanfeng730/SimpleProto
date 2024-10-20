@@ -1,7 +1,7 @@
 package cn.wanfeng.proto.record;
 
 import cn.wanfeng.proto.constant.ProtoConstants;
-import cn.wanfeng.proto.constants.SpFailedReason;
+import cn.wanfeng.proto.constants.SpExceptionMessage;
 import cn.wanfeng.proto.exception.SpException;
 import cn.wanfeng.proto.serial.DeserializeMethodContainer;
 import cn.wanfeng.proto.serial.DeserializeUtils;
@@ -11,7 +11,7 @@ import cn.wanfeng.proto.type.ProtoType;
 import cn.wanfeng.proto.type.ProtoTypeConstants;
 import cn.wanfeng.proto.type.ProtoTypeUtils;
 import cn.wanfeng.proto.type.TypeMapContainer;
-import cn.wanfeng.proto.util.staticutils.ByteArrayUtils;
+import cn.wanfeng.proto.util.ByteArrayUtils;
 import cn.wanfeng.proto.value.ProtoValueConstants;
 
 import java.lang.reflect.Method;
@@ -24,7 +24,16 @@ import java.util.Map;
  */
 public class ProtoRecordFactory {
 
-    private static final byte FLAG_MAT = 63;
+    private static final int INDEX_NO_BYTE_START = 0;
+
+    private static final int INDEX_NO_BYTE_COUNT = 2;
+
+    private static final int TYPE_BYTE_START = 2;
+
+    private static final int TEXT_TYPE_BYTE_COUNT = 3;
+    private static final int STRING_TYPE_BYTE_COUNT = 2;
+    private static final int COMMON_TYPE_BYTE_COUNT = 1;
+
 
     /**
      * flag -> Method(deserialize the byte array to java value)
@@ -47,7 +56,7 @@ public class ProtoRecordFactory {
             data = readResult.getNextData();
             success = readResult.isSuccess();
             if (success) {
-                container.addRecord(readResult.getRecord());
+                container.putRecord(readResult.getRecord());
             }
         }
         return container;
@@ -66,102 +75,118 @@ public class ProtoRecordFactory {
 
         ProtoRecordBuilder builder = ProtoRecord.newBuilder();
 
-        //value[0]: indexNo
-        int indexNo = DeserializeUtils.oneByte2Int(data[0]);
+        // value[0][1]: indexNo
+        byte indexData0 = data[INDEX_NO_BYTE_START];
+        byte indexData1 = data[INDEX_NO_BYTE_START + 1];
+        byte[] indexNoBytes = new byte[]{indexData0, indexData1};
+        int indexNo = DeserializeUtils.twoByte2Int(indexNoBytes);
         builder = builder.indexNo(indexNo);
 
-        //value[1]: type
+        // value[2]: type
         int valueLen;
         // type: smallint, int, long, double, boolean, date
-        // last 6 bits of value[1]
-        byte flag = ProtoTypeUtils.getTypeFlagFromData1(data[1]);
+        // last 6 bits of value[2]
+        byte typeData0 = data[TYPE_BYTE_START];
+        byte flag = ProtoTypeUtils.getTypeFlagFromData1(typeData0);
+        int indexNoAndTypeLen;
+        int totalLen;
 
         // LzhTODO: 代码优化
         if (ProtoTypeConstants.TEXT_FLAG == flag) {
+            indexNoAndTypeLen = INDEX_NO_BYTE_COUNT + TEXT_TYPE_BYTE_COUNT;
             // type: string
-            if (ProtoTypeUtils.isEmptyValue(data[1])) {
+            if (ProtoTypeUtils.isEmptyValue(typeData0)) {
                 builder = builder.type(ProtoType.TEXT).len(0).value(ProtoValueConstants.EMPTY_TEXT);
-                byte[] nextData = ByteArrayUtils.consumeByteArrayHead(data, 4);
+                byte[] nextData = ByteArrayUtils.consumeByteArrayHead(data, indexNoAndTypeLen);
                 return RecordReadResult.buildSuccessResult(nextData, builder.build());
             }
-            //value[1] + value[2] + value[3] = len
+            byte typeData1 = data[TYPE_BYTE_START + 1];
+            byte typeData2 = data[TYPE_BYTE_START + 2];
+            // value[2] + value[3] + value[4] = len
             //get last 6 bit to a positive number
-            int len1 = ProtoTypeUtils.getFlagByteLengthFromData1(data[1]);
-            int len2 = DeserializeUtils.oneByte2Int(data[2]);
-            int len3 = DeserializeUtils.oneByte2Int(data[3]);
+            int len1 = ProtoTypeUtils.getFlagByteLengthFromData1(typeData0);
+            int len2 = DeserializeUtils.oneByte2Int(typeData1);
+            int len3 = DeserializeUtils.oneByte2Int(typeData2);
             valueLen = len1 * 256 * 256 + len2 * 256 + len3;
-            // value[4]... : value
-            if (data.length - 4 < valueLen) {
+            // value[5]... : value
+            if (data.length - (INDEX_NO_BYTE_COUNT + TEXT_TYPE_BYTE_COUNT) < valueLen) {
                 // LzhTODO: 异常原因统一格式化
                 throw new SpException("the length of value(text) in value is not enough");
             }
 
             Object value;
             try {
-                byte[] valueBytes = ByteArrayUtils.subByteArray(data, 4, valueLen);
+                byte[] valueBytes = ByteArrayUtils.subByteArray(data, indexNoAndTypeLen, valueLen);
                 value = DESERIAL_VALUE_METHOD_MAP.get(ProtoTypeConstants.TEXT_FLAG).invoke(builder, (Object) valueBytes);
             } catch (Exception e) {
                 throw new SpException(e);
             }
 
-            builder = builder.type(ProtoType.TEXT).valueLen(valueLen).len(valueLen + 4).value(value);
-            byte[] nextData = ByteArrayUtils.consumeByteArrayHead(data, 4 + valueLen);
+            totalLen = indexNoAndTypeLen + valueLen;
+
+            builder = builder.type(ProtoType.TEXT).valueLen(valueLen).len(totalLen).value(value);
+            byte[] nextData = ByteArrayUtils.consumeByteArrayHead(data, totalLen);
             return RecordReadResult.buildSuccessResult(nextData, builder.build());
 
         } else if (ProtoTypeConstants.STRING_FLAG == flag) {
+            indexNoAndTypeLen = INDEX_NO_BYTE_COUNT + STRING_TYPE_BYTE_COUNT;
             // type: string
-            if (ProtoTypeUtils.isEmptyValue(data[1])) {
+            if (ProtoTypeUtils.isEmptyValue(typeData0)) {
                 builder = builder.type(ProtoType.STRING).len(0).value(ProtoValueConstants.EMPTY_STRING);
-                byte[] nextData = ByteArrayUtils.consumeByteArrayHead(data, 3);
+                byte[] nextData = ByteArrayUtils.consumeByteArrayHead(data, indexNoAndTypeLen);
                 return RecordReadResult.buildSuccessResult(nextData, builder.build());
             }
             //value[1] + value[2] = len
             //get last 6 bit to a positive number
-            int len1 = ProtoTypeUtils.getFlagByteLengthFromData1(data[1]);
-            int len2 = DeserializeUtils.oneByte2Int(data[2]);
+            byte typeData1 = data[TYPE_BYTE_START + 1];
+            int len1 = ProtoTypeUtils.getFlagByteLengthFromData1(typeData0);
+            int len2 = DeserializeUtils.oneByte2Int(typeData1);
             valueLen = len1 * 256 + len2;
             // value[3]... : value
-            if (data.length - 3 < valueLen) {
+            if (data.length - indexNoAndTypeLen < valueLen) {
                 // LzhTODO: 异常原因统一格式化
                 throw new SpException("the length of value(string) in value is not enough");
             }
 
             Object value;
             try {
-                byte[] valueBytes = ByteArrayUtils.subByteArray(data, 3, valueLen);
+                byte[] valueBytes = ByteArrayUtils.subByteArray(data, indexNoAndTypeLen, valueLen);
                 value = DESERIAL_VALUE_METHOD_MAP.get(ProtoTypeConstants.STRING_FLAG).invoke(builder, (Object) valueBytes);
             } catch (Exception e) {
                 throw new SpException(e);
             }
 
-            builder = builder.type(ProtoType.STRING).valueLen(valueLen).len(valueLen + 3).value(value);
-            byte[] nextData = ByteArrayUtils.consumeByteArrayHead(data, 3 + valueLen);
+            totalLen = indexNoAndTypeLen + valueLen;
+            builder = builder.type(ProtoType.STRING).valueLen(valueLen).len(totalLen).value(value);
+            byte[] nextData = ByteArrayUtils.consumeByteArrayHead(data, totalLen);
             return RecordReadResult.buildSuccessResult(nextData, builder.build());
 
         } else if (TypeMapContainer.FLAG_CLASS_MAP.containsKey(flag)) {
             ProtoType type = TypeMapContainer.FLAG_ENUM_MAP.get(flag);
-            if (ProtoTypeUtils.isEmptyValue(data[1])) {
-                builder = builder.type(type).len(0).value(null);
-                byte[] nextData = ByteArrayUtils.consumeByteArrayHead(data, 2);
+            indexNoAndTypeLen = INDEX_NO_BYTE_COUNT + COMMON_TYPE_BYTE_COUNT;
+            if (ProtoTypeUtils.isEmptyValue(typeData0)) {
+                builder = builder.type(type).len(indexNoAndTypeLen).value(null);
+                byte[] nextData = ByteArrayUtils.consumeByteArrayHead(data, indexNoAndTypeLen);
                 return RecordReadResult.buildSuccessResult(nextData, builder.build());
             }
 
             valueLen = TypeMapContainer.FLAG_LENGTH_MAP.get(flag);
             // value[2]... : value
-            if (data.length - 2 < valueLen) {
+            if (data.length - indexNoAndTypeLen < valueLen) {
                 // LzhTODO: 异常原因统一格式化
                 throw new SpException("the length of value in value is not enough");
             }
             Object value;
             try {
-                byte[] valueBytes = ByteArrayUtils.subByteArray(data, 2, valueLen);
+                byte[] valueBytes = ByteArrayUtils.subByteArray(data, indexNoAndTypeLen, valueLen);
                 value = DESERIAL_VALUE_METHOD_MAP.get(flag).invoke(valueBytes, new Object[]{valueBytes});
             } catch (Exception e) {
                 throw new SpException(e);
             }
 
-            builder = builder.type(type).valueLen(valueLen).len(valueLen + 2).value(value);
-            byte[] nextData = ByteArrayUtils.consumeByteArrayHead(data, 2 + valueLen);
+            totalLen = indexNoAndTypeLen + valueLen;
+            builder = builder.type(type).valueLen(valueLen).len(totalLen).value(value);
+            byte[] nextData = ByteArrayUtils.consumeByteArrayHead(data, totalLen);
             return RecordReadResult.buildSuccessResult(nextData, builder.build());
         } else {
             throw new SpException("the type of record can not resolve!");
@@ -176,8 +201,8 @@ public class ProtoRecordFactory {
         // get total size
         byte[] data = new byte[container.getTotalSize()];
         int cursor = 0;
-        for (int i = 0; i < container.getRecordList().size(); i++) {
-            ProtoRecord record = container.getRecordList().get(i);
+        for (Map.Entry<Integer, ProtoRecord> entry : container.getIndexNoRecordMap().entrySet()) {
+            ProtoRecord record = entry.getValue();
             byte[] recordData = writeRecordToBytes(record);
             int len = recordData.length;
             System.arraycopy(recordData, 0, data, cursor, len);
@@ -190,47 +215,53 @@ public class ProtoRecordFactory {
     private static byte[] writeRecordToBytes(ProtoRecord record) {
         byte[] data = new byte[record.getLen()];
         // indexNo
-        data[0] = (byte) record.getIndexNo();
+        byte[] indexNoBytes = SerializeUtils.int2TwoBytes(record.getIndexNo());
+        System.arraycopy(indexNoBytes, 0, data, INDEX_NO_BYTE_START, INDEX_NO_BYTE_COUNT);
 
+        int indexNoAndTypeLen;
         if (record.isTextType()) {
+            indexNoAndTypeLen = INDEX_NO_BYTE_COUNT + TEXT_TYPE_BYTE_COUNT;
             // string len to 3 byte
             byte[] typeData = SerializeUtils.textLen2Bytes(record.getValueLen());
             // set text flag
             typeData[0] = (byte) (typeData[0] | ProtoTypeConstants.TEXT_FLAG);
-            System.arraycopy(typeData, 0, data, 1, 3);
+            System.arraycopy(typeData, 0, data, TYPE_BYTE_START, TEXT_TYPE_BYTE_COUNT);
             // if value is null
             if (record.isEmptyValue()) {
-                data[1] = ProtoTypeUtils.type0SetEmpty(data[1]);
-                return ByteArrayUtils.subByteArray(data, 0, 3);
+                data[TYPE_BYTE_START] = ProtoTypeUtils.type0SetEmpty(data[TYPE_BYTE_START]);
+                return ByteArrayUtils.subByteArray(data, 0, indexNoAndTypeLen);
             }
             // LzhTODO: 改成Text类可行？
             byte[] valueBytes = SerializeUtils.string2Bytes((String) record.getValue());
-            System.arraycopy(valueBytes, 0, data, 4, record.getValueLen());
+            System.arraycopy(valueBytes, 0, data, indexNoAndTypeLen, record.getValueLen());
         } else if (record.isStringType()) {
+            indexNoAndTypeLen = INDEX_NO_BYTE_COUNT + STRING_TYPE_BYTE_COUNT;
             // string len to 2 byte
             byte[] typeData = SerializeUtils.stringLen2Bytes(record.getValueLen());
             // add string flag
             typeData[0] = (byte) (typeData[0] | ProtoTypeConstants.STRING_FLAG);
-            System.arraycopy(typeData, 0, data, 1, 2);
+            System.arraycopy(typeData, 0, data, TYPE_BYTE_START, STRING_TYPE_BYTE_COUNT);
             // if value is null
             if (record.isEmptyValue()) {
-                data[1] = ProtoTypeUtils.type0SetEmpty(data[1]);
-                return ByteArrayUtils.subByteArray(data, 0, 3);
+                data[TYPE_BYTE_START] = ProtoTypeUtils.type0SetEmpty(data[TYPE_BYTE_START]);
+                return ByteArrayUtils.subByteArray(data, 0, indexNoAndTypeLen);
             }
 
             byte[] valueBytes = SerializeUtils.string2Bytes((String) record.getValue());
-            System.arraycopy(valueBytes, 0, data, 3, record.getValueLen());
+            System.arraycopy(valueBytes, 0, data, indexNoAndTypeLen, record.getValueLen());
         } else {
+            indexNoAndTypeLen = INDEX_NO_BYTE_COUNT + COMMON_TYPE_BYTE_COUNT;
+
             byte flag = record.getType().toFlag();
-            data[1] = flag;
+            data[TYPE_BYTE_START] = flag;
             // if value is null
             if (record.isEmptyValue()) {
-                data[1] = ProtoTypeUtils.type0SetEmpty(data[1]);
-                return ByteArrayUtils.subByteArray(data, 0, 2);
+                data[TYPE_BYTE_START] = ProtoTypeUtils.type0SetEmpty(data[TYPE_BYTE_START]);
+                return ByteArrayUtils.subByteArray(data, 0, indexNoAndTypeLen);
             }
             try {
                 byte[] valueData = (byte[]) SERIAL_VALUE_METHOD_MAP.get(flag).invoke(record, record.getValue());
-                System.arraycopy(valueData, 0, data, 2, record.getValueLen());
+                System.arraycopy(valueData, 0, data, indexNoAndTypeLen, record.getValueLen());
             } catch (Exception e) {
                 throw new SpException(e);
             }
@@ -247,13 +278,14 @@ public class ProtoRecordFactory {
             builder.type(ProtoType.STRING);
             int valueLen = ((String) value).getBytes(ProtoConstants.UTF8_CHARSET).length;
             if (valueLen > ProtoTypeConstants.TEXT_MAX_LENGTH) {
-                throw new SpException(SpFailedReason.stringValueLengthTooLong(valueLen));
+                throw new SpException(SpExceptionMessage.stringValueLengthTooLong(valueLen));
             } else if (valueLen > ProtoTypeConstants.STRING_MAX_LENGTH) {
                 // LzhTODO: 升级为text类型
-
+                builder.valueLen(valueLen);
+                builder.len(valueLen + INDEX_NO_BYTE_COUNT + TEXT_TYPE_BYTE_COUNT);
             } else {
                 builder.valueLen(valueLen);
-                builder.len(valueLen + 3);
+                builder.len(valueLen + INDEX_NO_BYTE_COUNT + STRING_TYPE_BYTE_COUNT);
             }
             return builder.build();
         }
@@ -261,7 +293,7 @@ public class ProtoRecordFactory {
         builder.type(type);
         Integer valueLen = TypeMapContainer.CLASS_LENGTH_MAP.get(value.getClass());
         builder.valueLen(valueLen);
-        builder.len(valueLen + 2);
+        builder.len(valueLen + INDEX_NO_BYTE_COUNT + COMMON_TYPE_BYTE_COUNT);
         return builder.build();
     }
 
