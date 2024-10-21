@@ -8,6 +8,13 @@ package cn.wanfeng.proto.constants;
  */
 public class SpExceptionMessage {
 
+    public static final String OBJECT_ID_IS_NULL_WHEN_FIND_OBJECT = "Object Id is NULL when find object from database";
+
+
+
+
+
+
     private static final String STRING_VALUE_LENGTH_TOO_LONG = "The Length of String Value (%s) is too Long Failed!";
 
     private static final String PROTO_FIELD_INDEX_DUPLICATE = "@ProtoField[index=%d, name=%s] Verify Failed! Because Duplicate with index, please confirm index and name all not duplicate！";
@@ -15,6 +22,9 @@ public class SpExceptionMessage {
     private static final String PROTO_FIELD_NAME_DUPLICATE = "@ProtoField[index=%d, name=%s] Verify Failed! Because Duplicate with name, please confirm index and name all not duplicate！";
 
     private static final String SET_PROPERTY_NO_ACCESSIBLE = "Set Property[index=%d, name=%s] has no Accessible";
+
+    private static final String OBJECT_ID_NOT_FOUND = "Not Found Object Id[%d] in Database";
+
 
     public static String stringValueLengthTooLong(int valueLen) {
         return String.format(STRING_VALUE_LENGTH_TOO_LONG, valueLen);
@@ -30,5 +40,9 @@ public class SpExceptionMessage {
 
     public static String setPropertyNoAccessible(int index, String name) {
         return String.format(SET_PROPERTY_NO_ACCESSIBLE, index, name);
+    }
+
+    public static String objectIdNotFound(Long id) {
+        return String.format(OBJECT_ID_NOT_FOUND, id);
     }
 }

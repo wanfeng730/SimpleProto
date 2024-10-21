@@ -24,4 +24,8 @@ public class SpObjectConvertUtils {
         return spBaseObjectDO;
     }
 
+    public static SpBaseObjectDO convertSpBaseObjectToDO(SpBaseObject spBaseObject) {
+        return convertSpBaseObjectToDO(spBaseObject, null);
+    }
+
 }

@@ -39,5 +39,6 @@ cn:
 logging:
   level:
     root: INFO
+    cn.wanfeng.sp.base.SpBaseObjectTest: DEBUG
   file:
     path: ./logs

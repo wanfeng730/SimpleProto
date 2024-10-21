@@ -32,26 +32,26 @@ public class SpBaseObject implements ISpBaseObject {
 
     protected SpSession spSession;
 
-    private Long id;
+    protected Long id;
 
-    private String type;
+    protected String type;
 
-    private String name;
+    protected String name;
 
-    private Date createDate;
+    protected Date createDate;
 
-    private Date modifyDate;
+    protected Date modifyDate;
 
-    private Boolean isDelete;
+    protected Boolean isDelete;
 
-    private ProtoRecordContainer recordContainer;
+    protected ProtoRecordContainer recordContainer;
 
-    private ConcurrentHashMap<String, Object> fieldNameValueMap;
+    protected ConcurrentHashMap<String, Object> fieldNameValueMap;
 
     /**
      * 该对象是否为新建的对象（该id未在数据库中存在）
      */
-    private boolean isNewObject;
+    protected boolean isNewObject;
 
     public SpBaseObject(SpSession session, String type) {
         this(session, type, defaultName());
@@ -67,8 +67,12 @@ public class SpBaseObject implements ISpBaseObject {
     public SpBaseObject(SpSession session, Long id) {
         this.spSession = session;
         this.isNewObject = false;
+
+        assertObjectIdNotNull(id);
         // 从数据库获取此id的字段
         SpBaseObjectDO objectDO = spSession.objectStorage().findById(id);
+        assertObjectIdFindFromDatabase(id, objectDO);
+
         ProtoRecordContainer container = ProtoRecordFactory.readBytesToRecordList(objectDO.getData());
         LogUtils.debug(container.getIndexNoRecordMap().toString());
 
@@ -76,6 +80,18 @@ public class SpBaseObject implements ISpBaseObject {
         verifyAndSetRecordMap(container);
         // 读取container中的数据并设置到本对象的属性中
         readRecordMap();
+    }
+
+    private static void assertObjectIdNotNull(Long id) {
+        if (Objects.isNull(id)) {
+            throw new SpException(SpExceptionMessage.OBJECT_ID_IS_NULL_WHEN_FIND_OBJECT);
+        }
+    }
+
+    private static void assertObjectIdFindFromDatabase(Long id, SpBaseObjectDO spBaseObjectDO) {
+        if (Objects.isNull(spBaseObjectDO)) {
+            throw new SpException(SpExceptionMessage.objectIdNotFound(id));
+        }
     }
 
     private void verifyAndSetRecordMap(ProtoRecordContainer container) {
@@ -220,7 +236,7 @@ public class SpBaseObject implements ISpBaseObject {
             // 生成主键id
             generateIncreaseId();
             // 将继承类中的属性放到indexNoRecordMap和fieldNameValueMap
-            putDeclaredProperty();
+            putDeclaredPropertyToContainer();
             // 所有字段序列化成字节数组
             byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
             // 该对象保存到数据库
@@ -230,7 +246,7 @@ public class SpBaseObject implements ISpBaseObject {
             updateIncreaseIdToStorage();
         } else {
             // 将继承类中的属性放到indexNoRecordMap和fieldNameValueMap
-            putDeclaredProperty();
+            putDeclaredPropertyToContainer();
             // 所有字段序列化成字节数组
             byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
             // 该对象更新到数据库
@@ -243,7 +259,7 @@ public class SpBaseObject implements ISpBaseObject {
     /**
      * 将继承类的属性放入map中
      */
-    private void putDeclaredProperty() {
+    private void putDeclaredPropertyToContainer() {
         Field[] fields = SpReflectUtils.getProtoFieldAnnotationFields(this.getClass());
 
         for (Field field : fields) {
@@ -285,7 +301,17 @@ public class SpBaseObject implements ISpBaseObject {
 
     @Override
     public void remove() {
+        if (isNewObject) {
+            LogUtils.info("对象[id={}, type={}, name={}]为新建对象，未保存到数据库，无需删除", this.id, this.type, this.name);
+        } else {
+            // 在数据库中删除
+            removeDataFromDB();
+        }
+    }
 
+    private void removeDataFromDB() {
+        SpBaseObjectDO deleteObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this);
+        int deleteRows = spSession.objectStorage().deleteById(deleteObjectDO);
     }
 
 

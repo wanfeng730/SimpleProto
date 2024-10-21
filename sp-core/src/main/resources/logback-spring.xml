@@ -21,7 +21,7 @@
 
     <appender name="ROLLING_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--  要区别于其他的appender中的文件名字  -->
-        <file>${LOG_HOME}/log-rolling.log</file>
+        <file>${LOG_HOME}/${APP_NAME}.log</file>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread]-[%-5level] [%logger{50}: %-5line]: %msg%n</pattern>
             <charset>${ENCODING}</charset>
@@ -29,23 +29,22 @@
         <!-- 设置滚动日志记录的滚动策略 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 日志归档路径以及格式 -->
-            <fileNamePattern>${LOG_HOME}/info/log-rolling-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/info/${APP_NAME}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <!--归档日志文件保留的最大数量-->
             <maxHistory>50</maxHistory>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>1KB</maxFileSize>
+                <maxFileSize>10MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
     </appender>
 
-    <springProfile name="dev,test">
-        <logger name="cn.wanfeng.sp" level="DEBUG">
-            <appender-ref ref="CONSOLE"/>
-            <appender-ref ref="ROLLING_LOG"/>
-        </logger>
-    </springProfile>
 
-    <logger name="spLogger" level="DEBUG">
+    <logger name="cn.wanfeng.sp" level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ROLLING_LOG"/>
+    </logger>
+
+    <logger name="spLogger" level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="ROLLING_LOG"/>
     </logger>
