@@ -42,3 +42,7 @@ logging:
     cn.wanfeng.sp.base.SpBaseObjectTest: DEBUG
   file:
     path: ./logs
+
+# 动态sql配置
+dynamicSql:
+  settingsTable: sp_settings

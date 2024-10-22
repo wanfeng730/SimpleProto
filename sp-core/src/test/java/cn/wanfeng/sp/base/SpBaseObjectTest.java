@@ -69,4 +69,10 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
         LogUtils.info("SpBaseObject功能测试完成");
     }
+
+    @Test
+    public void test_mybatis_interceptor() {
+        SpSettingsDO spSettingsDO = spSession.settingsStorage().findByName("SpBaseObjectId");
+        Assertions.assertNotNull(spSettingsDO);
+    }
 }

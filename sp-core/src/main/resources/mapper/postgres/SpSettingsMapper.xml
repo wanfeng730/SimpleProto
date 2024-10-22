@@ -9,9 +9,8 @@
     <select id="findByName" resultMap="mybatis-plus_SpSettingsDO">
         select
         <include refid="all_field"/>
-        from sp_settings
+        from {setting_table}
         where name = #{name}
-        limit 1
     </select>
 
 
