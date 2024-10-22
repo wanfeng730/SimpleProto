@@ -228,9 +228,7 @@ public class SpBaseObject implements ISpBaseObject {
 
     @Override
     public void store() {
-        ProtoRecord nameRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(NAME_INDEX, this.name);
-        recordContainer.putRecord(nameRecord);
-        fieldNameValueMap.put(NAME_COL, this.name);
+        putNewestNameValue();
 
         if (isNewObject) {
             // 生成主键id
@@ -245,6 +243,8 @@ public class SpBaseObject implements ISpBaseObject {
             // 将自增后的id保存到数据库
             updateIncreaseIdToStorage();
         } else {
+            // 修改时间刷新
+            updateModifyDateAndPut();
             // 将继承类中的属性放到indexNoRecordMap和fieldNameValueMap
             putDeclaredPropertyToContainer();
             // 所有字段序列化成字节数组
@@ -254,6 +254,20 @@ public class SpBaseObject implements ISpBaseObject {
             int updateRows = spSession.objectStorage().updateById(spBaseObjectDO);
         }
 
+    }
+
+    private void putNewestNameValue() {
+        ProtoRecord nameRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(NAME_INDEX, this.name);
+        recordContainer.putRecord(nameRecord);
+        fieldNameValueMap.put(NAME_COL, this.name);
+    }
+
+    private void updateModifyDateAndPut() {
+        this.modifyDate = new Date();
+
+        ProtoRecord modifyDateRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(MODIFY_DATE_INDEX, this.modifyDate);
+        recordContainer.putRecord(modifyDateRecord);
+        fieldNameValueMap.put(MODIFY_DATE_COL, this.modifyDate);
     }
 
     /**

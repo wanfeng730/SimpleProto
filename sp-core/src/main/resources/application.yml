@@ -8,7 +8,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://120.27.150.100:5432/${spring.application.name}?currentSchema=${spring.profiles.active}&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
     username: postgres
-    password: Lzh200127
+    password: Wanfeng730
   jpa:
     properties:
       hibernate:

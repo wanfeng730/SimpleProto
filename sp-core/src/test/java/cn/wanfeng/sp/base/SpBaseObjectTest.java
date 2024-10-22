@@ -57,6 +57,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
         Assertions.assertNotNull(borrowForm);
         Assertions.assertEquals("借阅单1", borrowForm.getName());
         Assertions.assertEquals(43, borrowForm.getApplyDays());
+        Assertions.assertTrue(borrowForm.getModifyDate().after(borrowForm.getCreateDate()));
 
         long step2 = System.currentTimeMillis();
         borrowForm.remove();
