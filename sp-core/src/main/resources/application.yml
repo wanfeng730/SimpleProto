@@ -25,15 +25,10 @@ mybatis-plus:
     use-generated-keys: true
     default-executor-type: REUSE
     use-actual-param-name: true
+    interceptor:
+      - cn.wanfeng.sp.interceptor.MybatisPlusTableNameInterceptor
   # mapper xml文件扫描路径
   mapper-locations: classpath:mapper/postgres/*Mapper.xml
-
-
-cn:
-  wanfeng:
-    sp:
-      tableName: sp_object_table
-
 
 # 日志配置
 logging:
@@ -42,6 +37,17 @@ logging:
     cn.wanfeng.sp.base.SpBaseObjectTest: DEBUG
   file:
     path: ./logs
+
+cn:
+  wanfeng:
+    sp:
+      tableName: sp_object_table
+
+simpleproto:
+  dataTable: sp_object_table
+  settingsTable: sp_settings
+
+
 
 # 动态sql配置
 dynamicSql:

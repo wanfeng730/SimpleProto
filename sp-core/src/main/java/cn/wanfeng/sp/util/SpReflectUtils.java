@@ -1,7 +1,7 @@
 package cn.wanfeng.sp.util;
 
 
-import cn.wanfeng.sp.base.anno.ProtoField;
+import cn.wanfeng.sp.anno.ProtoField;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;

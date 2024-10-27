@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.base.anno;
+package cn.wanfeng.sp.anno;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

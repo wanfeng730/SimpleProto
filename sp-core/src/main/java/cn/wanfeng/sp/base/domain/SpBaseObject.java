@@ -6,7 +6,7 @@ import cn.wanfeng.proto.record.ProtoRecord;
 import cn.wanfeng.proto.record.ProtoRecordContainer;
 import cn.wanfeng.proto.record.ProtoRecordFactory;
 import cn.wanfeng.proto.util.LogUtils;
-import cn.wanfeng.sp.base.anno.ProtoField;
+import cn.wanfeng.sp.anno.ProtoField;
 import cn.wanfeng.sp.base.object.SpBaseObjectDO;
 import cn.wanfeng.sp.base.object.SpSession;
 import cn.wanfeng.sp.base.object.SpSettingsDO;

@@ -1,8 +1,8 @@
 package cn.wanfeng.sp.base;
 
 
-import cn.wanfeng.sp.base.anno.ProtoField;
-import cn.wanfeng.sp.base.anno.Type;
+import cn.wanfeng.sp.anno.ProtoField;
+import cn.wanfeng.sp.anno.Type;
 import cn.wanfeng.sp.base.domain.SpBaseObject;
 import cn.wanfeng.sp.base.object.SpSession;
 import cn.wanfeng.sp.common.BusinessTypeConstant;
