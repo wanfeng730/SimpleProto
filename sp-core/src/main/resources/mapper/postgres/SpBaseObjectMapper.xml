@@ -9,19 +9,19 @@
     <select id="findById" resultMap="mybatis-plus_SpBaseObjectDO">
         select
         <include refid="all_field"/>
-        from sp_object_table
+        from {data_table}
         where id = #{id}
     </select>
 
     <update id="updateById" useGeneratedKeys="true" keyProperty="id">
-        UPDATE sp_object_table
+        UPDATE {data_table}
         SET type=#{type}, name=#{name}, create_date=#{createDate}, modify_date=#{modifyDate}, is_delete=#{isDelete},
         data=#{data, jdbcType=BLOB}
         WHERE id=#{id}
     </update>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO sp_object_table(id, type, name, create_date, modify_date, is_delete, data)
+        INSERT INTO {data_table}(id, type, name, create_date, modify_date, is_delete, data)
         VALUES (#{id}, #{type}, #{name}, #{createDate}, #{modifyDate}, #{isDelete}, #{data})
     </insert>
 

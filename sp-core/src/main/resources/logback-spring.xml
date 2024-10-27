@@ -11,7 +11,7 @@
     <conversionRule conversionWord="logColor" converterClass="cn.wanfeng.sp.config.LogColorConfiguration"/>
 
     <!-- 控制台日志 -->
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %green([%thread]) %logColor(%-5level) %boldMagenta(%logger): %msg%n
             </pattern>
@@ -19,7 +19,7 @@
         </encoder>
     </appender>
 
-    <appender name="ROLLING_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="spLogFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--  要区别于其他的appender中的文件名字  -->
         <file>${LOG_HOME}/${APP_NAME}.log</file>
         <encoder>
@@ -38,15 +38,13 @@
         </rollingPolicy>
     </appender>
 
-
-    <logger name="cn.wanfeng.sp" level="INFO">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="ROLLING_LOG"/>
+    <logger name="cn.wanfeng.sp" level="info">
+        <appender-ref ref="consoleAppender"/>
+        <appender-ref ref="spLogFileAppender"/>
     </logger>
 
-    <logger name="spLogger" level="INFO">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="ROLLING_LOG"/>
+    <logger name="spLogger" level="debug">
+        <appender-ref ref="spLogFileAppender"/>
     </logger>
 
 </configuration>
