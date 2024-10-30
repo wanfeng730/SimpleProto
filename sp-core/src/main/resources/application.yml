@@ -1,3 +1,10 @@
+simpleproto:
+  postgresHost: localhost
+  postgresPort: 5432
+  dataTable: sp_object_table
+  settingsTable: sp_settings
+
+
 spring:
   application:
     name: simpleproto
@@ -6,7 +13,7 @@ spring:
   # Postgres数据源
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://120.27.150.100:5432/${spring.application.name}?currentSchema=${spring.profiles.active}&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
+    url: jdbc:postgresql://${simpleproto.postgresHost}:${simpleproto.postgresPort}/${spring.application.name}?currentSchema=${spring.profiles.active}&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
     username: postgres
     password: Wanfeng730
   jpa:
@@ -37,18 +44,3 @@ logging:
     cn.wanfeng.sp.base.SpBaseObjectTest: DEBUG
   file:
     path: ./logs
-
-cn:
-  wanfeng:
-    sp:
-      tableName: sp_object_table
-
-simpleproto:
-  dataTable: sp_object_table
-  settingsTable: sp_settings
-
-
-
-# 动态sql配置
-dynamicSql:
-  settingsTable: sp_settings

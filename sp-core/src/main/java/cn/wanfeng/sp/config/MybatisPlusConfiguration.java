@@ -2,7 +2,6 @@ package cn.wanfeng.sp.config;
 
 
 import cn.wanfeng.sp.interceptor.MybatisPlusTableNameInterceptor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,9 +13,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class MybatisPlusConfiguration {
-
-    @Value("${dynamicSql.settingsTable}")
-    private String settingsTable;
 
     @Bean
     public MybatisPlusTableNameInterceptor mybatisPlusInterceptor() {
