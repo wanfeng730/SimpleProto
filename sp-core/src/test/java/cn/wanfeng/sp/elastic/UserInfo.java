@@ -4,9 +4,6 @@ package cn.wanfeng.sp.elastic;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.DateFormat;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -21,7 +18,6 @@ import java.util.List;
  */
 @Data
 @AllArgsConstructor
-@Document(indexName = "user_info")
 public class UserInfo {
 
     @Id
@@ -30,19 +26,16 @@ public class UserInfo {
     /**
      * 工号
      */
-    @Field(name = "job_no")
     private String jobNo;
 
     /**
      * 姓名
      */
-    @Field(name = "name")
     private String name;
 
     /**
      * 英文名
      */
-    @Field(name = "english_name")
     private String englishName;
 
     /**
@@ -68,7 +61,6 @@ public class UserInfo {
     /**
      * 入职时间
      */
-    @Field(name = "job_day", format = DateFormat.date_hour_minute_second_fraction)
     private Date jobDay;
 
     /**

@@ -16,6 +16,13 @@ import org.springframework.stereotype.Component;
 public class SimpleProtoProperties {
 
     private String dataTable;
-
     private String settingsTable;
+
+    private String postgresHost;
+    private String postgresPort;
+
+    private String esUris;
+    private String esUsername;
+    private String esPassword;
+
 }
