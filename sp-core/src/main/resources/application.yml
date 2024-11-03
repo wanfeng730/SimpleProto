@@ -6,7 +6,7 @@ simpleproto:
   #   8.x版本根据官方文档部署的需要使用https
   esUris: https://localhost:9200
   esUsername: elastic
-  esPassword: UxBe-Hk5=21GLpQg=8Pw
+  esPassword: Wanfeng730
   # 业务数据表名
   dataTable: sp_object_table
   # 业务设置表名

@@ -1,6 +1,7 @@
 package cn.wanfeng.sp.elastic;
 
 
+import cn.wanfeng.proto.util.LogUtils;
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.transport.endpoints.BooleanResponse;
@@ -36,5 +37,6 @@ public class ElasticSearchTest extends SimpleprotoApplicationTest {
 
         // 删除索引
         elasticsearchClient.indices().delete(d -> d.index(indexName));
+        LogUtils.info("ElasticSearch索引功能测试完成");
     }
 }
