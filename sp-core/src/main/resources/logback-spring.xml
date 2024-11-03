@@ -19,11 +19,13 @@
         </encoder>
     </appender>
 
+    <!-- 日志文件 -->
     <appender name="spLogFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--  要区别于其他的appender中的文件名字  -->
         <file>${LOG_HOME}/${APP_NAME}.log</file>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread]-[%-5level] [%logger{50}: %-5line]: %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %green([%thread]) %logColor(%-5level) %boldMagenta(%logger): %msg%n
+            </pattern>
             <charset>${ENCODING}</charset>
         </encoder>
         <!-- 设置滚动日志记录的滚动策略 -->
@@ -37,6 +39,11 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
     </appender>
+
+    <!-- 根日志 -->
+    <root level="INFO">
+        <appender-ref ref="spLogFileAppender"/>
+    </root>
 
     <logger name="cn.wanfeng.sp" level="info">
         <appender-ref ref="consoleAppender"/>
