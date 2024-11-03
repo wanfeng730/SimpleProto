@@ -95,6 +95,8 @@ public class ElasticSearchTest extends SimpleprotoApplicationTest {
         );
         elasticsearchClient.update(updateRequest, Map.class);
 
+        Thread.sleep(3000);
+
         // 查看数据
         SearchResponse<Map> searchResponse = elasticsearchClient.search(s -> s.index(indexName).query(q -> q
                         .term(t -> t.field("name").value(((String) dataMap.get("name")))

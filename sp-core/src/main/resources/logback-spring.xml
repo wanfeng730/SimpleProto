@@ -24,7 +24,7 @@
         <!--  要区别于其他的appender中的文件名字  -->
         <file>${LOG_HOME}/${APP_NAME}.log</file>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %green([%thread]) %logColor(%-5level) %boldMagenta(%logger): %msg%n
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger: %msg%n
             </pattern>
             <charset>${ENCODING}</charset>
         </encoder>
