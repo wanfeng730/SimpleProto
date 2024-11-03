@@ -2,12 +2,10 @@ package cn.wanfeng.sp.config;
 
 
 import cn.wanfeng.proto.exception.SpException;
-import cn.wanfeng.sp.properties.SimpleProtoProperties;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.ElasticsearchTransport;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
-import jakarta.annotation.Resource;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -30,12 +28,9 @@ import javax.net.ssl.SSLContext;
 @Configuration
 public class ElasticSearchConfiguration {
 
-    @Resource
-    private SimpleProtoProperties simpleProtoProperties;
-
     @Bean
     public ElasticsearchClient getEsClientBean() {
-        UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(simpleProtoProperties.getEsUsername(), simpleProtoProperties.getEsPassword());
+        UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(SimpleProtoConfig.esUsername, SimpleProtoConfig.esPassword);
         BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, credentials);
 
@@ -43,7 +38,7 @@ public class ElasticSearchConfiguration {
         SSLIOSessionStrategy sslioSessionStrategy = getAllAllowSSLStrategy();
 
         RestClient restClient = RestClient
-                .builder(HttpHost.create(simpleProtoProperties.getEsUris()))
+                .builder(HttpHost.create(SimpleProtoConfig.esUris))
                 .setHttpClientConfigCallback(hc -> hc
                         .setDefaultCredentialsProvider(credentialsProvider)
                         .disableAuthCaching()

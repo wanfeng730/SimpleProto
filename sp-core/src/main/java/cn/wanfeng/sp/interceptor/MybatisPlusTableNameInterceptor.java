@@ -2,7 +2,7 @@ package cn.wanfeng.sp.interceptor;
 
 
 import cn.wanfeng.proto.util.LogUtils;
-import cn.wanfeng.sp.properties.SimpleProtoProperties;
+import cn.wanfeng.sp.config.SimpleProtoConfig;
 import jakarta.annotation.Resource;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -27,7 +27,7 @@ import java.sql.Connection;
 public class MybatisPlusTableNameInterceptor implements Interceptor {
 
     @Resource
-    private SimpleProtoProperties simpleProtoProperties;
+    private SimpleProtoConfig simpleProtoConfig;
 
     private static final String DATA_TABLE_NAME_PLACEHOLDER = "{data_table}";
 
@@ -63,9 +63,9 @@ public class MybatisPlusTableNameInterceptor implements Interceptor {
      */
     private String customProcessSql(String sql) {
         // dataTable占位符替换
-        sql = sql.replace(DATA_TABLE_NAME_PLACEHOLDER, simpleProtoProperties.getDataTable());
+        sql = sql.replace(DATA_TABLE_NAME_PLACEHOLDER, SimpleProtoConfig.dataTable);
         // settingsTable占位符替换
-        sql = sql.replace(SETTINGS_TABLE_NAME_PLACEHOLDER, simpleProtoProperties.getSettingsTable());
+        sql = sql.replace(SETTINGS_TABLE_NAME_PLACEHOLDER, SimpleProtoConfig.settingsTable);
         return sql;
     }
 }
