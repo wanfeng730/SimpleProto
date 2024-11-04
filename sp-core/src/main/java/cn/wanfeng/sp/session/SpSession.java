@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.base.object;
+package cn.wanfeng.sp.session;
 
 import cn.wanfeng.sp.base.mapper.SpBaseObjectMapper;
 import cn.wanfeng.sp.base.mapper.SpSettingsMapper;
