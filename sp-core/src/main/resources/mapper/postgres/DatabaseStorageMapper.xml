@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wanfeng.sp.storage.mapper.DatabaseStorageMapper">
+
+    <sql id="settings_field">
+        name, increase_long, increase_string
+    </sql>
+    <resultMap id="settingsResultMap" type="cn.wanfeng.sp.base.object.SpSettingsDO">
+        <id property="name" column="name"/>
+        <id property="increaseLong" column="increase_long"/>
+        <id property="increaseString" column="increase_string"/>
+    </resultMap>
+
+    <sql id="object_field">
+        id, type, name, create_date, modify_date, is_delete, data
+    </sql>
+    <resultMap id="objectResultMap" type="cn.wanfeng.sp.base.object.SpBaseObjectDO">
+        <id property="id" column="id"/>
+        <id property="type" column="type"/>
+        <id property="name" column="name"/>
+        <id property="createDate" column="create_date"/>
+        <id property="modifyDate" column="modify_date"/>
+        <id property="isDelete" column="is_delete"/>
+        <id property="data" column="data"/>
+    </resultMap>
+
+    <select id="findSettingsByName" resultMap="settingsResultMap">
+        SELECT
+        <include refid="settings_field"/>
+        FROM ${tableName}
+        WHERE name = #{name}
+    </select>
+
+
+</mapper>

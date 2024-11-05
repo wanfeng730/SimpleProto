@@ -9,6 +9,7 @@ import cn.wanfeng.proto.util.LogUtils;
 import cn.wanfeng.sp.anno.ProtoField;
 import cn.wanfeng.sp.base.object.SpBaseObjectDO;
 import cn.wanfeng.sp.base.object.SpSettingsDO;
+import cn.wanfeng.sp.config.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.SpObjectConvertUtils;
 import cn.wanfeng.sp.util.SpReflectUtils;
@@ -297,7 +298,7 @@ public class SpBaseObject implements ISpBaseObject {
 
     private void generateIncreaseId() {
         // LzhTODO: 自动生成settings表sql，添加初始的数据
-        SpSettingsDO idIncreaseDO = spSession.settingsStorage().findByName(BASE_OBJECT_ID_INCREASE_NAME);
+        SpSettingsDO idIncreaseDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, BASE_OBJECT_ID_INCREASE_NAME);
         this.id = Objects.isNull(idIncreaseDO) ? 1L : idIncreaseDO.getIncreaseLong() + 1;
 
         ProtoRecord idRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(ID_INDEX, id);
