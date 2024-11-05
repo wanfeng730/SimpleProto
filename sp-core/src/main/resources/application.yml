@@ -1,7 +1,10 @@
+# 修改此配置后，需同步更新SimpleProtoConfig的初始化方法
 simpleproto:
-  # PostgreSQL配置
-  postgresHost: localhost
-  postgresPort: 15432
+  # 数据库连接配置
+  dataSourceDriver: org.postgresql.Driver
+  dataSourceUrl: jdbc:postgresql://localhost:15432/${spring.application.name}?currentSchema=${spring.profiles.active}&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
+  dataSourceUsername: postgres
+  dataSourcePassword: Wanfeng730
   # ElasticSearch配置
   #   8.x版本根据官方文档部署的需要使用https
   esUris: https://localhost:9200
@@ -20,10 +23,10 @@ spring:
     active: dev
   # Postgres数据源
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${simpleproto.postgresHost}:${simpleproto.postgresPort}/${spring.application.name}?currentSchema=${spring.profiles.active}&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
-    username: postgres
-    password: Wanfeng730
+    driver-class-name: ${simpleproto.dataSourceDriver}
+    url: ${simpleproto.dataSourceUrl}
+    username: ${simpleproto.dataSourceUsername}
+    password: ${simpleproto.dataSourcePassword}
   jpa:
     properties:
       hibernate:
