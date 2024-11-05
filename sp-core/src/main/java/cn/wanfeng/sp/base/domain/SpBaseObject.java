@@ -239,8 +239,9 @@ public class SpBaseObject implements ISpBaseObject {
             // 所有字段序列化成字节数组
             byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
             // 该对象保存到数据库
-            SpBaseObjectDO spBaseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
-            int insertRows = spSession.objectStorage().insert(spBaseObjectDO);
+            SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
+            int insertRows = spSession.databaseStorage().insertObject(SimpleProtoConfig.dataTable, baseObjectDO);
+            LogUtils.info("数据表[{}]新建行数: {}", SimpleProtoConfig.dataTable, insertRows);
             // 将自增后的id保存到数据库
             updateIncreaseIdToStorage();
         } else {

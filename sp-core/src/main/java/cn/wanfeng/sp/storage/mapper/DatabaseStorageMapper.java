@@ -1,5 +1,6 @@
 package cn.wanfeng.sp.storage.mapper;
 
+import cn.wanfeng.sp.base.object.SpBaseObjectDO;
 import cn.wanfeng.sp.base.object.SpSettingsDO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -22,21 +23,30 @@ public interface DatabaseStorageMapper {
      */
     SpSettingsDO findSettingsByName(@Param("tableName") String tableName, @Param("name") String name);
 
-    // /**
-    //  * 新建对象数据
-    //  *
-    //  * @param tableName 对象数据表名
-    //  * @param objectDO  对象数据
-    //  * @return 更新行数
-    //  */
-    // int insertObject(@Param("tableName") String tableName, @Param("object") SpBaseObjectDO objectDO);
-    //
-    // /**
-    //  * 新建设置
-    //  *
-    //  * @param tableName  设置表名
-    //  * @param settingsDO 设置
-    //  * @return 更新行数
-    //  */
-    // int insertSettings(@Param("tableName") String tableName, @Param("settings") SpSettingsDO settingsDO);
+    /**
+     * 新建对象数据
+     *
+     * @param tableName 对象数据表名
+     * @param objectDO  对象数据
+     * @return 更新行数
+     */
+    int insertObject(@Param("tableName") String tableName, @Param("objectDO") SpBaseObjectDO objectDO);
+
+    /**
+     * 新建设置
+     *
+     * @param tableName  设置表名
+     * @param settingsDO 设置
+     * @return 更新行数
+     */
+    int insertSettings(@Param("tableName") String tableName, @Param("settingsDO") SpSettingsDO settingsDO);
+
+    /**
+     * 更新设置
+     *
+     * @param tableName  设置表名
+     * @param settingsDO 设置
+     * @return 更新行数
+     */
+    int updateSettings(@Param("tableName") String tableName, @Param("settingsDO") SpSettingsDO settingsDO);
 }

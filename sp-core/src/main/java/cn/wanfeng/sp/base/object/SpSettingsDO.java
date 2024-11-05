@@ -23,4 +23,13 @@ public class SpSettingsDO {
 
     @TableField("increase_string")
     private String increaseString;
+
+    public SpSettingsDO() {
+    }
+
+    public SpSettingsDO(String name, Long increaseLong, String increaseString) {
+        this.name = name;
+        this.increaseLong = increaseLong;
+        this.increaseString = increaseString;
+    }
 }

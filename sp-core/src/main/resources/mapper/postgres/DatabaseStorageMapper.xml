@@ -2,6 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.wanfeng.sp.storage.mapper.DatabaseStorageMapper">
 
+    <!-- 设置表字段 -->
+    <!--
+    修改字段后需要同步修改本文件中的sql: insertSettings、updateSettings -->
     <sql id="settings_field">
         name, increase_long, increase_string
     </sql>
@@ -11,6 +14,7 @@
         <id property="increaseString" column="increase_string"/>
     </resultMap>
 
+    <!-- 数据表字段 -->
     <sql id="object_field">
         id, type, name, create_date, modify_date, is_delete, data
     </sql>
@@ -24,12 +28,41 @@
         <id property="data" column="data"/>
     </resultMap>
 
+    <insert id="insertObject" useGeneratedKeys="true" keyProperty="objectDO.id">
+        INSERT INTO ${tableName}(<include refid="object_field"/>)
+        VALUES (
+        #{objectDO.id},
+        #{objectDO.type},
+        #{objectDO.name},
+        #{objectDO.createDate},
+        #{objectDO.modifyDate},
+        #{objectDO.isDelete},
+        #{objectDO.data}
+        )
+    </insert>
+
     <select id="findSettingsByName" resultMap="settingsResultMap">
         SELECT
         <include refid="settings_field"/>
         FROM ${tableName}
         WHERE name = #{name}
     </select>
+
+    <insert id="insertSettings" useGeneratedKeys="true" keyProperty="settingsDO.name">
+        INSERT INTO ${tableName}(<include refid="settings_field"/>)
+        VALUES (
+        #{settingsDO.name},
+        #{settingsDO.increaseLong},
+        #{settingsDO.increaseString}
+        )
+    </insert>
+
+    <update id="updateSettings" useGeneratedKeys="true" keyProperty="settingsDO.name">
+        UPDATE ${tableName}
+        SET increase_long = #{settingsDO.increaseLong},
+        increase_string = #{settingsDO.increaseString}
+        WHERE name = #{settingsDO.name}
+    </update>
 
 
 </mapper>
