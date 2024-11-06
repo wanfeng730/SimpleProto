@@ -71,7 +71,7 @@ public class SpBaseObject implements ISpBaseObject {
 
         assertObjectIdNotNull(id);
         // 从数据库获取此id的字段
-        SpBaseObjectDO objectDO = spSession.objectStorage().findById(id);
+        SpBaseObjectDO objectDO = spSession.databaseStorage().findObjectById(SimpleProtoConfig.dataTable, id);
         assertObjectIdFindFromDatabase(id, objectDO);
 
         ProtoRecordContainer container = ProtoRecordFactory.readBytesToRecordList(objectDO.getData());
@@ -241,7 +241,7 @@ public class SpBaseObject implements ISpBaseObject {
             // 该对象保存到数据库
             SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
             int insertRows = spSession.databaseStorage().insertObject(SimpleProtoConfig.dataTable, baseObjectDO);
-            LogUtils.info("数据表[{}]新建行数: {}", SimpleProtoConfig.dataTable, insertRows);
+            LogUtils.debug("数据表[{}]新建行数: {}", SimpleProtoConfig.dataTable, insertRows);
             // 将自增后的id保存到数据库
             updateIncreaseIdToStorage();
         } else {
@@ -252,8 +252,9 @@ public class SpBaseObject implements ISpBaseObject {
             // 所有字段序列化成字节数组
             byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
             // 该对象更新到数据库
-            SpBaseObjectDO spBaseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
-            int updateRows = spSession.objectStorage().updateById(spBaseObjectDO);
+            SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
+            int updateRows = spSession.databaseStorage().updateObject(SimpleProtoConfig.dataTable, baseObjectDO);
+            LogUtils.debug("数据表[{}]更新行数：{}", SimpleProtoConfig.dataTable, updateRows);
         }
 
     }
@@ -311,7 +312,7 @@ public class SpBaseObject implements ISpBaseObject {
         SpSettingsDO settingsDO = new SpSettingsDO();
         settingsDO.setName(BASE_OBJECT_ID_INCREASE_NAME);
         settingsDO.setIncreaseLong(this.id);
-        spSession.settingsStorage().updateById(settingsDO);
+        spSession.databaseStorage().updateSettings(SimpleProtoConfig.settingsTable, settingsDO);
     }
 
 
@@ -327,7 +328,8 @@ public class SpBaseObject implements ISpBaseObject {
 
     private void removeDataFromDB() {
         SpBaseObjectDO deleteObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this);
-        int deleteRows = spSession.objectStorage().deleteById(deleteObjectDO);
+        int deleteRows = spSession.databaseStorage().removeObject(SimpleProtoConfig.dataTable, deleteObjectDO.getId());
+        LogUtils.debug("数据表[{}]删除行数：{}", SimpleProtoConfig.dataTable, deleteRows);
     }
 
 

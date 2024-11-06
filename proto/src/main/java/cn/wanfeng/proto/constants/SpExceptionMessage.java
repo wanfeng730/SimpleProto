@@ -10,11 +10,6 @@ public class SpExceptionMessage {
 
     public static final String OBJECT_ID_IS_NULL_WHEN_FIND_OBJECT = "Object Id is NULL when find object from database";
 
-
-
-
-
-
     private static final String STRING_VALUE_LENGTH_TOO_LONG = "The Length of String Value (%s) is too Long Failed!";
 
     private static final String PROTO_FIELD_INDEX_DUPLICATE = "@ProtoField[index=%d, name=%s] Verify Failed! Because Duplicate with index, please confirm index and name all not duplicate！";
@@ -44,5 +39,13 @@ public class SpExceptionMessage {
 
     public static String objectIdNotFound(Long id) {
         return String.format(OBJECT_ID_NOT_FOUND, id);
+    }
+
+
+
+    public static final String AUTO_CREATE_MAPPING_ERROR = "自动创建Mapping[fieldName=%s, valueClass=%s]出现未知异常";
+
+    public static String autoCreateMappingError(String fieldName, Object value){
+        return String.format(AUTO_CREATE_MAPPING_ERROR, fieldName, value.getClass().getName());
     }
 }

@@ -28,18 +28,41 @@
         <id property="data" column="data"/>
     </resultMap>
 
+    <select id="findObjectById" resultMap="objectResultMap">
+        SELECT
+        <include refid="object_field"/>
+        FROM ${tableName}
+        WHERE id = #{id}
+    </select>
+
+    <update id="updateObject" useGeneratedKeys="true" keyProperty="objectDO.id">
+        UPDATE ${tableName}
+        SET type = #{objectDO.type},
+            name = #{objectDO.name},
+            create_date = #{objectDO.createDate},
+            modify_date = #{objectDO.modifyDate},
+            is_delete = #{objectDO.isDelete},
+            data = #{objectDO.data}
+        WHERE id = #{objectDO.id}
+    </update>
+
     <insert id="insertObject" useGeneratedKeys="true" keyProperty="objectDO.id">
         INSERT INTO ${tableName}(<include refid="object_field"/>)
         VALUES (
-        #{objectDO.id},
-        #{objectDO.type},
-        #{objectDO.name},
-        #{objectDO.createDate},
-        #{objectDO.modifyDate},
-        #{objectDO.isDelete},
-        #{objectDO.data}
+            #{objectDO.id},
+            #{objectDO.type},
+            #{objectDO.name},
+            #{objectDO.createDate},
+            #{objectDO.modifyDate},
+            #{objectDO.isDelete},
+            #{objectDO.data}
         )
     </insert>
+
+    <delete id="removeObject">
+        DELETE FROM ${tableName}
+        WHERE id = #{id}
+    </delete>
 
     <select id="findSettingsByName" resultMap="settingsResultMap">
         SELECT
@@ -51,18 +74,20 @@
     <insert id="insertSettings" useGeneratedKeys="true" keyProperty="settingsDO.name">
         INSERT INTO ${tableName}(<include refid="settings_field"/>)
         VALUES (
-        #{settingsDO.name},
-        #{settingsDO.increaseLong},
-        #{settingsDO.increaseString}
+            #{settingsDO.name},
+            #{settingsDO.increaseLong},
+            #{settingsDO.increaseString}
         )
     </insert>
 
     <update id="updateSettings" useGeneratedKeys="true" keyProperty="settingsDO.name">
         UPDATE ${tableName}
         SET increase_long = #{settingsDO.increaseLong},
-        increase_string = #{settingsDO.increaseString}
+            increase_string = #{settingsDO.increaseString}
         WHERE name = #{settingsDO.name}
     </update>
+
+
 
 
 </mapper>

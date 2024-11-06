@@ -15,13 +15,20 @@ import org.apache.ibatis.annotations.Param;
 public interface DatabaseStorageMapper {
 
     /**
-     * 根据设置名称查询
-     *
-     * @param tableName 设置表名
-     * @param name      设置名称
-     * @return 设置
+     * 根据对象id查询
+     * @param tableName 对象数据表名
+     * @param id 对象id
+     * @return 对象数据
      */
-    SpSettingsDO findSettingsByName(@Param("tableName") String tableName, @Param("name") String name);
+    SpBaseObjectDO findObjectById(@Param("tableName") String tableName, @Param("id") Long id);
+
+    /**
+     * 根据对象id更新
+     * @param tableName 对象数据表名
+     * @param objectDO 对象数据
+     * @return 更新行数
+     */
+    int updateObject(@Param("tableName") String tableName, @Param("objectDO") SpBaseObjectDO objectDO);
 
     /**
      * 新建对象数据
@@ -31,6 +38,23 @@ public interface DatabaseStorageMapper {
      * @return 更新行数
      */
     int insertObject(@Param("tableName") String tableName, @Param("objectDO") SpBaseObjectDO objectDO);
+
+    /**
+     * 根据对象id删除
+     * @param tableName 对象数据表名
+     * @param id 对象id
+     * @return 删除行数
+     */
+    int removeObject(@Param("tableName") String tableName, @Param("id") Long id);
+
+    /**
+     * 根据设置名称查询
+     *
+     * @param tableName 设置表名
+     * @param name      设置名称
+     * @return 设置
+     */
+    SpSettingsDO findSettingsByName(@Param("tableName") String tableName, @Param("name") String name);
 
     /**
      * 新建设置

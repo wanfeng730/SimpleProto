@@ -6,6 +6,7 @@ import cn.wanfeng.sp.SimpleprotoApplicationTest;
 import cn.wanfeng.sp.base.domain.ISpBaseObject;
 import cn.wanfeng.sp.base.object.SpSettingsDO;
 import cn.wanfeng.sp.common.BusinessTypeConstant;
+import cn.wanfeng.sp.config.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Assertions;
@@ -39,7 +40,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
         Assertions.assertNotNull(borrowForm.getId());
 
-        SpSettingsDO spSettingsDO = spSession.settingsStorage().findByName(ISpBaseObject.BASE_OBJECT_ID_INCREASE_NAME);
+        SpSettingsDO spSettingsDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, ISpBaseObject.BASE_OBJECT_ID_INCREASE_NAME);
         Long maxBaseObjectId = spSettingsDO.getIncreaseLong();
         borrowForm = new BorrowForm(spSession, maxBaseObjectId);
         Assertions.assertEquals(BusinessTypeConstant.BORROW_FORM, borrowForm.getType());
@@ -68,11 +69,5 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
         Assertions.assertThrows(SpException.class, () -> new BorrowForm(spSession, null));
 
         LogUtils.info("SpBaseObject功能测试完成");
-    }
-
-    @Test
-    public void test_mybatis_interceptor() {
-        SpSettingsDO spSettingsDO = spSession.settingsStorage().findByName("SpBaseObjectId");
-        Assertions.assertNotNull(spSettingsDO);
     }
 }
