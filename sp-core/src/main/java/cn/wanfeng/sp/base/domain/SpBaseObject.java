@@ -236,14 +236,8 @@ public class SpBaseObject implements ISpBaseObject {
             generateIncreaseId();
             // 将继承类中的属性放到indexNoRecordMap和fieldNameValueMap
             putDeclaredPropertyToContainer();
-            // 所有字段序列化成字节数组
-            byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
-            // 该对象保存到数据库
-            SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
-            int insertRows = spSession.databaseStorage().insertObject(SimpleProtoConfig.dataTable, baseObjectDO);
-            LogUtils.debug("数据表[{}]新建行数: {}", SimpleProtoConfig.dataTable, insertRows);
-            // 将自增后的id保存到数据库
-            updateIncreaseIdToStorage();
+            // 新建数据到数据库（事务：数据库存储新建、设置自增主键id、高级搜索存储新建）
+            createObjectToStorage();
         } else {
             // 修改时间刷新
             updateModifyDateAndPut();
@@ -298,6 +292,21 @@ public class SpBaseObject implements ISpBaseObject {
         }
     }
 
+    private void createObjectToStorage(){
+        // 序列化，构造对象数据保存到数据库
+        byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
+        SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
+        // 自增id保存到数据库
+        SpSettingsDO settingsDO = new SpSettingsDO();
+        settingsDO.setName(BASE_OBJECT_ID_INCREASE_NAME);
+        settingsDO.setIncreaseLong(this.id);
+        try {
+            spSession.createObjectToStorage(baseObjectDO, settingsDO, fieldNameValueMap);
+        } catch (Exception e) {
+            LogUtils.error("对象创建失败，回滚", e);
+        }
+    }
+
     private void generateIncreaseId() {
         // LzhTODO: 自动生成settings表sql，添加初始的数据
         SpSettingsDO idIncreaseDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, BASE_OBJECT_ID_INCREASE_NAME);
@@ -306,13 +315,6 @@ public class SpBaseObject implements ISpBaseObject {
         ProtoRecord idRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(ID_INDEX, id);
         recordContainer.putRecord(idRecord);
         fieldNameValueMap.put(ID_COL, idRecord.getValue());
-    }
-
-    private void updateIncreaseIdToStorage() {
-        SpSettingsDO settingsDO = new SpSettingsDO();
-        settingsDO.setName(BASE_OBJECT_ID_INCREASE_NAME);
-        settingsDO.setIncreaseLong(this.id);
-        spSession.databaseStorage().updateSettings(SimpleProtoConfig.settingsTable, settingsDO);
     }
 
 
@@ -363,5 +365,11 @@ public class SpBaseObject implements ISpBaseObject {
         return modifyDate;
     }
 
+    public ProtoRecordContainer getRecordContainer() {
+        return recordContainer;
+    }
 
+    public ConcurrentHashMap<String, Object> getFieldNameValueMap() {
+        return fieldNameValueMap;
+    }
 }

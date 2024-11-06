@@ -3,8 +3,10 @@ package cn.wanfeng.sp.storage.search;
 
 import cn.wanfeng.proto.constants.SpExceptionMessage;
 import cn.wanfeng.proto.exception.SpException;
+import cn.wanfeng.sp.config.SimpleProtoConfig;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.mapping.Property;
+import co.elastic.clients.elasticsearch.core.IndexRequest;
 import co.elastic.clients.elasticsearch.indices.PutMappingRequest;
 import co.elastic.clients.util.ObjectBuilder;
 import jakarta.annotation.Resource;
@@ -29,8 +31,14 @@ public class ElasticSearchStorageClient implements SearchStorageClient{
     private ElasticsearchClient client;
 
     @Override
-    public void insertObject(String tableName, Map<String, Object> objectData) {
-
+    public void insertObject(String tableName, Map<String, Object> objectData) throws Exception {
+        String id = String.valueOf(objectData.get(OBJECT_ID_KEY));
+        IndexRequest<Map<String, Object>> indexRequest = IndexRequest.of(b -> b
+                .index(SimpleProtoConfig.dataTable)
+                .id(id)
+                .document(objectData)
+        );
+        client.index(indexRequest);
     }
 
     @Override

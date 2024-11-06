@@ -17,19 +17,19 @@ public interface SearchStorageClient {
      * @param tableName 对象数据表名、索引
      * @param objectData 对象数据
      */
-    void insertObject(String tableName, Map<String, Object> objectData);
+    void insertObject(String tableName, Map<String, Object> objectData) throws Exception;
 
     /**
      * 更新对象数据
      * @param tableName 对象数据表名、索引
      * @param objectData 对象数据
      */
-    void updateObject(String tableName, Map<String, Object> objectData);
+    void updateObject(String tableName, Map<String, Object> objectData) throws Exception;
 
     /**
      * 删除对象数据
      * @param tableName 对象数据表名、索引
      * @param id 对象id
      */
-    void removeObject(String tableName, Long id);
+    void removeObject(String tableName, Long id) throws Exception;
 }
