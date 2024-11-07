@@ -303,7 +303,7 @@ public class SpBaseObject implements ISpBaseObject {
         try {
             spSession.createObjectToStorage(baseObjectDO, settingsDO, fieldNameValueMap);
         } catch (Exception e) {
-            LogUtils.error("对象创建失败，回滚", e);
+            LogUtils.error("对象创建失败，数据已回滚，失败原因", e);
         }
     }
 

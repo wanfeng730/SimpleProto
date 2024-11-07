@@ -4,6 +4,7 @@ package cn.wanfeng.sp.storage.search;
 import cn.wanfeng.proto.constants.SpExceptionMessage;
 import cn.wanfeng.proto.exception.SpException;
 import cn.wanfeng.sp.config.SimpleProtoConfig;
+import cn.wanfeng.sp.elastic.ElasticDateTimePattern;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.mapping.Property;
 import co.elastic.clients.elasticsearch.core.IndexRequest;
@@ -13,16 +14,18 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Map;
 
 /**
  * @date: 2024-11-06 21:37
  * @author: luozh.wanfeng
- * @description:
- * @since:
+ * @description: ElasticSearch存储
+ * @since: 1.0
  */
 @Component
 public class ElasticSearchStorageClient implements SearchStorageClient{
@@ -30,14 +33,20 @@ public class ElasticSearchStorageClient implements SearchStorageClient{
     @Resource
     private ElasticsearchClient client;
 
+    private static final String DEFAULT_DATE_FORMAT = ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern() + "||" + ElasticDateTimePattern.EPOCH_SECOND.toPattern();
+
+    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern());
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern());
+
     @Override
     public void insertObject(String tableName, Map<String, Object> objectData) throws Exception {
+        //根据参数类型自动创建mapping
+        autoCreateMappingByObjectData(tableName, objectData);
+        //将日期的值更换为格式化字符串，以便es查看
+        convertDateValueToDateTimeMillis(objectData);
+
         String id = String.valueOf(objectData.get(OBJECT_ID_KEY));
-        IndexRequest<Map<String, Object>> indexRequest = IndexRequest.of(b -> b
-                .index(SimpleProtoConfig.dataTable)
-                .id(id)
-                .document(objectData)
-        );
+        IndexRequest<Map<String, Object>> indexRequest = IndexRequest.of(b -> b.index(SimpleProtoConfig.dataTable).id(id).document(objectData));
         client.index(indexRequest);
     }
 
@@ -53,19 +62,31 @@ public class ElasticSearchStorageClient implements SearchStorageClient{
 
     /**
      * 根据属性名和值自动创建mapping
-     * @param fieldName 属性名
-     * @param value 值
      */
-    private void autoCreateMappingByValue(String fieldName, Object value){
+    private void autoCreateMappingByObjectData(String tableName, Map<String, Object> objectData){
         try {
-            client.indices().putMapping(PutMappingRequest.of(req -> req
-                    .properties(fieldName, builder -> handlePropertyBuilderByValue(builder, value))
-            ));
+            PutMappingRequest request = PutMappingRequest.of(req -> {
+                //指定索引
+                req.index(tableName);
+                //根据数据类型创建合适的mapping
+                for (Map.Entry<String, Object> data : objectData.entrySet()) {
+                    String fieldName = data.getKey();
+                    Object value = data.getValue();
+                    req.properties(fieldName, builder -> handlePropertyBuilderByValue(builder, value));
+                }
+                return req;
+            });
+            client.indices().putMapping(request);
         } catch (IOException e) {
-            throw new SpException(SpExceptionMessage.autoCreateMappingError(fieldName, value), e);
+            throw new SpException(SpExceptionMessage.AUTO_CREATE_MAPPING_ERROR, e);
         }
     }
 
+    /**
+     * 根据值的类型构建默认的mapping配置
+     * @param builder mapping
+     * @param value 值
+     */
     private static ObjectBuilder<Property> handlePropertyBuilderByValue(Property.Builder builder, Object value){
         Class<?> valueClass = value.getClass();
         if(valueClass == String.class){
@@ -78,8 +99,33 @@ public class ElasticSearchStorageClient implements SearchStorageClient{
             return builder.boolean_(t -> t);
         }
         if(valueClass == Date.class || valueClass == LocalDate.class || valueClass == LocalDateTime.class){
-            return builder.date(t -> t);
+            return builder.date(t -> t.format(DEFAULT_DATE_FORMAT));
         }
         return null;
     }
+
+    /**
+     * 将日期数据转换为yyyy-MM-dd HH:mm:ss.SSS进行es创建，以便Kibana显示对应的日期格式
+     */
+    private static void convertDateValueToDateTimeMillis(Map<String, Object> objectData){
+        for (String key : objectData.keySet()) {
+            Object value = objectData.get(key);
+            Class<?> valueClass = value.getClass();
+            if (valueClass == Date.class) {
+                String formatDate = SIMPLE_DATE_FORMAT.format((Date) objectData.get(key));
+                objectData.put(key, formatDate);
+                continue;
+            }
+            if (valueClass == LocalDateTime.class) {
+                String formatDate = DATE_TIME_FORMATTER.format((LocalDateTime) objectData.get(key));
+                objectData.put(key, formatDate);
+                continue;
+            }
+            if (valueClass == LocalDate.class) {
+                String formatDate = DATE_TIME_FORMATTER.format((LocalDate) value);
+                objectData.put(key, formatDate);
+            }
+        }
+    }
+
 }

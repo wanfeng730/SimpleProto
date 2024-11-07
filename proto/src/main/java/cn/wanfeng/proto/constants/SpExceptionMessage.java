@@ -43,9 +43,5 @@ public class SpExceptionMessage {
 
 
 
-    public static final String AUTO_CREATE_MAPPING_ERROR = "自动创建Mapping[fieldName=%s, valueClass=%s]出现未知异常";
-
-    public static String autoCreateMappingError(String fieldName, Object value){
-        return String.format(AUTO_CREATE_MAPPING_ERROR, fieldName, value.getClass().getName());
-    }
+    public static final String AUTO_CREATE_MAPPING_ERROR = "自动创建Mapping出现未知异常";
 }

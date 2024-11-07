@@ -6,6 +6,7 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.ElasticsearchTransport;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
+import jakarta.annotation.Resource;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -27,6 +28,9 @@ import javax.net.ssl.SSLContext;
  */
 @Configuration
 public class ElasticSearchConfiguration {
+
+    @Resource
+    private SimpleProtoConfig simpleProtoConfig;
 
     @Bean
     public ElasticsearchClient getEsClientBean() {
