@@ -47,6 +47,20 @@
             <version>5.10.0</version>
         </dependency>
 
+        <!-- Java校验注解依赖 -->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
+        </dependency>
+
+        <!-- Hutool 工具包 -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.23</version>
+        </dependency>
+
 
         <!-- 连接postgresql所需依赖 -->
         <dependency>
@@ -90,6 +104,20 @@
             <groupId>com.github.f4b6a3</groupId>
             <artifactId>ulid-creator</artifactId>
             <version>5.1.0</version>
+        </dependency>
+
+        <!--apache 包含连接ftp服务器的工具-->
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.6</version>
+        </dependency>
+
+        <!-- Amazon S3 存储服务java依赖 -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>1.12.777</version>
         </dependency>
     </dependencies>
 
