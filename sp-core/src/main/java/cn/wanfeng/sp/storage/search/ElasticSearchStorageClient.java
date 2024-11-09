@@ -3,11 +3,12 @@ package cn.wanfeng.sp.storage.search;
 
 import cn.wanfeng.proto.constants.SpExceptionMessage;
 import cn.wanfeng.proto.exception.SpException;
-import cn.wanfeng.sp.config.SimpleProtoConfig;
 import cn.wanfeng.sp.elastic.ElasticDateTimePattern;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.mapping.Property;
+import co.elastic.clients.elasticsearch.core.DeleteRequest;
 import co.elastic.clients.elasticsearch.core.IndexRequest;
+import co.elastic.clients.elasticsearch.core.UpdateRequest;
 import co.elastic.clients.elasticsearch.indices.PutMappingRequest;
 import co.elastic.clients.util.ObjectBuilder;
 import jakarta.annotation.Resource;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -43,21 +45,29 @@ public class ElasticSearchStorageClient implements SearchStorageClient{
         //根据参数类型自动创建mapping
         autoCreateMappingByObjectData(tableName, objectData);
         //将日期的值更换为格式化字符串，以便es查看
-        convertDateValueToDateTimeMillis(objectData);
+        Map<String, Object> dataMap = convertDateValueToDateTimeMillis(objectData);
 
-        String id = String.valueOf(objectData.get(OBJECT_ID_KEY));
-        IndexRequest<Map<String, Object>> indexRequest = IndexRequest.of(b -> b.index(SimpleProtoConfig.dataTable).id(id).document(objectData));
+        String id = String.valueOf(dataMap.get(OBJECT_ID_KEY));
+        IndexRequest<Map<String, Object>> indexRequest = IndexRequest.of(b -> b.index(tableName).id(id).document(dataMap));
         client.index(indexRequest);
     }
 
     @Override
-    public void updateObject(String tableName, Map<String, Object> objectData) {
+    public void updateObject(String tableName, Map<String, Object> objectData) throws Exception {
+        //根据参数类型自动创建mapping
+        autoCreateMappingByObjectData(tableName, objectData);
+        //将日期的值更换为格式化字符串，以便es查看
+        Map<String, Object> dataMap = convertDateValueToDateTimeMillis(objectData);
 
+        String id = String.valueOf(dataMap.get(OBJECT_ID_KEY));
+        UpdateRequest<Map<String, Object>, Map<String, Object>> updateRequest = UpdateRequest.of(req -> req.index(tableName).id(id).doc(dataMap));
+        client.update(updateRequest, Map.class);
     }
 
     @Override
-    public void removeObject(String tableName, Long id) {
-
+    public void removeObject(String tableName, Long id) throws  Exception{
+        DeleteRequest deleteRequest = DeleteRequest.of(req -> req.index(tableName).id(String.valueOf(id)));
+        client.delete(deleteRequest);
     }
 
     /**
@@ -107,25 +117,29 @@ public class ElasticSearchStorageClient implements SearchStorageClient{
     /**
      * 将日期数据转换为yyyy-MM-dd HH:mm:ss.SSS进行es创建，以便Kibana显示对应的日期格式
      */
-    private static void convertDateValueToDateTimeMillis(Map<String, Object> objectData){
+    private static Map<String, Object> convertDateValueToDateTimeMillis(Map<String, Object> objectData){
+        Map<String, Object> convertData = new HashMap<>();
         for (String key : objectData.keySet()) {
             Object value = objectData.get(key);
             Class<?> valueClass = value.getClass();
             if (valueClass == Date.class) {
                 String formatDate = SIMPLE_DATE_FORMAT.format((Date) objectData.get(key));
-                objectData.put(key, formatDate);
+                convertData.put(key, formatDate);
                 continue;
             }
             if (valueClass == LocalDateTime.class) {
                 String formatDate = DATE_TIME_FORMATTER.format((LocalDateTime) objectData.get(key));
-                objectData.put(key, formatDate);
+                convertData.put(key, formatDate);
                 continue;
             }
             if (valueClass == LocalDate.class) {
                 String formatDate = DATE_TIME_FORMATTER.format((LocalDate) value);
-                objectData.put(key, formatDate);
+                convertData.put(key, formatDate);
+                continue;
             }
+            convertData.put(key, value);
         }
+        return convertData;
     }
 
 }

@@ -193,7 +193,7 @@ public class SpBaseObject implements ISpBaseObject {
     }
 
     /**
-     * 初始化map，将基础对象的属性放入
+     * 初始化map，将基础对象的属性放入Container和fieldNameValueMap
      */
     private void initRecordContainerAndValueMap() {
         this.recordContainer = ProtoRecordContainer.emptyContainer();
@@ -235,20 +235,18 @@ public class SpBaseObject implements ISpBaseObject {
             // 生成主键id
             generateIncreaseId();
             // 将继承类中的属性放到indexNoRecordMap和fieldNameValueMap
-            putDeclaredPropertyToContainer();
+            putThisPropertyToContainerAndValueMap();
+            putDeclaredPropertyToContainerAndValueMap();
             // 新建数据到数据库（事务：数据库存储新建、设置自增主键id、高级搜索存储新建）
             createObjectToStorage();
         } else {
             // 修改时间刷新
-            updateModifyDateAndPut();
+            updateModifyDate();
             // 将继承类中的属性放到indexNoRecordMap和fieldNameValueMap
-            putDeclaredPropertyToContainer();
-            // 所有字段序列化成字节数组
-            byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
-            // 该对象更新到数据库
-            SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
-            int updateRows = spSession.databaseStorage().updateObject(SimpleProtoConfig.dataTable, baseObjectDO);
-            LogUtils.debug("数据表[{}]更新行数：{}", SimpleProtoConfig.dataTable, updateRows);
+            putThisPropertyToContainerAndValueMap();
+            putDeclaredPropertyToContainerAndValueMap();
+            // 更新数据(事务：数据库存储更新、高级搜索存储更新）
+            updateObjectToStorage();
         }
 
     }
@@ -259,18 +257,35 @@ public class SpBaseObject implements ISpBaseObject {
         fieldNameValueMap.put(NAME_COL, this.name);
     }
 
-    private void updateModifyDateAndPut() {
+    private void updateModifyDate() {
         this.modifyDate = new Date();
-
-        ProtoRecord modifyDateRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(MODIFY_DATE_INDEX, this.modifyDate);
-        recordContainer.putRecord(modifyDateRecord);
-        fieldNameValueMap.put(MODIFY_DATE_COL, this.modifyDate);
     }
 
-    /**
-     * 将继承类的属性放入map中
-     */
-    private void putDeclaredPropertyToContainer() {
+    private void putThisPropertyToContainerAndValueMap(){
+        //放入Container
+        ProtoRecord idRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(ID_INDEX, this.id);
+        recordContainer.putRecord(idRecord);
+        ProtoRecord nameRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(NAME_INDEX, this.name);
+        recordContainer.putRecord(nameRecord);
+        ProtoRecord typeRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(TYPE_INDEX, this.type);
+        recordContainer.putRecord(typeRecord);
+        ProtoRecord createDateRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(CREATE_DATE_INDEX, this.createDate);
+        recordContainer.putRecord(createDateRecord);
+        ProtoRecord modifyDateRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(MODIFY_DATE_INDEX, this.modifyDate);
+        recordContainer.putRecord(modifyDateRecord);
+        ProtoRecord isDeleteRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(IS_DELETE_INDEX, this.isDelete);
+        recordContainer.putRecord(isDeleteRecord);
+
+        //放入fieldNameValueMap
+        fieldNameValueMap.put(ID_COL, this.id);
+        fieldNameValueMap.put(NAME_COL, this.name);
+        fieldNameValueMap.put(TYPE_COL, this.type);
+        fieldNameValueMap.put(CREATE_DATE_COL, this.createDate);
+        fieldNameValueMap.put(MODIFY_DATE_COL, this.modifyDate);
+        fieldNameValueMap.put(IS_DELETE_COL, this.isDelete);
+    }
+
+    private void putDeclaredPropertyToContainerAndValueMap(){
         Field[] fields = SpReflectUtils.getProtoFieldAnnotationFields(this.getClass());
 
         for (Field field : fields) {
@@ -307,6 +322,18 @@ public class SpBaseObject implements ISpBaseObject {
         }
     }
 
+    private void updateObjectToStorage(){
+        // 所有字段序列化成字节数组
+        byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
+        // 该对象更新到数据库
+        SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
+        try {
+            spSession.updateObjectToStorage(baseObjectDO, fieldNameValueMap);
+        } catch (Exception e) {
+            LogUtils.error("对象更新失败，数据已回滚，失败原因", e);
+        }
+    }
+
     private void generateIncreaseId() {
         // LzhTODO: 自动生成settings表sql，添加初始的数据
         SpSettingsDO idIncreaseDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, BASE_OBJECT_ID_INCREASE_NAME);
@@ -324,14 +351,16 @@ public class SpBaseObject implements ISpBaseObject {
             LogUtils.info("对象[id={}, type={}, name={}]为新建对象，未保存到数据库，无需删除", this.id, this.type, this.name);
         } else {
             // 在数据库中删除
-            removeDataFromDB();
+            removeObjectFromStorage();
         }
     }
 
-    private void removeDataFromDB() {
-        SpBaseObjectDO deleteObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this);
-        int deleteRows = spSession.databaseStorage().removeObject(SimpleProtoConfig.dataTable, deleteObjectDO.getId());
-        LogUtils.debug("数据表[{}]删除行数：{}", SimpleProtoConfig.dataTable, deleteRows);
+    private void removeObjectFromStorage(){
+        try {
+            spSession.removeObjectFromStorage(this.id);
+        } catch (Exception e) {
+            LogUtils.error("对象删除失败，数据已回滚，失败原因", e);
+        }
     }
 
 

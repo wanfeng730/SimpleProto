@@ -1,6 +1,5 @@
 package cn.wanfeng.sp.session;
 
-import cn.wanfeng.proto.util.LogUtils;
 import cn.wanfeng.sp.base.object.SpBaseObjectDO;
 import cn.wanfeng.sp.base.object.SpSettingsDO;
 import cn.wanfeng.sp.config.SimpleProtoConfig;
@@ -38,12 +37,27 @@ public class SpSession {
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void createObjectToStorage(SpBaseObjectDO baseObjectDO, SpSettingsDO settingsDO, Map<String, Object> fieldNameValueMap) throws Exception {
-        int insertRows = databaseStorage().insertObject(SimpleProtoConfig.dataTable, baseObjectDO);
-        LogUtils.debug("数据表[{}]新建行数: {}", SimpleProtoConfig.dataTable, insertRows);
+        //该对象保存到数据库存储
+        databaseStorage().insertObject(SimpleProtoConfig.dataTable, baseObjectDO);
         //更新设置表
-        int updateRows = databaseStorage().updateSettings(SimpleProtoConfig.settingsTable, settingsDO);
-        // 该对象保存到高级搜索存储
+        databaseStorage().updateSettings(SimpleProtoConfig.settingsTable, settingsDO);
+        //该对象保存到高级搜索存储
         searchStorage().insertObject(SimpleProtoConfig.dataTable, fieldNameValueMap);
+    }
 
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void updateObjectToStorage(SpBaseObjectDO baseObjectDO, Map<String, Object> fieldNameValueMap) throws Exception{
+        //更新数据库存储
+        databaseStorage().updateObject(SimpleProtoConfig.dataTable, baseObjectDO);
+        //更新高级搜索存储
+        searchStorage().updateObject(SimpleProtoConfig.dataTable, fieldNameValueMap);
+    }
+
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void removeObjectFromStorage(Long id) throws Exception{
+        //删除数据库存储
+        databaseStorage().removeObject(SimpleProtoConfig.dataTable, id);
+        //删除高级搜索存储
+        searchStorage().removeObject(SimpleProtoConfig.dataTable, id);
     }
 }

@@ -43,4 +43,6 @@ public class BorrowForm extends SpBaseObject {
     public void updateApplyDays(Integer applyDays) {
         this.applyDays = applyDays;
     }
+
+
 }
