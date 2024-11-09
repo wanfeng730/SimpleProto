@@ -313,7 +313,7 @@ public class SpBaseObject implements ISpBaseObject {
         SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
         // 自增id保存到数据库
         SpSettingsDO settingsDO = new SpSettingsDO();
-        settingsDO.setName(BASE_OBJECT_ID_INCREASE_NAME);
+        settingsDO.setName(OBJECT_ID_INCREASE_NAME);
         settingsDO.setIncreaseLong(this.id);
         try {
             spSession.createObjectToStorage(baseObjectDO, settingsDO, fieldNameValueMap);
@@ -336,7 +336,7 @@ public class SpBaseObject implements ISpBaseObject {
 
     private void generateIncreaseId() {
         // LzhTODO: 自动生成settings表sql，添加初始的数据
-        SpSettingsDO idIncreaseDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, BASE_OBJECT_ID_INCREASE_NAME);
+        SpSettingsDO idIncreaseDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, OBJECT_ID_INCREASE_NAME);
         this.id = Objects.isNull(idIncreaseDO) ? 1L : idIncreaseDO.getIncreaseLong() + 1;
 
         ProtoRecord idRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(ID_INDEX, id);

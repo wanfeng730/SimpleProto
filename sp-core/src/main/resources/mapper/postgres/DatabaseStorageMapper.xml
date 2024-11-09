@@ -87,7 +87,38 @@
         WHERE name = #{settingsDO.name}
     </update>
 
+    <select id="listAllTable" resultType="java.lang.String">
+        select tablename from pg_tables where schemaname=#{currentScheme}
+    </select>
 
+    <update id="createDataTable">
+        CREATE TABLE ${tableName} (
+            id int8 NOT NULL,
+            "type" varchar NOT NULL,
+            "name" varchar NULL,
+            create_date timestamp NOT NULL,
+            modify_date timestamp NOT NULL,
+            is_delete bool NOT NULL,
+            path varchar NULL,
+            "data" bytea NOT NULL,
+            CONSTRAINT ${tableName}_pk PRIMARY KEY (id)
+        );
+        CREATE INDEX ${tableName}_type_idx ON ${tableName} USING btree (type);
+    </update>
+
+    <update id="createSettingsTable">
+        CREATE TABLE ${tableName} (
+            "name" varchar NOT NULL,
+            increase_long varchar NULL,
+            increase_string varchar NULL,
+            CONSTRAINT ${tableName}_pk PRIMARY KEY ("name")
+        );
+    </update>
+
+    <insert id="initSettingsTableData">
+        INSERT INTO ${tableName} ("name", increase_long, increase_string)
+        VALUES('SP_OBJECT_ID_INCREASE', '0', NULL);
+    </insert>
 
 
 </mapper>

@@ -59,7 +59,7 @@ public class ElasticSearchTest extends SimpleprotoApplicationTest {
     public void testDocument() throws IOException, InterruptedException {
         String indexName = "test_settings_documents";
         Map<String, Object> dataMap = new HashMap<>();
-        dataMap.put("name", SpBaseObject.BASE_OBJECT_ID_INCREASE_NAME);
+        dataMap.put("name", SpBaseObject.OBJECT_ID_INCREASE_NAME);
         dataMap.put("increase_long", 888);
         dataMap.put("increase_string", "AAABBBCCC");
 
@@ -78,7 +78,7 @@ public class ElasticSearchTest extends SimpleprotoApplicationTest {
         }
 
         // 新建数据
-        SpSettingsSearchDO spSettingsSearchDO = new SpSettingsSearchDO(SpBaseObject.BASE_OBJECT_ID_INCREASE_NAME, 3L, null);
+        SpSettingsSearchDO spSettingsSearchDO = new SpSettingsSearchDO(SpBaseObject.OBJECT_ID_INCREASE_NAME, 3L, null);
         IndexRequest<Map<String, Object>> indexRequest = IndexRequest.of(b -> b
                 .index(indexName)
                 .id((String) dataMap.get("name"))

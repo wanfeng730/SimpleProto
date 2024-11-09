@@ -40,7 +40,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
         Assertions.assertNotNull(borrowForm.getId());
 
-        SpSettingsDO spSettingsDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, ISpBaseObject.BASE_OBJECT_ID_INCREASE_NAME);
+        SpSettingsDO spSettingsDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, ISpBaseObject.OBJECT_ID_INCREASE_NAME);
         Long maxBaseObjectId = spSettingsDO.getIncreaseLong();
         borrowForm = new BorrowForm(spSession, maxBaseObjectId);
         Assertions.assertEquals(BusinessTypeConstant.BORROW_FORM, borrowForm.getType());

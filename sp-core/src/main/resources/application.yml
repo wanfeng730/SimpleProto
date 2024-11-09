@@ -10,6 +10,8 @@ simpleproto:
   esUris: https://localhost:9200
   esUsername: elastic
   esPassword: Wanfeng730
+  # 数据库名称取spring应用名称
+  currentScheme: ${spring.profiles.active}
   # 业务数据表名
   dataTable: sp_object_table
   # 业务设置表名

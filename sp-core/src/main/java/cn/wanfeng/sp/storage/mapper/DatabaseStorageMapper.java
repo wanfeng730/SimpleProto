@@ -5,6 +5,8 @@ import cn.wanfeng.sp.base.object.SpSettingsDO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * @date: 2024-11-04 23:48
  * @author: luozh.wanfeng
@@ -73,4 +75,29 @@ public interface DatabaseStorageMapper {
      * @return 更新行数
      */
     int updateSettings(@Param("tableName") String tableName, @Param("settingsDO") SpSettingsDO settingsDO);
+
+    /**
+     * 查询所有数据表
+     * @param currentScheme 模式名
+     * @return 表名
+     */
+    List<String> listAllTable(@Param("currentScheme") String currentScheme);
+
+    /**
+     * 创建对象数据表
+     * @param tableName 对象数据表名
+     */
+    void createDataTable(@Param("tableName") String tableName);
+
+    /**
+     * 创建设置表
+     * @param tableName 设置表名
+     */
+    void createSettingsTable(@Param("tableName") String tableName);
+
+    /**
+     * 初始化设置表的数据
+     * @param tableName 设置表名
+     */
+    void initSettingsTableData(@Param("tableName") String tableName);
 }

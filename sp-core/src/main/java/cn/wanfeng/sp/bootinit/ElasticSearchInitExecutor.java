@@ -1,6 +1,7 @@
 package cn.wanfeng.sp.bootinit;
 
 
+import cn.wanfeng.proto.util.LogUtils;
 import cn.wanfeng.sp.config.SimpleProtoConfig;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.transport.endpoints.BooleanResponse;
@@ -29,10 +30,10 @@ public class ElasticSearchInitExecutor {
     public void initIndex() throws IOException {
         // 索引是否存在,不存在则创建
         BooleanResponse books = elasticsearchClient.indices().exists(e -> e.index(SimpleProtoConfig.dataTable));
-        System.out.println("索引是否存在：" + books.value());
         if (!books.value()) {
             // 创建索引
             elasticsearchClient.indices().create(c -> c.index(SimpleProtoConfig.dataTable));
+            LogUtils.info("初始化创建ElasticSearch索引[{}]", SimpleProtoConfig.dataTable);
         }
     }
 }
