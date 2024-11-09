@@ -10,6 +10,11 @@ simpleproto:
   esUris: https://localhost:9200
   esUsername: elastic
   esPassword: Wanfeng730
+  # Redis连接配置
+  redisHost: localhost
+  redisPort: 6379
+  redisPassword: Wanfeng730
+  redisDatabase: 0
   # 数据库名称取spring应用名称
   currentScheme: ${spring.profiles.active}
   # 业务数据表名
@@ -29,14 +34,14 @@ spring:
     url: ${simpleproto.dataSourceUrl}
     username: ${simpleproto.dataSourceUsername}
     password: ${simpleproto.dataSourcePassword}
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        hbm2ddl:
-          auto: create
+  data:
+    redis:
+      host: ${simpleproto.redisHost}
+      port: ${simpleproto.redisPort}
+      password: ${simpleproto.redisPassword}
+      database: ${simpleproto.redisDatabase}
+  # 全局json日期格式
   jackson:
-    # 全局json日期格式
     date-format: yyyy-MM-dd HH:mm:ss
   # ElasticSearch数据源
   elasticsearch:

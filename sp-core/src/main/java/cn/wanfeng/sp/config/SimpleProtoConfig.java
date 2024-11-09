@@ -29,6 +29,11 @@ public class SimpleProtoConfig {
     public static String dataSourceUsername;
     public static String dataSourcePassword;
 
+    public static String redisHost;
+    public static String redisPort;
+    public static String redisPassword;
+    public static String redisDatabase;
+
 
     @Resource
     private ConfigurableEnvironment environment;
@@ -50,6 +55,11 @@ public class SimpleProtoConfig {
         dataSourceUrl = environment.getProperty("simpleproto.dataSourceUrl");
         dataSourceUsername = environment.getProperty("simpleproto.dataSourceUsername");
         dataSourcePassword = environment.getProperty("simpleproto.dataSourcePassword");
+
+        redisHost = environment.getProperty("simpleproto.redisHost");
+        redisPort = environment.getProperty("simpleproto.redisPort");
+        redisPassword = environment.getProperty("simpleproto.redisPassword");
+        redisDatabase = environment.getProperty("simpleproto.redisDatabase");
     }
 
 }

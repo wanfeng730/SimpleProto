@@ -7,6 +7,7 @@ import cn.wanfeng.proto.record.ProtoRecordContainer;
 import cn.wanfeng.proto.record.ProtoRecordFactory;
 import cn.wanfeng.proto.util.LogUtils;
 import cn.wanfeng.sp.anno.ProtoField;
+import cn.wanfeng.sp.anno.Type;
 import cn.wanfeng.sp.base.object.SpBaseObjectDO;
 import cn.wanfeng.sp.base.object.SpSettingsDO;
 import cn.wanfeng.sp.config.SimpleProtoConfig;
@@ -229,8 +230,8 @@ public class SpBaseObject implements ISpBaseObject {
 
     @Override
     public void store() {
-        putNewestNameValue();
-
+        assertTypeValueEqualsAnnotation();
+        //根据是否为新对象执行store操作
         if (isNewObject) {
             // 生成主键id
             generateIncreaseId();
@@ -251,10 +252,12 @@ public class SpBaseObject implements ISpBaseObject {
 
     }
 
-    private void putNewestNameValue() {
-        ProtoRecord nameRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(NAME_INDEX, this.name);
-        recordContainer.putRecord(nameRecord);
-        fieldNameValueMap.put(NAME_COL, this.name);
+    public void assertTypeValueEqualsAnnotation(){
+        Type typeAnnotation = this.getClass().getAnnotation(Type.class);
+        String typeAnnoValue = typeAnnotation.value();
+        if(!StringUtils.equals(this.type, typeAnnoValue)){
+            throw new SpException(String.format("保存对象异常，type的值必须和注解@Type标注的值[%s]一致，当前type=[%s]", typeAnnoValue, this.type));
+        }
     }
 
     private void updateModifyDate() {
@@ -335,13 +338,8 @@ public class SpBaseObject implements ISpBaseObject {
     }
 
     private void generateIncreaseId() {
-        // LzhTODO: 自动生成settings表sql，添加初始的数据
         SpSettingsDO idIncreaseDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, OBJECT_ID_INCREASE_NAME);
         this.id = Objects.isNull(idIncreaseDO) ? 1L : idIncreaseDO.getIncreaseLong() + 1;
-
-        ProtoRecord idRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(ID_INDEX, id);
-        recordContainer.putRecord(idRecord);
-        fieldNameValueMap.put(ID_COL, idRecord.getValue());
     }
 
 

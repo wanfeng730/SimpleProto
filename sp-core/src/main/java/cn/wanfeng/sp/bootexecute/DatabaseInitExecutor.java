@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.bootinit;
+package cn.wanfeng.sp.bootexecute;
 
 
 import cn.wanfeng.proto.util.LogUtils;

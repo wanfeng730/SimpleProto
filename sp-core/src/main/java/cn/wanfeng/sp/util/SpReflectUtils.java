@@ -17,4 +17,5 @@ public class SpReflectUtils {
     public static Field[] getProtoFieldAnnotationFields(Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(ProtoField.class)).toArray(Field[]::new);
     }
+
 }
