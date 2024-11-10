@@ -16,6 +16,8 @@ import org.springframework.core.env.ConfigurableEnvironment;
 @Configuration
 public class SimpleProtoConfig {
 
+    public static String appName;
+
     public static String currentScheme;
     public static String dataTable;
     public static String settingsTable;
@@ -43,6 +45,8 @@ public class SimpleProtoConfig {
 
     @PostConstruct
     public void init() {
+        appName = environment.getProperty("spring.application.name");
+
         currentScheme = environment.getProperty("simpleproto.currentScheme");
         dataTable = environment.getProperty("simpleproto.dataTable");
         settingsTable = environment.getProperty("simpleproto.settingsTable");
