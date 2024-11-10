@@ -7,17 +7,19 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @date: 2024-11-09 22:59
  * @author: luozh.wanfeng
- * @description:
- * @since:
+ * @description: redis数据序列化工具，防止乱码
+ * @since: 1.0
  */
 public class SimpleProtoRedisSerializer<T> implements RedisSerializer<T> {
 
-    public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
-    private Class<T> clazz;
+    public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+
+    private final Class<T> clazz;
 
     public SimpleProtoRedisSerializer(Class<T> clazz) {
         super();
