@@ -1,7 +1,7 @@
 package cn.wanfeng.sp.session;
 
 import cn.wanfeng.sp.base.object.SpBaseObjectDO;
-import cn.wanfeng.sp.base.object.SpSettingsDO;
+import cn.wanfeng.sp.cache.CacheOperator;
 import cn.wanfeng.sp.config.SimpleProtoConfig;
 import cn.wanfeng.sp.storage.mapper.DatabaseStorageMapper;
 import cn.wanfeng.sp.storage.search.SearchStorageClient;
@@ -27,20 +27,25 @@ public class SpSession {
     @Resource
     private SearchStorageClient searchStorageClient;
 
+    @Resource
+    private CacheOperator cacheOperator;
+
     public DatabaseStorageMapper databaseStorage() {
-        return databaseStorageMapper;
+        return this.databaseStorageMapper;
     }
 
     public SearchStorageClient searchStorage(){
         return this.searchStorageClient;
     }
 
+    public CacheOperator cacheOperator(){
+        return this.cacheOperator;
+    }
+
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void createObjectToStorage(SpBaseObjectDO baseObjectDO, SpSettingsDO settingsDO, Map<String, Object> fieldNameValueMap) throws Exception {
+    public void createObjectToStorage(SpBaseObjectDO baseObjectDO, Map<String, Object> fieldNameValueMap) throws Exception {
         //该对象保存到数据库存储
         databaseStorage().insertObject(SimpleProtoConfig.dataTable, baseObjectDO);
-        //更新设置表
-        databaseStorage().updateSettings(SimpleProtoConfig.settingsTable, settingsDO);
         //该对象保存到高级搜索存储
         searchStorage().insertObject(SimpleProtoConfig.dataTable, fieldNameValueMap);
     }

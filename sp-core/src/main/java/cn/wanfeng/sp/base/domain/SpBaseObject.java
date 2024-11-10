@@ -314,14 +314,14 @@ public class SpBaseObject implements ISpBaseObject {
         // 序列化，构造对象数据保存到数据库
         byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
         SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
-        // 自增id保存到数据库
-        SpSettingsDO settingsDO = new SpSettingsDO();
-        settingsDO.setName(OBJECT_ID_INCREASE_NAME);
-        settingsDO.setIncreaseLong(this.id);
+        //获取id自增锁
+
         try {
-            spSession.createObjectToStorage(baseObjectDO, settingsDO, fieldNameValueMap);
+            spSession.createObjectToStorage(baseObjectDO, fieldNameValueMap);
         } catch (Exception e) {
             LogUtils.error("对象创建失败，数据已回滚，失败原因", e);
+        } finally {
+
         }
     }
 
@@ -338,8 +338,24 @@ public class SpBaseObject implements ISpBaseObject {
     }
 
     private void generateIncreaseId() {
-        SpSettingsDO idIncreaseDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, OBJECT_ID_INCREASE_NAME);
-        this.id = Objects.isNull(idIncreaseDO) ? 1L : idIncreaseDO.getIncreaseLong() + 1;
+        boolean locked = spSession.cacheOperator().lock(OBJECT_ID_INCREASE_NAME);
+        if(locked){
+            try {
+                SpSettingsDO idIncreaseDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, OBJECT_ID_INCREASE_NAME);
+                this.id = Objects.isNull(idIncreaseDO) ? 1L : idIncreaseDO.getIncreaseLong() + 1;
+                // 自增后的id保存到数据库
+                SpSettingsDO settingsDO = new SpSettingsDO();
+                settingsDO.setName(OBJECT_ID_INCREASE_NAME);
+                settingsDO.setIncreaseLong(this.id);
+                //更新设置表
+                spSession.databaseStorage().updateSettings(SimpleProtoConfig.settingsTable, settingsDO);
+            } catch (Exception e) {
+                throw new SpException("生成自增id时出现未知异常", e);
+            } finally {
+                spSession.cacheOperator().unLock(OBJECT_ID_INCREASE_NAME);
+                LogUtils.info("释放锁");
+            }
+        }
     }
 
 

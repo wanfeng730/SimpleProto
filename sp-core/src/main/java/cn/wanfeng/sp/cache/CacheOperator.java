@@ -7,6 +7,7 @@ import cn.wanfeng.sp.config.SimpleProtoConfig;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotBlank;
@@ -203,6 +204,7 @@ public class CacheOperator {
      * @param lockName 锁名称
      * @return 是否加锁成功
      */
+    @Retryable(retryFor = SpException.class, maxAttempts = 100)
     public boolean lock(@NotBlank String lockName){
         if(StringUtils.isBlank(lockName)){
             throw new SpException("Cache Lock Failed, [lockName] must Not Blank!");
@@ -215,7 +217,9 @@ public class CacheOperator {
         if(success){
             LogUtils.debug("锁获取成功，key={}", lockKey);
         }else {
-            LogUtils.error("锁获取失败，key={}", lockKey);
+            LogUtils.error("锁获取失败，稍后重试...[key={}]", lockKey);
+            // sleepHalfSecond();
+            throw new SpException("锁获取失败");
         }
         return success;
     }
@@ -223,21 +227,24 @@ public class CacheOperator {
     /**
      * 加锁
      * @param lockName 锁名称
-     * @param seconds 锁的有效时间（秒）
+     * @param expireSeconds 锁的有效时间（秒）
      * @return 是否加锁成功
      */
-    public boolean lock(@NotBlank String lockName, @NotNull long seconds){
+    @Retryable(retryFor = SpException.class, maxAttempts = 100)
+    public boolean lock(@NotBlank String lockName, @NotNull long expireSeconds){
         String lockKey = generateThisAppLockKey(lockName);
         String lockValue = generateThisAppLockValue(lockName);
         Boolean success = Optional.ofNullable(
-                redisTemplate.opsForValue().setIfAbsent(lockKey, lockValue, seconds, TimeUnit.SECONDS)
+                redisTemplate.opsForValue().setIfAbsent(lockKey, lockValue, expireSeconds, TimeUnit.SECONDS)
         ).orElse(false);
         if(success){
             LogUtils.debug("锁[{}]获取成功", lockKey);
         }else {
-            LogUtils.error("锁[{}]获取失败", lockKey);
+            LogUtils.error("锁获取失败，稍后重试...[key={}]", lockKey);
+            sleepHalfSecond();
+            throw new SpException("锁获取失败");
         }
-        return success;
+        return true;
     }
 
     /**
@@ -262,5 +269,16 @@ public class CacheOperator {
 
     private static String generateThisAppLockValue(String lockName){
         return String.format("The Lock[%s] has been Used", lockName);
+    }
+
+    /**
+     * 等待半秒
+     */
+    private static void sleepHalfSecond(){
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

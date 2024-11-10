@@ -5,6 +5,8 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * @author wanfeng
@@ -12,6 +14,8 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 @SpringBootApplication
 @ConfigurationPropertiesScan
 @MapperScan(basePackages = {"cn.wanfeng.sp.**.mapper"})
+@EnableRetry
+@EnableAsync
 public class SimpleprotoApplication {
 
     public static void main(String[] args) {
