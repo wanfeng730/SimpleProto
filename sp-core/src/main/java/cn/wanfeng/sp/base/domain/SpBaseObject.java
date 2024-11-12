@@ -320,8 +320,6 @@ public class SpBaseObject implements ISpBaseObject {
             spSession.createObjectToStorage(baseObjectDO, fieldNameValueMap);
         } catch (Exception e) {
             LogUtils.error("对象创建失败，数据已回滚，失败原因", e);
-        } finally {
-
         }
     }
 
@@ -337,8 +335,11 @@ public class SpBaseObject implements ISpBaseObject {
         }
     }
 
-    private void generateIncreaseId() {
-        boolean locked = spSession.cacheOperator().lock(OBJECT_ID_INCREASE_NAME);
+
+
+    protected void generateIncreaseId() {
+        //从redis获取当前自增的id值，若没有则从数据库加载
+        boolean locked = spSession.cacheOperator().lockRetryable(OBJECT_ID_INCREASE_NAME);
         if(locked){
             try {
                 SpSettingsDO idIncreaseDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, OBJECT_ID_INCREASE_NAME);
@@ -348,12 +349,15 @@ public class SpBaseObject implements ISpBaseObject {
                 settingsDO.setName(OBJECT_ID_INCREASE_NAME);
                 settingsDO.setIncreaseLong(this.id);
                 //更新设置表
-                spSession.databaseStorage().updateSettings(SimpleProtoConfig.settingsTable, settingsDO);
+                if(Objects.isNull(idIncreaseDO)){
+                    spSession.databaseStorage().insertSettings(SimpleProtoConfig.settingsTable, settingsDO);
+                }else {
+                    spSession.databaseStorage().updateSettings(SimpleProtoConfig.settingsTable, settingsDO);
+                }
             } catch (Exception e) {
                 throw new SpException("生成自增id时出现未知异常", e);
             } finally {
                 spSession.cacheOperator().unLock(OBJECT_ID_INCREASE_NAME);
-                LogUtils.info("释放锁");
             }
         }
     }

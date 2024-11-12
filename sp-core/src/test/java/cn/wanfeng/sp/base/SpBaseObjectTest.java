@@ -11,6 +11,7 @@ import cn.wanfeng.sp.config.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.ThreadPoolTemplateUtils;
 import jakarta.annotation.Resource;
+import lombok.Synchronized;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -40,7 +41,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
         long step0 = System.currentTimeMillis();
         borrowForm.store();
-        LogUtils.debug("SpBaseObject对象新建保存耗时{}ms", System.currentTimeMillis() - step0);
+        LogUtils.info("SpBaseObject对象新建保存耗时{}ms", System.currentTimeMillis() - step0);
 
         Assertions.assertNotNull(borrowForm.getId());
 
@@ -56,7 +57,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
         long step1 = System.currentTimeMillis();
         borrowForm.store();
-        LogUtils.debug("SpBaseObject对象更新保存耗时{}ms", System.currentTimeMillis() - step1);
+        LogUtils.info("SpBaseObject对象更新保存耗时{}ms", System.currentTimeMillis() - step1);
 
         borrowForm = new BorrowForm(spSession, maxBaseObjectId);
         Assertions.assertNotNull(borrowForm);
@@ -66,7 +67,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
         long step2 = System.currentTimeMillis();
         borrowForm.remove();
-        LogUtils.debug("SpBaseObject对象删除耗时{}ms", System.currentTimeMillis() - step2);
+        LogUtils.info("SpBaseObject对象删除耗时{}ms", System.currentTimeMillis() - step2);
 
         Assertions.assertThrows(SpException.class, () -> new BorrowForm(spSession, maxBaseObjectId));
 
@@ -81,7 +82,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
      * 数据表数量：执行前737，执行后837
      * es数据数量：执行前737，执行后837
      * 总计运行时间：43.571s
-     * 分析：间隔较大
+     * 分析：锁获取重试间隔较大
      */
     @Test
     public void testManyBorrowFormAsyncCreate() throws InterruptedException {
@@ -108,7 +109,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 } finally {
-                    countDownLatch.countDown();
+                    syncCountDown(countDownLatch);
                 }
             });
         }
@@ -119,6 +120,11 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
     private Integer randomSeconds(){
         return RandomUtil.randomInt(2000, 3000);
+    }
+
+    @Synchronized
+    private void syncCountDown(CountDownLatch latch){
+        latch.countDown();
     }
 
 

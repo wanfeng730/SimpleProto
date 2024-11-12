@@ -1,12 +1,14 @@
 package cn.wanfeng.sp.cache;
 
 
+import cn.wanfeng.proto.exception.RedisLockNotGetException;
 import cn.wanfeng.proto.exception.SpException;
 import cn.wanfeng.proto.util.LogUtils;
 import cn.wanfeng.sp.config.SimpleProtoConfig;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
@@ -204,25 +206,26 @@ public class CacheOperator {
      * @param lockName 锁名称
      * @return 是否加锁成功
      */
-    @Retryable(retryFor = SpException.class, maxAttempts = 100)
     public boolean lock(@NotBlank String lockName){
         if(StringUtils.isBlank(lockName)){
             throw new SpException("Cache Lock Failed, [lockName] must Not Blank!");
         }
         String lockKey = generateThisAppLockKey(lockName);
         String lockValue = generateThisAppLockValue(lockName);
-        Boolean success = Optional.ofNullable(
+        return Optional.ofNullable(
                 redisTemplate.opsForValue().setIfAbsent(lockKey, lockValue)
         ).orElse(false);
-        if(success){
-            LogUtils.debug("锁获取成功，key={}", lockKey);
-        }else {
-            LogUtils.error("锁获取失败，稍后重试...[key={}]", lockKey);
-            // sleepHalfSecond();
-            throw new SpException("锁获取失败");
-        }
-        return success;
     }
+
+    @Retryable(retryFor = RedisLockNotGetException.class, maxAttempts = 300, backoff = @Backoff(delay = 100))
+    public boolean lockRetryable(@NotBlank String lockName){
+        boolean locked = lock(lockName);
+        if(!locked){
+            throw new RedisLockNotGetException();
+        }
+        return true;
+    }
+
 
     /**
      * 加锁
@@ -230,21 +233,12 @@ public class CacheOperator {
      * @param expireSeconds 锁的有效时间（秒）
      * @return 是否加锁成功
      */
-    @Retryable(retryFor = SpException.class, maxAttempts = 100)
     public boolean lock(@NotBlank String lockName, @NotNull long expireSeconds){
         String lockKey = generateThisAppLockKey(lockName);
         String lockValue = generateThisAppLockValue(lockName);
-        Boolean success = Optional.ofNullable(
+        return Optional.ofNullable(
                 redisTemplate.opsForValue().setIfAbsent(lockKey, lockValue, expireSeconds, TimeUnit.SECONDS)
         ).orElse(false);
-        if(success){
-            LogUtils.debug("锁[{}]获取成功", lockKey);
-        }else {
-            LogUtils.error("锁获取失败，稍后重试...[key={}]", lockKey);
-            sleepHalfSecond();
-            throw new SpException("锁获取失败");
-        }
-        return true;
     }
 
     /**
