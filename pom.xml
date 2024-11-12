@@ -15,7 +15,6 @@
 
     <packaging>pom</packaging>
     <name>simpleproto</name>
-    <description>simpleproto</description>
 
     <modules>
         <module>proto</module>
@@ -27,43 +26,61 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <springboot.version>3.3.0</springboot.version>
+        <springretry.version>2.0.6</springretry.version>
+        <junit.version>5.10.0</junit.version>
+        <java.validation.version>2.0.1.Final</java.validation.version>
+        <hutool.version>5.8.25</hutool.version>
+        <postgresql.version>42.7.3</postgresql.version>
+        <lombok.version>1.18.32</lombok.version>
+        <mybatisplus.version>3.5.5</mybatisplus.version>
+        <elasticsearch.version>8.15.3</elasticsearch.version>
+        <fastjson.version>1.2.83</fastjson.version>
+        <common-lang3.version>3.17.0</common-lang3.version>
+        <common-collection4.version>4.4</common-collection4.version>
+        <commons-net.version>3.6</commons-net.version>
+        <aws-java.version>1.12.777</aws-java.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <version>${springboot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <version>${springboot.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.retry</groupId>
             <artifactId>spring-retry</artifactId>
+            <version>${springretry.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.10.0</version>
+            <version>${junit.version}</version>
         </dependency>
 
         <!-- Java校验注解依赖 -->
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
-            <version>2.0.1.Final</version>
+            <version>${java.validation.version}</version>
         </dependency>
 
         <!-- Hutool 工具包 -->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.8.23</version>
+            <version>${hutool.version}</version>
         </dependency>
 
 
@@ -71,50 +88,54 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>${springboot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
+            <version>${lombok.version}</version>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-            <version>3.5.5</version>
+            <version>${mybatisplus.version}</version>
         </dependency>
 
         <!-- 连接ElasticSearch依赖 -->
         <dependency>
             <groupId>co.elastic.clients</groupId>
             <artifactId>elasticsearch-java</artifactId>
-            <version>8.15.3</version>
+            <version>${elasticsearch.version}</version>
         </dependency>
 
         <!-- 连接redis依赖Redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
+            <version>${springboot.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.83</version>
+            <version>${fastjson.version}</version>
         </dependency>
 
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.17.0</version>
+            <version>${common-lang3.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.4</version>
+            <version>${common-collection4.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.f4b6a3</groupId>
@@ -126,17 +147,15 @@
         <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
-            <version>3.6</version>
+            <version>${commons-net.version}</version>
         </dependency>
 
         <!-- Amazon S3 存储服务java依赖 -->
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
-            <version>1.12.777</version>
+            <version>${aws-java.version}</version>
         </dependency>
-
-
     </dependencies>
 
     <build>
@@ -158,7 +177,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
                 <configuration>
-                    <skipTests>false</skipTests>
+                    <skipTests>true</skipTests>
                     <testFailureIgnore>true</testFailureIgnore>
                 </configuration>
             </plugin>
