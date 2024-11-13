@@ -217,6 +217,11 @@ public class CacheOperator {
         ).orElse(false);
     }
 
+    /**
+     * 加锁（若没有获取到锁反复尝试获取，最大尝试300次，每次间隔100ms）
+     * @param lockName 锁名称
+     * @return 是否加锁成功
+     */
     @Retryable(retryFor = RedisLockNotGetException.class, maxAttempts = 300, backoff = @Backoff(delay = 100))
     public boolean lockRetryable(@NotBlank String lockName){
         boolean locked = lock(lockName);

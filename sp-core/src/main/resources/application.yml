@@ -2,7 +2,7 @@
 simpleproto:
   # 数据库连接配置
   dataSourceDriver: org.postgresql.Driver
-  dataSourceUrl: jdbc:postgresql://localhost:15432/${spring.application.name}?currentSchema=${spring.profiles.active}&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
+  dataSourceUrl: jdbc:postgresql://localhost:5432/${spring.application.name}?currentSchema=${spring.profiles.active}&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
   dataSourceUsername: postgres
   dataSourcePassword: Wanfeng730
   # ElasticSearch配置
@@ -40,6 +40,13 @@ spring:
       port: ${simpleproto.redisPort}
       password: ${simpleproto.redisPassword}
       database: ${simpleproto.redisDatabase}
+  # 数据库连接方言配置
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        hbm2ddl:
+          auto: create
   # 全局json日期格式
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
@@ -48,6 +55,9 @@ spring:
     uris: ${simpleproto.esUris}
     username: ${simpleproto.esUsername}
     password: ${simpleproto.esPassword}
+
+hibernate:
+  dialect: org.hibernate.dialect.PostgreSQLDialect
 
 mybatis-plus:
   configuration:
