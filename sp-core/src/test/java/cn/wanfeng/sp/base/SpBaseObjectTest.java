@@ -30,6 +30,37 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
     private SpSession spSession;
 
     @Test
+    public void test_SpBaseObject_createBorrowForm() {
+        BorrowForm borrowForm = new BorrowForm(spSession, "A002", 222, new Date());
+        Assertions.assertNotNull(borrowForm);
+        Assertions.assertEquals(borrowForm.getType(), BusinessTypeConstant.BORROW_FORM);
+        Assertions.assertNotNull(borrowForm.getName());
+        Assertions.assertNotNull(borrowForm.getCreateDate());
+        Assertions.assertNotNull(borrowForm.getModifyDate());
+        Assertions.assertFalse(borrowForm.getDelete());
+
+        long step0 = System.currentTimeMillis();
+        borrowForm.store();
+        LogUtils.info("SpBaseObject对象新建保存耗时{}ms", System.currentTimeMillis() - step0);
+
+        Assertions.assertNotNull(borrowForm.getId());
+
+        SpSettingsDO spSettingsDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, ISpBaseObject.OBJECT_ID_INCREASE_NAME);
+        Long maxBaseObjectId = spSettingsDO.getIncreaseLong();
+        borrowForm = new BorrowForm(spSession, maxBaseObjectId);
+        Assertions.assertEquals(BusinessTypeConstant.BORROW_FORM, borrowForm.getType());
+        Assertions.assertNotNull(borrowForm.getName());
+        Assertions.assertEquals(false, borrowForm.getDelete());
+
+        borrowForm.setName("借阅单1");
+        borrowForm.updateApplyDays(43);
+
+        long step1 = System.currentTimeMillis();
+        borrowForm.store();
+        LogUtils.info("SpBaseObject对象更新保存耗时{}ms", System.currentTimeMillis() - step1);
+    }
+
+    @Test
     public void test_SpBaseObject_borrowForm() {
         BorrowForm borrowForm = new BorrowForm(spSession, "A002", 222, new Date());
         Assertions.assertNotNull(borrowForm);
@@ -75,6 +106,8 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
         LogUtils.info("SpBaseObject功能测试完成");
     }
+
+
 
     /**
      * 2秒中内随机时间并发100个创建数据的请求，执行情况：

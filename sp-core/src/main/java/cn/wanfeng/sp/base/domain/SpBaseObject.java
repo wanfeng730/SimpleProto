@@ -48,7 +48,9 @@ public class SpBaseObject implements ISpBaseObject {
 
     protected ProtoRecordContainer recordContainer;
 
-    protected ConcurrentHashMap<String, Object> fieldNameValueMap;
+    protected ConcurrentHashMap<String, Integer> propertyIndexNoContainer;
+
+    protected ConcurrentHashMap<String, Object> propertyValueContainer;
 
     /**
      * 该对象是否为新建的对象（该id未在数据库中存在）
@@ -63,23 +65,28 @@ public class SpBaseObject implements ISpBaseObject {
         this.spSession = session;
         this.isNewObject = true;
         initBaseObject(type, name);
-        initRecordContainerAndValueMap();
+        initInternalContainer();
+        //校验属性的indexNo和fieldName不重复，并生成映射关系
+        assertProtoFieldUniqueAndBuildIndexNoMap();
     }
 
     public SpBaseObject(SpSession session, Long id) {
         this.spSession = session;
         this.isNewObject = false;
+        initInternalContainer();
 
         assertObjectIdNotNull(id);
         // 从数据库获取此id的字段
         SpBaseObjectDO objectDO = spSession.databaseStorage().findObjectById(SimpleProtoConfig.dataTable, id);
         assertObjectIdFindFromDatabase(id, objectDO);
 
-        ProtoRecordContainer container = ProtoRecordFactory.readBytesToRecordList(objectDO.getData());
-        LogUtils.debug(container.getIndexNoRecordMap().toString());
+        //校验属性的indexNo和fieldName不重复，并生成映射关系
+        assertProtoFieldUniqueAndBuildIndexNoMap();
 
-        // 校验ProtoField注解定义的index和name是否重复
-        verifyAndSetRecordMap(container);
+        // 反序列化proto二进制数据
+        this.recordContainer = ProtoRecordFactory.readBytesToRecordList(objectDO.getData());
+        LogUtils.debug(recordContainer.getIndexNoRecordMap().toString());
+
         // 读取container中的数据并设置到本对象的属性中
         readRecordMap();
     }
@@ -96,28 +103,22 @@ public class SpBaseObject implements ISpBaseObject {
         }
     }
 
-    private void verifyAndSetRecordMap(ProtoRecordContainer container) {
-        this.recordContainer = container;
-        this.fieldNameValueMap = new ConcurrentHashMap<>(16);
+    private void assertProtoFieldUniqueAndBuildIndexNoMap(){
+        Set<String> addFieldNameSet = new HashSet<>();
+        Set<Integer> addIndexNoSet = new HashSet<>();
+        Field[] fields = SpReflectUtils.getProtoFieldAnnotationFields(this.getClass());
+        for (Field field : fields) {
+            ProtoField protoField = field.getAnnotation(ProtoField.class);
+            int indexNo = protoField.index();
+            String fieldName = protoField.name();
 
-        ConcurrentHashMap<Integer, ProtoRecord> indexNoRecordMap = container.getIndexNoRecordMap();
-
-        Set<Integer> existIndexSet = new HashSet<>();
-        Set<String> existFieldNameSet = new HashSet<>();
-
-        for (Field declaredField : this.getClass().getDeclaredFields()) {
-            if (!declaredField.isAnnotationPresent(ProtoField.class)) {
-                continue;
+            if(addFieldNameSet.contains(fieldName) || addIndexNoSet.contains(indexNo)){
+                throw new SpException(SpExceptionMessage.protoFieldNameDuplicate(indexNo, fieldName));
             }
-            ProtoField protoField = declaredField.getAnnotation(ProtoField.class);
-            assertIndexAndNameNotDuplicate(existIndexSet, existFieldNameSet, protoField);
-            int annoIndexNo = protoField.index();
-            String annoFieldName = protoField.name();
-            if (!indexNoRecordMap.containsKey(annoIndexNo) || StringUtils.isBlank(annoFieldName)) {
-                continue;
-            }
-            ProtoRecord protoRecord = indexNoRecordMap.get(annoIndexNo);
-            fieldNameValueMap.put(annoFieldName, protoRecord);
+            addFieldNameSet.add(fieldName);
+            addIndexNoSet.add(indexNo);
+
+            this.propertyIndexNoContainer.put(fieldName, indexNo);
         }
     }
 
@@ -166,17 +167,6 @@ public class SpBaseObject implements ISpBaseObject {
         }
     }
 
-    private static void assertIndexAndNameNotDuplicate(Set<Integer> existIndexSet, Set<String> existFieldNameSet, ProtoField protoField) {
-        int index = protoField.index();
-        String name = protoField.name();
-        if (existIndexSet.contains(index)) {
-            throw new SpException(SpExceptionMessage.protoFieldIndexDuplicate(index, name));
-        }
-        if (existFieldNameSet.contains(name)) {
-            throw new SpException(SpExceptionMessage.protoFieldNameDuplicate(index, name));
-        }
-    }
-
     /**
      * 初始化基础对象的属性
      *
@@ -196,27 +186,10 @@ public class SpBaseObject implements ISpBaseObject {
     /**
      * 初始化map，将基础对象的属性放入Container和fieldNameValueMap
      */
-    private void initRecordContainerAndValueMap() {
+    private void initInternalContainer() {
         this.recordContainer = ProtoRecordContainer.emptyContainer();
-        this.fieldNameValueMap = new ConcurrentHashMap<>();
-
-        ProtoRecord typeRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(TYPE_INDEX, type);
-        ProtoRecord nameRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(NAME_INDEX, name);
-        ProtoRecord createDateRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(CREATE_DATE_INDEX, createDate);
-        ProtoRecord modifyDateRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(MODIFY_DATE_INDEX, modifyDate);
-        ProtoRecord isDeleteRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(IS_DELETE_INDEX, isDelete);
-
-        recordContainer.putRecord(typeRecord);
-        recordContainer.putRecord(nameRecord);
-        recordContainer.putRecord(createDateRecord);
-        recordContainer.putRecord(modifyDateRecord);
-        recordContainer.putRecord(isDeleteRecord);
-
-        fieldNameValueMap.put(TYPE_COL, typeRecord.getValue());
-        fieldNameValueMap.put(NAME_COL, nameRecord.getValue());
-        fieldNameValueMap.put(CREATE_DATE_COL, createDateRecord.getValue());
-        fieldNameValueMap.put(MODIFY_DATE_COL, modifyDateRecord.getValue());
-        fieldNameValueMap.put(IS_DELETE_COL, isDeleteRecord.getValue());
+        this.propertyIndexNoContainer = new ConcurrentHashMap<>(8);
+        this.propertyValueContainer = new ConcurrentHashMap<>(8);
     }
 
     /**
@@ -280,12 +253,12 @@ public class SpBaseObject implements ISpBaseObject {
         recordContainer.putRecord(isDeleteRecord);
 
         //放入fieldNameValueMap
-        fieldNameValueMap.put(ID_COL, this.id);
-        fieldNameValueMap.put(NAME_COL, this.name);
-        fieldNameValueMap.put(TYPE_COL, this.type);
-        fieldNameValueMap.put(CREATE_DATE_COL, this.createDate);
-        fieldNameValueMap.put(MODIFY_DATE_COL, this.modifyDate);
-        fieldNameValueMap.put(IS_DELETE_COL, this.isDelete);
+        propertyValueContainer.put(ID_FIELD, this.id);
+        propertyValueContainer.put(NAME_FIELD, this.name);
+        propertyValueContainer.put(TYPE_FIELD, this.type);
+        propertyValueContainer.put(CREATE_DATE_FIELD, this.createDate);
+        propertyValueContainer.put(MODIFY_DATE_FIELD, this.modifyDate);
+        propertyValueContainer.put(IS_DELETE_FIELD, this.isDelete);
     }
 
     private void putDeclaredPropertyToContainerAndValueMap(){
@@ -302,7 +275,7 @@ public class SpBaseObject implements ISpBaseObject {
                 ProtoRecord record = ProtoRecordFactory.buildProtoRecordByIndexAndValue(indexNo, value);
                 recordContainer.putRecord(record);
 
-                fieldNameValueMap.put(fieldName, value);
+                propertyValueContainer.put(fieldName, value);
             } catch (IllegalAccessException e) {
                 LogUtils.error(SpExceptionMessage.setPropertyNoAccessible(indexNo, fieldName));
                 throw new SpException(e);
@@ -317,7 +290,7 @@ public class SpBaseObject implements ISpBaseObject {
         //获取id自增锁
 
         try {
-            spSession.createObjectToStorage(baseObjectDO, fieldNameValueMap);
+            spSession.createObjectToStorage(baseObjectDO, propertyValueContainer);
         } catch (Exception e) {
             LogUtils.error("对象创建失败，数据已回滚，失败原因", e);
         }
@@ -329,7 +302,7 @@ public class SpBaseObject implements ISpBaseObject {
         // 该对象更新到数据库
         SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
         try {
-            spSession.updateObjectToStorage(baseObjectDO, fieldNameValueMap);
+            spSession.updateObjectToStorage(baseObjectDO, propertyValueContainer);
         } catch (Exception e) {
             LogUtils.error("对象更新失败，数据已回滚，失败原因", e);
         }
@@ -410,13 +383,5 @@ public class SpBaseObject implements ISpBaseObject {
 
     public Date getModifyDate() {
         return modifyDate;
-    }
-
-    public ProtoRecordContainer getRecordContainer() {
-        return recordContainer;
-    }
-
-    public ConcurrentHashMap<String, Object> getFieldNameValueMap() {
-        return fieldNameValueMap;
     }
 }

@@ -12,6 +12,10 @@ public class SpException extends RuntimeException {
         super(message);
     }
 
+    public SpException(String format, Object... args){
+        super(String.format(format, args));
+    }
+
     public SpException(Throwable cause) {
         super(cause);
     }

@@ -6,12 +6,12 @@ package cn.wanfeng.sp.base.domain;
  * @since: 1.0
  */
 public interface ISpBaseObject {
-    String ID_COL = "id";
-    String TYPE_COL = "type";
-    String NAME_COL = "name";
-    String CREATE_DATE_COL = "create_date";
-    String MODIFY_DATE_COL = "modify_date";
-    String IS_DELETE_COL = "is_delete";
+    String ID_FIELD = "id";
+    String TYPE_FIELD = "type";
+    String NAME_FIELD = "name";
+    String CREATE_DATE_FIELD = "create_date";
+    String MODIFY_DATE_FIELD = "modify_date";
+    String IS_DELETE_FIELD = "is_delete";
 
     int ID_INDEX = 1001;
     int TYPE_INDEX = 1002;
@@ -31,4 +31,5 @@ public interface ISpBaseObject {
      * 将对象从持久化删除
      */
     void remove();
+
 }
