@@ -30,10 +30,16 @@ spring:
     active: dev
   # Postgres数据源
   datasource:
-    driver-class-name: ${simpleproto.dataSourceDriver}
-    url: ${simpleproto.dataSourceUrl}
-    username: ${simpleproto.dataSourceUsername}
-    password: ${simpleproto.dataSourcePassword}
+    postgres:
+      driver-class-name: ${simpleproto.dataSourceDriver}
+      url: ${simpleproto.dataSourceUrl}
+      username: ${simpleproto.dataSourceUsername}
+      password: ${simpleproto.dataSourcePassword}
+    elastic:
+      driver-class-name: ${simpleproto.dataSourceDriver}
+      url: ${simpleproto.dataSourceUrl}
+      username: ${simpleproto.dataSourceUsername}
+      password: ${simpleproto.dataSourcePassword}
   data:
     redis:
       host: ${simpleproto.redisHost}

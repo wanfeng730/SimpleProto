@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @since: 1.0
  */
 @Configuration
-public class MybatisPlusConfiguration {
+public class MybatisPlusInterceptorConfiguration {
 
     @Bean
     public MybatisPlusTableNameInterceptor mybatisPlusInterceptor() {
