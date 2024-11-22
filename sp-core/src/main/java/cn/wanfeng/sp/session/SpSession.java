@@ -3,7 +3,7 @@ package cn.wanfeng.sp.session;
 import cn.wanfeng.sp.base.object.SpBaseObjectDO;
 import cn.wanfeng.sp.cache.CacheOperator;
 import cn.wanfeng.sp.config.SimpleProtoConfig;
-import cn.wanfeng.sp.storage.mapper.DatabaseStorageMapper;
+import cn.wanfeng.sp.storage.mapper.postgres.DatabaseStorageMapper;
 import cn.wanfeng.sp.storage.search.SearchStorageClient;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;

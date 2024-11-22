@@ -37,6 +37,7 @@
         <lombok.version>1.18.32</lombok.version>
         <mybatisplus.version>3.5.5</mybatisplus.version>
         <elasticsearch.version>8.15.3</elasticsearch.version>
+        <elasticsearch-sql.version>7.6.0.0</elasticsearch-sql.version>
         <fastjson.version>1.2.83</fastjson.version>
         <common-lang3.version>3.17.0</common-lang3.version>
         <common-collection4.version>4.4</common-collection4.version>
@@ -98,11 +99,11 @@
 
 
         <!-- 连接postgresql所需依赖 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <version>${springboot.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-data-jpa</artifactId>-->
+<!--            <version>${springboot.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -126,6 +127,14 @@
             <artifactId>elasticsearch-java</artifactId>
             <version>${elasticsearch.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.amazon.opendistroforelasticsearch.client</groupId>
+            <artifactId>opendistro-sql-jdbc</artifactId>
+            <version>1.9.0.0</version>
+        </dependency>
+
+
 
         <!-- 连接redis依赖Redis -->
         <dependency>

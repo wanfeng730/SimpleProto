@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.storage.mapper;
+package cn.wanfeng.sp.storage.mapper.postgres;
 
 import cn.wanfeng.sp.base.object.SpBaseObjectDO;
 import cn.wanfeng.sp.base.object.SpSettingsDO;

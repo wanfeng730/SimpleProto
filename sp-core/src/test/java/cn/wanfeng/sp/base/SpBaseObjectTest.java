@@ -5,6 +5,7 @@ import cn.wanfeng.proto.exception.SpException;
 import cn.wanfeng.proto.util.LogUtils;
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
 import cn.wanfeng.sp.base.domain.ISpBaseObject;
+import cn.wanfeng.sp.base.mapper.es.BorrowFormMapper;
 import cn.wanfeng.sp.base.object.SpSettingsDO;
 import cn.wanfeng.sp.common.BusinessTypeConstant;
 import cn.wanfeng.sp.config.SimpleProtoConfig;
@@ -12,11 +13,13 @@ import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.ThreadPoolTemplateUtils;
 import jakarta.annotation.Resource;
 import lombok.Synchronized;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -29,8 +32,18 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
     @Resource
     private SpSession spSession;
 
+    @Resource
+    private BorrowFormMapper borrowFormMapper;
+
+    @Test
+    public void test_opendistro(){
+
+    }
+
     @Test
     public void test_SpBaseObject_createBorrowForm() {
+
+
         BorrowForm borrowForm = new BorrowForm(spSession, "A002", 222, new Date());
         Assertions.assertNotNull(borrowForm);
         Assertions.assertEquals(borrowForm.getType(), BusinessTypeConstant.BORROW_FORM);
@@ -47,6 +60,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
         SpSettingsDO spSettingsDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, ISpBaseObject.OBJECT_ID_INCREASE_NAME);
         Long maxBaseObjectId = spSettingsDO.getIncreaseLong();
+
         borrowForm = new BorrowForm(spSession, maxBaseObjectId);
         Assertions.assertEquals(BusinessTypeConstant.BORROW_FORM, borrowForm.getType());
         Assertions.assertNotNull(borrowForm.getName());
@@ -78,6 +92,10 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
         SpSettingsDO spSettingsDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, ISpBaseObject.OBJECT_ID_INCREASE_NAME);
         Long maxBaseObjectId = spSettingsDO.getIncreaseLong();
+
+        List<BorrowFormDO> borrowFormDOList = borrowFormMapper.findById(maxBaseObjectId);
+        Assertions.assertTrue(CollectionUtils.isNotEmpty(borrowFormDOList));
+
         borrowForm = new BorrowForm(spSession, maxBaseObjectId);
         Assertions.assertEquals(BusinessTypeConstant.BORROW_FORM, borrowForm.getType());
         Assertions.assertNotNull(borrowForm.getName());

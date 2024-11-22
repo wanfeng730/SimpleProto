@@ -31,6 +31,10 @@ public class SimpleProtoConfig {
     public static String dataSourceUsername;
     public static String dataSourcePassword;
 
+    public static String esJdbcDriver;
+    public static String esJdbcUrl;
+    public static String esJdbcUseSSL;
+
     public static String redisHost;
     public static String redisPort;
     public static String redisPassword;
@@ -59,6 +63,10 @@ public class SimpleProtoConfig {
         dataSourceUrl = environment.getProperty("simpleproto.dataSourceUrl");
         dataSourceUsername = environment.getProperty("simpleproto.dataSourceUsername");
         dataSourcePassword = environment.getProperty("simpleproto.dataSourcePassword");
+
+        esJdbcDriver = environment.getProperty("simpleproto.esJdbcDriver");
+        esJdbcUrl = environment.getProperty("simpleproto.esJdbcUrl");
+        esJdbcUseSSL = environment.getProperty("simpleproto.esJdbcUseSSL");
 
         redisHost = environment.getProperty("simpleproto.redisHost");
         redisPort = environment.getProperty("simpleproto.redisPort");
