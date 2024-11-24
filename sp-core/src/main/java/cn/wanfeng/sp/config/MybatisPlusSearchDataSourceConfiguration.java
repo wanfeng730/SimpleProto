@@ -23,8 +23,8 @@ import java.util.Properties;
  * @since:
  */
 @Configuration
-@MapperScan(basePackages = "cn.wanfeng.**.mapper.es", sqlSessionFactoryRef = "elasticSqlSessionFactory")
-public class MybatisPlusElasticDataSourceConfiguration {
+@MapperScan(basePackages = "cn.wanfeng.**.mapper.es", sqlSessionFactoryRef = "searchSqlSessionFactory")
+public class MybatisPlusSearchDataSourceConfiguration {
 
     private static final String ELASTIC_MAPPER_LOCATION = "classpath*:mapper/es/*.xml";
 
@@ -44,7 +44,7 @@ public class MybatisPlusElasticDataSourceConfiguration {
         return dataSource;
     }
 
-    @Bean(name = "elasticSqlSessionFactory")
+    @Bean(name = "searchSqlSessionFactory")
     public SqlSessionFactory db1SqlSessionFactory(@Qualifier("searchDataSource") DataSource datasource) throws Exception {
         MybatisSqlSessionFactoryBean factoryBean = new MybatisSqlSessionFactoryBean();
         //configuration配置bean
@@ -75,8 +75,8 @@ public class MybatisPlusElasticDataSourceConfiguration {
         return factoryBean.getObject();
     }
 
-    @Bean("elasticSqlSessionTemplate")
-    public SqlSessionTemplate elasticSqlSessionTemplate(@Qualifier("elasticSqlSessionFactory") SqlSessionFactory sessionFactory) {
+    @Bean("searchSqlSessionTemplate")
+    public SqlSessionTemplate elasticSqlSessionTemplate(@Qualifier("searchSqlSessionFactory") SqlSessionFactory sessionFactory) {
         return new SqlSessionTemplate(sessionFactory);
     }
 

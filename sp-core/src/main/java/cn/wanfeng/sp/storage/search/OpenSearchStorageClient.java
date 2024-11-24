@@ -7,7 +7,9 @@ import cn.wanfeng.sp.elastic.ElasticDateTimePattern;
 import jakarta.annotation.Resource;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.mapping.Property;
+import org.opensearch.client.opensearch.core.DeleteRequest;
 import org.opensearch.client.opensearch.core.IndexRequest;
+import org.opensearch.client.opensearch.core.UpdateRequest;
 import org.opensearch.client.opensearch.indices.PutMappingRequest;
 import org.opensearch.client.util.ObjectBuilder;
 import org.springframework.stereotype.Component;
@@ -33,7 +35,7 @@ public class OpenSearchStorageClient implements SearchStorageClient{
     @Resource
     private OpenSearchClient openSearchClient;
 
-    private static final String DEFAULT_DATE_FORMAT = ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern() + "||" + ElasticDateTimePattern.EPOCH_SECOND.toPattern();
+    private static final String DEFAULT_DATE_FORMAT = ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern();
 
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern());
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern());
@@ -52,18 +54,18 @@ public class OpenSearchStorageClient implements SearchStorageClient{
 
     @Override
     public void updateObject(String tableName, Map<String, Object> objectData) throws Exception {
-        //根据参数类型自动创建mapping
-        autoCreateMappingByObjectData(tableName, objectData);
         //将日期的值更换为格式化字符串，以便es查看
         Map<String, Object> dataMap = convertDateValueToDateTimeMillis(objectData);
 
         String id = String.valueOf(dataMap.get(OBJECT_ID_KEY));
-        // LzhTODO: opensearch重构
+        UpdateRequest<Map, Map> updateRequest = UpdateRequest.of(req -> req.index(tableName).id(id).doc(dataMap));
+        openSearchClient.update(updateRequest, Map.class);
     }
 
     @Override
     public void removeObject(String tableName, Long id) throws  Exception{
-        // LzhTODO: opensearch重构
+        DeleteRequest deleteRequest = DeleteRequest.of(req -> req.index(tableName).id(String.valueOf(id)));
+        openSearchClient.delete(deleteRequest);
     }
 
     /**

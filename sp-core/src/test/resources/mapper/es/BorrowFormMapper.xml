@@ -9,14 +9,21 @@
         id, name, form_no, create_date
     </sql>
 
-    <select id="findById" resultMap="mybatis-plus_BorrowFormDO">
+    <resultMap id="borrowFormResultMap" type="cn.wanfeng.sp.base.BorrowFormDO">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="form_no" property="formNo"/>
+        <result column="create_date" property="createDate"/>
+    </resultMap>
+
+    <select id="findById" resultMap="borrowFormResultMap">
         select
         <include refid="all_field"/>
         from sp_object_table
         where id = #{id}
     </select>
 
-    <select id="findAll" resultMap="mybatis-plus_BorrowFormDO">
+    <select id="findAll" resultMap="borrowFormResultMap">
         select
         <include refid="all_field"/>
         from sp_object_table

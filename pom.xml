@@ -141,7 +141,7 @@
         <dependency>
             <groupId>com.amazon.opendistroforelasticsearch.client</groupId>
             <artifactId>opendistro-sql-jdbc</artifactId>
-            <version>1.9.0.0</version>
+            <version>1.13.0.0</version>
         </dependency>
 
 
