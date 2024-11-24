@@ -5,10 +5,10 @@ import cn.wanfeng.proto.exception.SpException;
 import cn.wanfeng.proto.util.LogUtils;
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
 import cn.wanfeng.sp.base.domain.ISpBaseObject;
-import cn.wanfeng.sp.base.mapper.es.BorrowFormMapper;
+import cn.wanfeng.sp.base.mapper.search.BorrowFormMapper;
 import cn.wanfeng.sp.base.object.SpSettingsDO;
 import cn.wanfeng.sp.common.BusinessTypeConstant;
-import cn.wanfeng.sp.config.SimpleProtoConfig;
+import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.ThreadPoolTemplateUtils;
 import jakarta.annotation.Resource;
@@ -75,7 +75,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
     }
 
     @Test
-    public void test_SpBaseObject_borrowForm() {
+    public void test_SpBaseObject_borrowForm() throws InterruptedException {
         BorrowForm borrowForm = new BorrowForm(spSession, "A002", 222, new Date());
         Assertions.assertNotNull(borrowForm);
         Assertions.assertEquals(borrowForm.getType(), BusinessTypeConstant.BORROW_FORM);
@@ -92,6 +92,8 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
         SpSettingsDO spSettingsDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, ISpBaseObject.OBJECT_ID_INCREASE_NAME);
         Long maxBaseObjectId = spSettingsDO.getIncreaseLong();
+
+        Thread.sleep(1000);
 
         List<BorrowFormDO> borrowFormDOList = borrowFormMapper.findAll();
         Assertions.assertTrue(CollectionUtils.isNotEmpty(borrowFormDOList));

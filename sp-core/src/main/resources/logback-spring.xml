@@ -8,7 +8,7 @@
     <property name="ENCODING" value="UTF-8"/>
 
     <!--自定义颜色配置 此处converterClass引用的是日志颜色类的路径， 此匹配的是第二种控制台色彩输出方式-->
-    <conversionRule conversionWord="logColor" converterClass="cn.wanfeng.sp.config.LogColorConfiguration"/>
+    <conversionRule conversionWord="logColor" converterClass="cn.wanfeng.sp.config.custom.LogColorConfiguration"/>
 
     <!-- 控制台日志 -->
     <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">

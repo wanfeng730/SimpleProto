@@ -1,42 +1,52 @@
-package cn.wanfeng.sp.config;
+package cn.wanfeng.sp.config.mybatisplus;
 
 
-import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
+import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
+import com.amazon.opendistroforelasticsearch.jdbc.ElasticsearchDataSource;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import jakarta.annotation.Resource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.util.Properties;
 
 /**
  * @date: 2024-11-20 23:32
  * @author: luozh.wanfeng
- * @description: Mybatis-plus 数据源动态配置
+ * @description: Mybatis-plus OpenSearch 数据源动态配置
  * @since: 1.0
  */
 @Configuration
-@MapperScan(basePackages = "cn.wanfeng.**.mapper.postgres", sqlSessionFactoryRef = "postgresSqlSessionFactory")
-public class MybatisPlusPostgresDataSourceConfiguration {
+@MapperScan(basePackages = "cn.wanfeng.**.mapper.search", sqlSessionFactoryRef = "searchSqlSessionFactory")
+public class MybatisPlusSearchDataSourceConfiguration {
 
-    private static final String POSTGRES_MAPPER_LOCATION = "classpath*:mapper/postgres/*.xml";
+    private static final String SEARCH_MAPPER_LOCATION = "classpath*:mapper/search/*.xml";
 
-    @Bean("postgresDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.postgres")
-    public DataSource getDataSource() {
-        return DruidDataSourceBuilder.create().build();
+    @Resource
+    private SimpleProtoConfig simpleProtoConfig;
+
+    @Bean("searchDataSource")
+    public DataSource getDataSource() throws Exception {
+        Properties properties = new Properties();
+        properties.setProperty("useSSL", SimpleProtoConfig.opensearchJdbcUseSSL);
+        properties.setProperty("user", SimpleProtoConfig.opensearchUsername);
+        properties.setProperty("password", SimpleProtoConfig.opensearchPassword);
+
+        ElasticsearchDataSource dataSource = new ElasticsearchDataSource();
+        dataSource.setUrl(SimpleProtoConfig.opensearchJdbcUrl);
+        dataSource.setProperties(properties);
+        return dataSource;
     }
 
-    @Bean(name = "postgresSqlSessionFactory")
-    public SqlSessionFactory db1SqlSessionFactory(@Qualifier("postgresDataSource") DataSource datasource) throws Exception {
+    @Bean(name = "searchSqlSessionFactory")
+    public SqlSessionFactory db1SqlSessionFactory(@Qualifier("searchDataSource") DataSource datasource) throws Exception {
         MybatisSqlSessionFactoryBean factoryBean = new MybatisSqlSessionFactoryBean();
         //configuration配置bean
         //MybatisConfiguration configuration = new MybatisConfiguration();
@@ -61,22 +71,14 @@ public class MybatisPlusPostgresDataSourceConfiguration {
 
         factoryBean.setDataSource(datasource);
         // 设置mybatis的xml所在位置
-        factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(POSTGRES_MAPPER_LOCATION));
+        factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(SEARCH_MAPPER_LOCATION));
         factoryBean.setPlugins(mybatisPlusInterceptor);
         return factoryBean.getObject();
     }
 
-    @Bean("postgresSqlSessionTemplate")
-    public SqlSessionTemplate db1SqlSessionTemplate(@Qualifier("postgresSqlSessionFactory") SqlSessionFactory sessionFactory) {
+    @Bean("searchSqlSessionTemplate")
+    public SqlSessionTemplate elasticSqlSessionTemplate(@Qualifier("searchSqlSessionFactory") SqlSessionFactory sessionFactory) {
         return new SqlSessionTemplate(sessionFactory);
-    }
-
-    /**
-     * 事务管理只需要使用数据库的事务管理器即可
-     */
-    @Bean
-    public PlatformTransactionManager transactionManager(@Qualifier("postgresDataSource") DataSource dataSource) {
-        return new DataSourceTransactionManager(dataSource);
     }
 
 }

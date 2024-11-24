@@ -1,5 +1,6 @@
-package cn.wanfeng.sp.config;
+package cn.wanfeng.sp.config.opensearch;
 
+import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import jakarta.annotation.Resource;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;

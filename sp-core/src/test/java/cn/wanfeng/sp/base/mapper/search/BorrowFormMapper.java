@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.base.mapper.es;
+package cn.wanfeng.sp.base.mapper.search;
 
 import cn.wanfeng.sp.base.BorrowFormDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -10,8 +10,6 @@ import java.util.List;
 /**
  * @date: 2024-11-22 00:26
  * @author: luozh.wanfeng
- * @description:
- * @since:
  */
 @Mapper
 public interface BorrowFormMapper extends BaseMapper<BorrowFormDO> {

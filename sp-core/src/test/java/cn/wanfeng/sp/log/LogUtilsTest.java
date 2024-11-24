@@ -2,7 +2,7 @@ package cn.wanfeng.sp.log;
 
 import cn.wanfeng.proto.util.LogUtils;
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
-import cn.wanfeng.sp.config.SimpleProtoConfig;
+import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Assertions;

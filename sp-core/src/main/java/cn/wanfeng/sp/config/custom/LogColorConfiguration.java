@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.config;
+package cn.wanfeng.sp.config.custom;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;

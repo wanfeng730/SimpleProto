@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.config;
+package cn.wanfeng.sp.config.custom;
 
 
 import jakarta.annotation.PostConstruct;
@@ -24,10 +24,6 @@ public class SimpleProtoConfig {
     public static String dataTable;
     public static String settingsTable;
 
-    public static String esUris;
-    public static String esUsername;
-    public static String esPassword;
-
     public static String opensearchHostScheme;
     public static String opensearchHost;
     public static Integer opensearchPort;
@@ -39,9 +35,9 @@ public class SimpleProtoConfig {
     public static String dataSourceUsername;
     public static String dataSourcePassword;
 
-    public static String esJdbcDriver;
-    public static String esJdbcUrl;
-    public static String esJdbcUseSSL;
+    public static String opensearchJdbcDriver;
+    public static String opensearchJdbcUrl;
+    public static String opensearchJdbcUseSSL;
 
     public static String redisHost;
     public static String redisPort;
@@ -63,10 +59,6 @@ public class SimpleProtoConfig {
         dataTable = environment.getProperty("simpleproto.dataTable");
         settingsTable = environment.getProperty("simpleproto.settingsTable");
 
-        esUris = environment.getProperty("simpleproto.esUris");
-        esUsername = environment.getProperty("simpleproto.esUsername");
-        esPassword = environment.getProperty("simpleproto.esPassword");
-
         opensearchHostScheme = environment.getProperty("simpleproto.opensearchHostScheme");
         opensearchHost = environment.getProperty("simpleproto.opensearchHost");
         opensearchPort = Integer.valueOf(Objects.requireNonNull(environment.getProperty("simpleproto.opensearchPort")));
@@ -78,9 +70,9 @@ public class SimpleProtoConfig {
         dataSourceUsername = environment.getProperty("simpleproto.dataSourceUsername");
         dataSourcePassword = environment.getProperty("simpleproto.dataSourcePassword");
 
-        esJdbcDriver = environment.getProperty("simpleproto.esJdbcDriver");
-        esJdbcUrl = environment.getProperty("simpleproto.esJdbcUrl");
-        esJdbcUseSSL = environment.getProperty("simpleproto.esJdbcUseSSL");
+        opensearchJdbcDriver = environment.getProperty("simpleproto.opensearchJdbcDriver");
+        opensearchJdbcUrl = environment.getProperty("simpleproto.opensearchJdbcUrl");
+        opensearchJdbcUseSSL = environment.getProperty("simpleproto.opensearchJdbcUseSSL");
 
         redisHost = environment.getProperty("simpleproto.redisHost");
         redisPort = environment.getProperty("simpleproto.redisPort");

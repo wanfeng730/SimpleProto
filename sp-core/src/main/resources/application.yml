@@ -5,21 +5,16 @@ simpleproto:
   dataSourceUrl: jdbc:postgresql://42.192.108.249:5432/${spring.application.name}?currentSchema=${spring.profiles.active}&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
   dataSourceUsername: postgres
   dataSourcePassword: Wanfeng730
-  # ElasticSearch配置
-  #   8.x版本根据官方文档部署的需要使用https、可在elasticsearch.yml关闭ssl验证
-  esUris: http://42.192.108.249:9200
-  esUsername: admin
-  esPassword: Wanfeng730
-
+  # OpenSearch 连接配置
   opensearchHostScheme: http
   opensearchHost: 42.192.108.249
   opensearchPort: 9200
   opensearchUsername: admin
   opensearchPassword: Wanfeng730
-  # ElasticSearch jdbc配置
-  esJdbcDriver: com.amazon.opendistroforelasticsearch.jdbc.Driver
-  esJdbcUrl: jdbc:elasticsearch://http://42.192.108.249:9200
-  esJdbcUseSSL: false
+  # OpenSearch jdbc配置
+  opensearchJdbcDriver: com.amazon.opendistroforelasticsearch.jdbc.Driver
+  opensearchJdbcUrl: jdbc:elasticsearch://http://42.192.108.249:9200
+  opensearchJdbcUseSSL: false
   # Redis连接配置
   redisHost: 42.192.108.249
   redisPort: 6379
@@ -45,12 +40,12 @@ spring:
       url: ${simpleproto.dataSourceUrl}
       username: ${simpleproto.dataSourceUsername}
       password: ${simpleproto.dataSourcePassword}
-    elastic:
-      driver-class-name: ${simpleproto.esJdbcDriver}
-      url: ${simpleproto.esJdbcUrl}
-      username: ${simpleproto.esUsername}
-      password: ${simpleproto.esPassword}
-      useSSL: ${simpleproto.esJdbcUseSSL}
+    search:
+      driver-class-name: ${simpleproto.opensearchJdbcDriver}
+      url: ${simpleproto.opensearchJdbcUrl}
+      username: ${simpleproto.opensearchUsername}
+      password: ${simpleproto.opensearchPassword}
+      useSSL: ${simpleproto.opensearchJdbcUseSSL}
   data:
     redis:
       host: ${simpleproto.redisHost}

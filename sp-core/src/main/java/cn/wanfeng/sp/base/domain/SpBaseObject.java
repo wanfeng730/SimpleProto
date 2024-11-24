@@ -10,7 +10,7 @@ import cn.wanfeng.sp.anno.ProtoField;
 import cn.wanfeng.sp.anno.Type;
 import cn.wanfeng.sp.base.object.SpBaseObjectDO;
 import cn.wanfeng.sp.base.object.SpSettingsDO;
-import cn.wanfeng.sp.config.SimpleProtoConfig;
+import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.SpObjectConvertUtils;
 import cn.wanfeng.sp.util.SpReflectUtils;

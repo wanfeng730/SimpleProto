@@ -4,7 +4,7 @@ package cn.wanfeng.sp.session;
 import cn.wanfeng.proto.util.LogUtils;
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
 import cn.wanfeng.sp.base.object.SpSettingsDO;
-import cn.wanfeng.sp.config.SimpleProtoConfig;
+import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

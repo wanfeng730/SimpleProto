@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.config;
+package cn.wanfeng.sp.config.redis;
 
 
 import cn.wanfeng.sp.config.custom.SimpleProtoRedisSerializer;

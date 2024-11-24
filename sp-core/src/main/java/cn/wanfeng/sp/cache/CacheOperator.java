@@ -4,7 +4,7 @@ package cn.wanfeng.sp.cache;
 import cn.wanfeng.proto.exception.RedisLockNotGetException;
 import cn.wanfeng.proto.exception.SpException;
 import cn.wanfeng.proto.util.LogUtils;
-import cn.wanfeng.sp.config.SimpleProtoConfig;
+import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;

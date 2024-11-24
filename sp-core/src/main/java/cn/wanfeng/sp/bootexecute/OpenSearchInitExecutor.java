@@ -2,7 +2,7 @@ package cn.wanfeng.sp.bootexecute;
 
 
 import cn.wanfeng.proto.util.LogUtils;
-import cn.wanfeng.sp.config.SimpleProtoConfig;
+import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import org.opensearch.client.opensearch.OpenSearchClient;

@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.config;
+package cn.wanfeng.sp.config.mybatisplus;
 
 
 import cn.wanfeng.sp.interceptor.MybatisPlusTableNameInterceptor;
