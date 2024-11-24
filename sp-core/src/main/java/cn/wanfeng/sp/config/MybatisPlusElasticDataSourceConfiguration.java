@@ -1,7 +1,6 @@
 package cn.wanfeng.sp.config;
 
 
-import cn.wanfeng.sp.util.SSLUtils;
 import com.amazon.opendistroforelasticsearch.jdbc.ElasticsearchDataSource;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
@@ -32,10 +31,8 @@ public class MybatisPlusElasticDataSourceConfiguration {
     @Resource
     private SimpleProtoConfig simpleProtoConfig;
 
-    @Bean("elasticDataSource")
+    @Bean("searchDataSource")
     public DataSource getDataSource() throws Exception {
-        SSLUtils.ignoreSsl();
-
         Properties properties = new Properties();
         properties.setProperty("useSSL", SimpleProtoConfig.esJdbcUseSSL);
         properties.setProperty("user", SimpleProtoConfig.esUsername);
@@ -48,7 +45,7 @@ public class MybatisPlusElasticDataSourceConfiguration {
     }
 
     @Bean(name = "elasticSqlSessionFactory")
-    public SqlSessionFactory db1SqlSessionFactory(@Qualifier("elasticDataSource") DataSource datasource) throws Exception {
+    public SqlSessionFactory db1SqlSessionFactory(@Qualifier("searchDataSource") DataSource datasource) throws Exception {
         MybatisSqlSessionFactoryBean factoryBean = new MybatisSqlSessionFactoryBean();
         //configuration配置bean
         //MybatisConfiguration configuration = new MybatisConfiguration();

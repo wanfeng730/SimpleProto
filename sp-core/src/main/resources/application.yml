@@ -2,20 +2,26 @@
 simpleproto:
   # 数据库连接配置(PostgreSQL、）
   dataSourceDriver: org.postgresql.Driver
-  dataSourceUrl: jdbc:postgresql://localhost:5432/${spring.application.name}?currentSchema=${spring.profiles.active}&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
+  dataSourceUrl: jdbc:postgresql://42.192.108.249:5432/${spring.application.name}?currentSchema=${spring.profiles.active}&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
   dataSourceUsername: postgres
   dataSourcePassword: Wanfeng730
   # ElasticSearch配置
-  #   8.x版本根据官方文档部署的需要使用https
-  esUris: https://localhost:9200
-  esUsername: elastic
+  #   8.x版本根据官方文档部署的需要使用https、可在elasticsearch.yml关闭ssl验证
+  esUris: http://42.192.108.249:9200
+  esUsername: admin
   esPassword: Wanfeng730
+
+  opensearchHostScheme: http
+  opensearchHost: 42.192.108.249
+  opensearchPort: 9200
+  opensearchUsername: admin
+  opensearchPassword: Wanfeng730
   # ElasticSearch jdbc配置
   esJdbcDriver: com.amazon.opendistroforelasticsearch.jdbc.Driver
-  esJdbcUrl: jdbc:elasticsearch://https://localhost:9200
-  esJdbcUseSSL: true
+  esJdbcUrl: jdbc:elasticsearch://http://42.192.108.249:9200
+  esJdbcUseSSL: false
   # Redis连接配置
-  redisHost: localhost
+  redisHost: 42.192.108.249
   redisPort: 6379
   redisPassword: Wanfeng730
   redisDatabase: 0

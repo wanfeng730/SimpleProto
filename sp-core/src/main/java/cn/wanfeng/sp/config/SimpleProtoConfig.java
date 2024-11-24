@@ -7,6 +7,8 @@ import lombok.Data;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 
+import java.util.Objects;
+
 /**
  * @date: 2024-10-27 13:40
  * @author: luozh.wanfeng
@@ -25,6 +27,12 @@ public class SimpleProtoConfig {
     public static String esUris;
     public static String esUsername;
     public static String esPassword;
+
+    public static String opensearchHostScheme;
+    public static String opensearchHost;
+    public static Integer opensearchPort;
+    public static String opensearchUsername;
+    public static String opensearchPassword;
 
     public static String dataSourceDriver;
     public static String dataSourceUrl;
@@ -58,6 +66,12 @@ public class SimpleProtoConfig {
         esUris = environment.getProperty("simpleproto.esUris");
         esUsername = environment.getProperty("simpleproto.esUsername");
         esPassword = environment.getProperty("simpleproto.esPassword");
+
+        opensearchHostScheme = environment.getProperty("simpleproto.opensearchHostScheme");
+        opensearchHost = environment.getProperty("simpleproto.opensearchHost");
+        opensearchPort = Integer.valueOf(Objects.requireNonNull(environment.getProperty("simpleproto.opensearchPort")));
+        opensearchUsername = environment.getProperty("simpleproto.opensearchUsername");
+        opensearchPassword = environment.getProperty("simpleproto.opensearchPassword");
 
         dataSourceDriver = environment.getProperty("simpleproto.dataSourceDriver");
         dataSourceUrl = environment.getProperty("simpleproto.dataSourceUrl");

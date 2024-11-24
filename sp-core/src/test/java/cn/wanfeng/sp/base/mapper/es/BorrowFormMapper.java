@@ -19,4 +19,6 @@ public interface BorrowFormMapper extends BaseMapper<BorrowFormDO> {
 
     List<BorrowFormDO> findById(@Param("id") Long id);
 
+    List<BorrowFormDO> findAll();
+
 }

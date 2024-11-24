@@ -93,7 +93,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
         SpSettingsDO spSettingsDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, ISpBaseObject.OBJECT_ID_INCREASE_NAME);
         Long maxBaseObjectId = spSettingsDO.getIncreaseLong();
 
-        List<BorrowFormDO> borrowFormDOList = borrowFormMapper.findById(maxBaseObjectId);
+        List<BorrowFormDO> borrowFormDOList = borrowFormMapper.findAll();
         Assertions.assertTrue(CollectionUtils.isNotEmpty(borrowFormDOList));
 
         borrowForm = new BorrowForm(spSession, maxBaseObjectId);

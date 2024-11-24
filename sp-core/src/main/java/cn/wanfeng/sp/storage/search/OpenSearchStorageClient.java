@@ -1,20 +1,11 @@
 package cn.wanfeng.sp.storage.search;
 
 
-import cn.wanfeng.proto.constants.SpExceptionMessage;
-import cn.wanfeng.proto.exception.SpException;
 import cn.wanfeng.sp.elastic.ElasticDateTimePattern;
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.mapping.Property;
-import co.elastic.clients.elasticsearch.core.DeleteRequest;
-import co.elastic.clients.elasticsearch.core.IndexRequest;
-import co.elastic.clients.elasticsearch.core.UpdateRequest;
-import co.elastic.clients.elasticsearch.indices.PutMappingRequest;
-import co.elastic.clients.util.ObjectBuilder;
 import jakarta.annotation.Resource;
+import org.opensearch.client.opensearch.OpenSearchClient;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,10 +21,10 @@ import java.util.Map;
  * @since: 1.0
  */
 @Component
-public class ElasticSearchStorageClient implements SearchStorageClient{
+public class OpenSearchStorageClient implements SearchStorageClient{
 
     @Resource
-    private ElasticsearchClient client;
+    private OpenSearchClient openSearchClient;
 
     private static final String DEFAULT_DATE_FORMAT = ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern() + "||" + ElasticDateTimePattern.EPOCH_SECOND.toPattern();
 
@@ -48,8 +39,7 @@ public class ElasticSearchStorageClient implements SearchStorageClient{
         Map<String, Object> dataMap = convertDateValueToDateTimeMillis(objectData);
 
         String id = String.valueOf(dataMap.get(OBJECT_ID_KEY));
-        IndexRequest<Map<String, Object>> indexRequest = IndexRequest.of(b -> b.index(tableName).id(id).document(dataMap));
-        client.index(indexRequest);
+        // LzhTODO: opensearch重构
     }
 
     @Override
@@ -60,36 +50,34 @@ public class ElasticSearchStorageClient implements SearchStorageClient{
         Map<String, Object> dataMap = convertDateValueToDateTimeMillis(objectData);
 
         String id = String.valueOf(dataMap.get(OBJECT_ID_KEY));
-        UpdateRequest<Map<String, Object>, Map<String, Object>> updateRequest = UpdateRequest.of(req -> req.index(tableName).id(id).doc(dataMap));
-        client.update(updateRequest, Map.class);
+        // LzhTODO: opensearch重构
     }
 
     @Override
     public void removeObject(String tableName, Long id) throws  Exception{
-        DeleteRequest deleteRequest = DeleteRequest.of(req -> req.index(tableName).id(String.valueOf(id)));
-        client.delete(deleteRequest);
+        // LzhTODO: opensearch重构
     }
 
     /**
      * 根据属性名和值自动创建mapping
      */
     private void autoCreateMappingByObjectData(String tableName, Map<String, Object> objectData){
-        try {
-            PutMappingRequest request = PutMappingRequest.of(req -> {
-                //指定索引
-                req.index(tableName);
-                //根据数据类型创建合适的mapping
-                for (Map.Entry<String, Object> data : objectData.entrySet()) {
-                    String fieldName = data.getKey();
-                    Object value = data.getValue();
-                    req.properties(fieldName, builder -> handlePropertyBuilderByValue(builder, value));
-                }
-                return req;
-            });
-            client.indices().putMapping(request);
-        } catch (IOException e) {
-            throw new SpException(SpExceptionMessage.AUTO_CREATE_MAPPING_ERROR, e);
-        }
+        // try {
+        //     PutMappingRequest request = PutMappingRequest.of(req -> {
+        //         //指定索引
+        //         req.index(tableName);
+        //         //根据数据类型创建合适的mapping
+        //         for (Map.Entry<String, Object> data : objectData.entrySet()) {
+        //             String fieldName = data.getKey();
+        //             Object value = data.getValue();
+        //             req.properties(fieldName, builder -> handlePropertyBuilderByValue(builder, value));
+        //         }
+        //         return req;
+        //     });
+        //     client.indices().putMapping(request);
+        // } catch (IOException e) {
+        //     throw new SpException(SpExceptionMessage.AUTO_CREATE_MAPPING_ERROR, e);
+        // }
     }
 
     /**
@@ -97,22 +85,9 @@ public class ElasticSearchStorageClient implements SearchStorageClient{
      * @param builder mapping
      * @param value 值
      */
-    private static ObjectBuilder<Property> handlePropertyBuilderByValue(Property.Builder builder, Object value){
-        Class<?> valueClass = value.getClass();
-        if(valueClass == String.class){
-            return builder.text(t -> t);
-        }
-        if(valueClass == Integer.class || valueClass == Long.class){
-            return builder.long_(t -> t);
-        }
-        if(valueClass == Boolean.class){
-            return builder.boolean_(t -> t);
-        }
-        if(valueClass == Date.class || valueClass == LocalDate.class || valueClass == LocalDateTime.class){
-            return builder.date(t -> t.format(DEFAULT_DATE_FORMAT));
-        }
-        return null;
-    }
+    // private static ObjectBuilder<Property> handlePropertyBuilderByValue(Property.Builder builder, Object value){
+    //     // LzhTODO: opensearch重构
+    // }
 
     /**
      * 将日期数据转换为yyyy-MM-dd HH:mm:ss.SSS进行es创建，以便Kibana显示对应的日期格式
