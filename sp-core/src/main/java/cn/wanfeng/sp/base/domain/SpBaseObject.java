@@ -238,10 +238,10 @@ public class SpBaseObject implements ISpBaseObject {
         //放入Container
         ProtoRecord idRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(ID_INDEX, this.id);
         recordContainer.putRecord(idRecord);
-        ProtoRecord nameRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(NAME_INDEX, this.name);
-        recordContainer.putRecord(nameRecord);
         ProtoRecord typeRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(TYPE_INDEX, this.type);
         recordContainer.putRecord(typeRecord);
+        ProtoRecord nameRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(NAME_INDEX, this.name);
+        recordContainer.putRecord(nameRecord);
         ProtoRecord createDateRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(CREATE_DATE_INDEX, this.createDate);
         recordContainer.putRecord(createDateRecord);
         ProtoRecord modifyDateRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(MODIFY_DATE_INDEX, this.modifyDate);
@@ -251,8 +251,8 @@ public class SpBaseObject implements ISpBaseObject {
 
         //放入fieldNameValueMap
         propertyValueContainer.put(ID_FIELD, this.id);
-        propertyValueContainer.put(NAME_FIELD, this.name);
         propertyValueContainer.put(TYPE_FIELD, this.type);
+        propertyValueContainer.put(NAME_FIELD, this.name);
         propertyValueContainer.put(CREATE_DATE_FIELD, this.createDate);
         propertyValueContainer.put(MODIFY_DATE_FIELD, this.modifyDate);
         propertyValueContainer.put(IS_DELETE_FIELD, this.isDelete);

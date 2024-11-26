@@ -295,9 +295,10 @@ public class ProtoRecordFactory {
         builder.value(value);
         if(value == null){
             ProtoType protoType = CLASS_PROTO_TYPE_MAP.get(valueClass);
+            int typeByteLen = valueClass == String.class ? 2 : 1;
             builder.type(protoType);
             builder.valueLen(0);
-            builder.len(INDEX_NO_BYTE_COUNT + 1);
+            builder.len(INDEX_NO_BYTE_COUNT + typeByteLen);
             return builder.build();
         }
         if (value instanceof String) {
