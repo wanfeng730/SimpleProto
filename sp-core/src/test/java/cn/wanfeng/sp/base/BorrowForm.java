@@ -7,6 +7,7 @@ import cn.wanfeng.sp.base.domain.SpBaseObject;
 import cn.wanfeng.sp.common.BusinessTypeConstant;
 import cn.wanfeng.sp.session.SpSession;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
@@ -18,6 +19,7 @@ import java.util.Date;
  */
 @Type(BusinessTypeConstant.BORROW_FORM)
 @Getter
+@Setter
 public class BorrowForm extends SpBaseObject {
 
     @ProtoField(index = 1, name = "form_no")

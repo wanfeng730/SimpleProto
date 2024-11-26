@@ -40,6 +40,8 @@ public class ProtoRecordFactory {
      */
     private static final Map<Byte, Method> DESERIAL_VALUE_METHOD_MAP = DeserializeMethodContainer.toFlagMethodMap();
     private static final Map<Byte, Method> SERIAL_VALUE_METHOD_MAP = SerializeMethodContainer.toFlagMethodMap();
+    private static final Map<Class<?>, ProtoType> CLASS_PROTO_TYPE_MAP = ProtoType.toClassEnumMap();
+    private static final Map<Class<?>, Integer> CLASS_TYPE_LEN_MAP = ProtoType.toClassLengthMap();
 
     /**
      * convert all byte array to ProtoRecord list
@@ -47,7 +49,6 @@ public class ProtoRecordFactory {
      * @param data byte array
      * @return ProtoRecord list
      */
-    // LzhTODO: text类型测试
     public static ProtoRecordContainer readBytesToRecordList(byte[] data) {
         ProtoRecordContainer container = ProtoRecordContainer.emptyContainer();
         boolean success = true;
@@ -270,17 +271,41 @@ public class ProtoRecordFactory {
         return data;
     }
 
-    public static ProtoRecord buildProtoRecordByIndexAndValue(int index, Object value) {
+    /**
+     * value不为null调用该方法构建ProtoRecord
+     * @param index indexNo
+     * @param value 值
+     * @return ProtoRecord
+     */
+    public static ProtoRecord buildProtoRecordByIndexAndValue(int index, Object value){
+        return buildProtoRecordByIndexAndValue(index, value.getClass(), value);
+    }
+
+    /**
+     * value为null调用该方法构建ProtoRecord，手动提供Class
+     * @param index indexNo
+     * @param valueClass 值的类型
+     * @param value 值
+     * @return ProtoRecord
+     */
+    public static ProtoRecord buildProtoRecordByIndexAndValue(int index, Class<?> valueClass, Object value) {
+        assertClassMappingProtoType(valueClass);
         ProtoRecordBuilder builder = ProtoRecord.newBuilder();
         builder.indexNo(index);
         builder.value(value);
+        if(value == null){
+            ProtoType protoType = CLASS_PROTO_TYPE_MAP.get(valueClass);
+            builder.type(protoType);
+            builder.valueLen(0);
+            builder.len(INDEX_NO_BYTE_COUNT + 1);
+            return builder.build();
+        }
         if (value instanceof String) {
             builder.type(ProtoType.STRING);
             int valueLen = ((String) value).getBytes(ProtoConstants.UTF8_CHARSET).length;
             if (valueLen > ProtoTypeConstants.TEXT_MAX_LENGTH) {
                 throw new SpException(SpExceptionMessage.stringValueLengthTooLong(valueLen));
             } else if (valueLen > ProtoTypeConstants.STRING_MAX_LENGTH) {
-                // LzhTODO: 升级为text类型
                 builder.valueLen(valueLen);
                 builder.len(valueLen + INDEX_NO_BYTE_COUNT + TEXT_TYPE_BYTE_COUNT);
             } else {
@@ -297,4 +322,10 @@ public class ProtoRecordFactory {
         return builder.build();
     }
 
+
+    private static void assertClassMappingProtoType(Class<?> clazz){
+        if(!CLASS_PROTO_TYPE_MAP.containsKey(clazz)){
+            throw new SpException("类型[%s]不支持SimpleProto序列化", clazz.getName());
+        }
+    }
 }

@@ -43,8 +43,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
     @Test
     public void test_SpBaseObject_createBorrowForm() {
 
-
-        BorrowForm borrowForm = new BorrowForm(spSession, "A002", 222, new Date());
+        BorrowForm borrowForm = new BorrowForm(spSession, "A002", null, new Date());
         Assertions.assertNotNull(borrowForm);
         Assertions.assertEquals(borrowForm.getType(), BusinessTypeConstant.BORROW_FORM);
         Assertions.assertNotNull(borrowForm.getName());

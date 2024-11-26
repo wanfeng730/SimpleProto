@@ -20,7 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -115,8 +115,8 @@ public class OpenSearchStorageClient implements SearchStorageClient{
     /**
      * 将日期数据转换为yyyy-MM-dd HH:mm:ss.SSS进行es创建，以便Kibana显示对应的日期格式
      */
-    private static Map<String, Object> convertDateValueToDateTimeMillis(Map<String, Object> objectData){
-        Map<String, Object> convertData = new HashMap<>();
+    private static LinkedHashMap<String, Object> convertDateValueToDateTimeMillis(Map<String, Object> objectData){
+        LinkedHashMap<String, Object> convertData = new LinkedHashMap<>();
         for (String key : objectData.keySet()) {
             Object value = objectData.get(key);
             Class<?> valueClass = value.getClass();

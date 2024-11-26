@@ -7,7 +7,7 @@ import java.util.Map;
  * @author: luozh
  * @since: 1.0
  */
-public final class TypeMapContainer {
+public class TypeMapContainer {
 
     public static final Map<Byte, Class<?>> FLAG_CLASS_MAP = ProtoType.toClassMap();
     public static final Map<Byte, ProtoType> FLAG_ENUM_MAP = ProtoType.toEnumMap();

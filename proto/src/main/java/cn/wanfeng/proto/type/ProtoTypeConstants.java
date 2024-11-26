@@ -5,7 +5,7 @@ package cn.wanfeng.proto.type;
  * @author: luozh
  * @since: 1.0
  */
-public final class ProtoTypeConstants {
+public class ProtoTypeConstants {
     public static final byte SMALL_INT_FLAG = 1;
     public static final byte INT_FLAG = 2;
     public static final byte LONG_FLAG = 3;

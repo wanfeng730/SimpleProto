@@ -18,10 +18,7 @@ import com.github.f4b6a3.ulid.UlidCreator;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -48,9 +45,9 @@ public class SpBaseObject implements ISpBaseObject {
 
     protected ProtoRecordContainer recordContainer;
 
-    protected ConcurrentHashMap<String, Integer> propertyIndexNoContainer;
+    protected HashMap<String, Integer> propertyIndexNoContainer;
 
-    protected ConcurrentHashMap<String, Object> propertyValueContainer;
+    protected LinkedHashMap<String, Object> propertyValueContainer;
 
     /**
      * 该对象是否为新建的对象（该id未在数据库中存在）
@@ -188,8 +185,8 @@ public class SpBaseObject implements ISpBaseObject {
      */
     private void initInternalContainer() {
         this.recordContainer = ProtoRecordContainer.emptyContainer();
-        this.propertyIndexNoContainer = new ConcurrentHashMap<>(8);
-        this.propertyValueContainer = new ConcurrentHashMap<>(8);
+        this.propertyIndexNoContainer = new HashMap<>(8);
+        this.propertyValueContainer = new LinkedHashMap<>(8);
     }
 
     /**
@@ -271,11 +268,14 @@ public class SpBaseObject implements ISpBaseObject {
             String fieldName = protoField.name();
             try {
                 Object value = field.get(this);
+                Class<?> valueClass = field.getType();
 
-                ProtoRecord record = ProtoRecordFactory.buildProtoRecordByIndexAndValue(indexNo, value);
+                ProtoRecord record = ProtoRecordFactory.buildProtoRecordByIndexAndValue(indexNo, valueClass, value);
                 recordContainer.putRecord(record);
 
-                propertyValueContainer.put(fieldName, value);
+                if(Objects.nonNull(value)){
+                    propertyValueContainer.put(fieldName, value);
+                }
             } catch (IllegalAccessException e) {
                 LogUtils.error(SpExceptionMessage.setPropertyNoAccessible(indexNo, fieldName));
                 throw new SpException(e);
