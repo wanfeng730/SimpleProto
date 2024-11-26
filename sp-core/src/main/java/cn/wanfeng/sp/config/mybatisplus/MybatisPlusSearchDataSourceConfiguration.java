@@ -46,7 +46,7 @@ public class MybatisPlusSearchDataSourceConfiguration {
     }
 
     @Bean(name = "searchSqlSessionFactory")
-    public SqlSessionFactory db1SqlSessionFactory(@Qualifier("searchDataSource") DataSource datasource) throws Exception {
+    public SqlSessionFactory searchSqlSessionFactory(@Qualifier("searchDataSource") DataSource datasource) throws Exception {
         MybatisSqlSessionFactoryBean factoryBean = new MybatisSqlSessionFactoryBean();
         //configuration配置bean
         //MybatisConfiguration configuration = new MybatisConfiguration();
@@ -77,7 +77,7 @@ public class MybatisPlusSearchDataSourceConfiguration {
     }
 
     @Bean("searchSqlSessionTemplate")
-    public SqlSessionTemplate elasticSqlSessionTemplate(@Qualifier("searchSqlSessionFactory") SqlSessionFactory sessionFactory) {
+    public SqlSessionTemplate searchSqlSessionTemplate(@Qualifier("searchSqlSessionFactory") SqlSessionFactory sessionFactory) {
         return new SqlSessionTemplate(sessionFactory);
     }
 

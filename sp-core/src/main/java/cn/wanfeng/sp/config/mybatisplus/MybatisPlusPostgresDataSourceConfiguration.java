@@ -36,7 +36,7 @@ public class MybatisPlusPostgresDataSourceConfiguration {
     }
 
     @Bean(name = "postgresSqlSessionFactory")
-    public SqlSessionFactory db1SqlSessionFactory(@Qualifier("postgresDataSource") DataSource datasource) throws Exception {
+    public SqlSessionFactory postgresSqlSessionFactory(@Qualifier("postgresDataSource") DataSource datasource) throws Exception {
         MybatisSqlSessionFactoryBean factoryBean = new MybatisSqlSessionFactoryBean();
         //configuration配置bean
         //MybatisConfiguration configuration = new MybatisConfiguration();
@@ -67,7 +67,7 @@ public class MybatisPlusPostgresDataSourceConfiguration {
     }
 
     @Bean("postgresSqlSessionTemplate")
-    public SqlSessionTemplate db1SqlSessionTemplate(@Qualifier("postgresSqlSessionFactory") SqlSessionFactory sessionFactory) {
+    public SqlSessionTemplate postgresSqlSessionTemplate(@Qualifier("postgresSqlSessionFactory") SqlSessionFactory sessionFactory) {
         return new SqlSessionTemplate(sessionFactory);
     }
 

@@ -1,6 +1,6 @@
 # 修改此配置后，需同步更新SimpleProtoConfig的初始化方法
 simpleproto:
-  # 数据库连接配置(PostgreSQL、）
+  # 数据库连接配置(PostgreSQL）
   dataSourceDriver: org.postgresql.Driver
   dataSourceUrl: jdbc:postgresql://42.192.108.249:5432/${spring.application.name}?currentSchema=${spring.profiles.active}&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
   dataSourceUsername: postgres
