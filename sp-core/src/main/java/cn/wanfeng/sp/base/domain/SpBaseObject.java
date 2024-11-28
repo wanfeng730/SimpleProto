@@ -142,11 +142,8 @@ public class SpBaseObject implements ISpBaseObject {
 
     protected void readRecordMapToAnnotationProperty() {
         ConcurrentHashMap<Integer, ProtoRecord> indexNoRecordMap = recordContainer.getIndexNoRecordMap();
-        Field[] declaredFields = this.getClass().getDeclaredFields();
-        for (Field declaredField : declaredFields) {
-            if (!declaredField.isAnnotationPresent(ProtoField.class)) {
-                continue;
-            }
+        Field[] protoField = SpReflectUtils.getProtoFieldAnnotationFields(this.getClass());
+        for (Field declaredField : protoField) {
             int indexNo = declaredField.getAnnotation(ProtoField.class).index();
             String fieldName = declaredField.getAnnotation(ProtoField.class).name();
             Class<?> fieldClass = declaredField.getType();
