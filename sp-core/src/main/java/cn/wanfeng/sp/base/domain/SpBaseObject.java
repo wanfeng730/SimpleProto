@@ -18,6 +18,7 @@ import com.github.f4b6a3.ulid.UlidCreator;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -148,17 +149,23 @@ public class SpBaseObject implements ISpBaseObject {
             }
             int indexNo = declaredField.getAnnotation(ProtoField.class).index();
             String fieldName = declaredField.getAnnotation(ProtoField.class).name();
+            Class<?> fieldClass = declaredField.getType();
             if (!indexNoRecordMap.containsKey(indexNo)) {
                 continue;
             }
+            Object value;
+            declaredField.setAccessible(true);
             try {
-                Object value = indexNoRecordMap.get(indexNo).getValue();
-                declaredField.setAccessible(true);
+                value = indexNoRecordMap.get(indexNo).getValue();
+                if(fieldClass.isEnum()){
+                    //获取ProtoEnumConstructor方法,转换为枚举类实例
+                    Method constructorMethod = SpReflectUtils.getProtoEnumConstructorMethod(fieldClass);
+                    value = Objects.isNull(constructorMethod) ? null : constructorMethod.invoke(null, value);
+                }
                 declaredField.set(this, value);
-                // TEST_LOG
                 LogUtils.debug("Set DeclaredField Property: {}={}", declaredField.getName(), declaredField.get(this));
             } catch (Exception e) {
-                LogUtils.error(SpExceptionMessage.setPropertyNoAccessible(indexNo, fieldName));
+                LogUtils.error("Set Property[index={}, name={}] Unknown Exception", indexNo, fieldName, e);
                 throw new SpException(e);
             }
         }
@@ -268,16 +275,22 @@ public class SpBaseObject implements ISpBaseObject {
             String fieldName = protoField.name();
             try {
                 Object value = field.get(this);
-                Class<?> valueClass = field.getType();
-
-                ProtoRecord record = ProtoRecordFactory.buildProtoRecordByIndexAndValue(indexNo, valueClass, value);
+                Class<?> fieldClass = field.getType();
+                if(fieldClass.isEnum()){
+                    Method enumValueMethod = SpReflectUtils.getProtoEnumValueMethod(fieldClass);
+                    assert enumValueMethod != null;
+                    fieldClass = enumValueMethod.getReturnType();
+                    value = enumValueMethod.invoke(value);
+                }
+                //放入recordContainer
+                ProtoRecord record = ProtoRecordFactory.buildProtoRecordByIndexAndValue(indexNo, fieldClass, value);
                 recordContainer.putRecord(record);
-
+                //放入propertyValueContainer
                 if(Objects.nonNull(value)){
                     propertyValueContainer.put(fieldName, value);
                 }
-            } catch (IllegalAccessException e) {
-                LogUtils.error(SpExceptionMessage.setPropertyNoAccessible(indexNo, fieldName));
+            } catch (Exception e) {
+                LogUtils.error("Get Property[index={}, name={}] Unknown Exception", indexNo, fieldName, e);
                 throw new SpException(e);
             }
         }

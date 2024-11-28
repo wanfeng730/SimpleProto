@@ -16,6 +16,7 @@ import cn.wanfeng.proto.value.ProtoValueConstants;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @date: 2024-02-15 22:22
@@ -289,7 +290,7 @@ public class ProtoRecordFactory {
      * @return ProtoRecord
      */
     public static ProtoRecord buildProtoRecordByIndexAndValue(int index, Class<?> valueClass, Object value) {
-        assertClassMappingProtoType(valueClass);
+        assertClassMappingProtoType(valueClass, value);
         ProtoRecordBuilder builder = ProtoRecord.newBuilder();
         builder.indexNo(index);
         builder.value(value);
@@ -324,9 +325,17 @@ public class ProtoRecordFactory {
     }
 
 
-    private static void assertClassMappingProtoType(Class<?> clazz){
-        if(!CLASS_PROTO_TYPE_MAP.containsKey(clazz)){
-            throw new SpException("类型[%s]不支持SimpleProto序列化", clazz.getName());
+    /**
+     * 确认类型能被proto序列化
+     * 1. 若value有值，取value.getClass()
+     * 2. 若value为空，取反射获取的clazz
+     * @param clazz 字段声明的类
+     * @param value 值
+     */
+    private static void assertClassMappingProtoType(Class<?> clazz, Object value){
+        Class<?> assertClass = Objects.nonNull(value) ? value.getClass() : clazz;
+        if(!CLASS_PROTO_TYPE_MAP.containsKey(assertClass)){
+            throw new SpException("类型[%s]不支持SimpleProto序列化", assertClass.getName());
         }
     }
 }

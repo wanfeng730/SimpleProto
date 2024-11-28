@@ -16,8 +16,6 @@ public class SpExceptionMessage {
 
     private static final String PROTO_FIELD_NAME_DUPLICATE = "@ProtoField[index=%d, name=%s] Verify Failed! Because Duplicate with name, please confirm index and name all not duplicate！";
 
-    private static final String SET_PROPERTY_NO_ACCESSIBLE = "Set Property[index=%d, name=%s] has no Accessible";
-
     private static final String OBJECT_ID_NOT_FOUND = "Not Found Object Id[%d] in Database";
 
 
@@ -31,10 +29,6 @@ public class SpExceptionMessage {
 
     public static String protoFieldNameDuplicate(int addIndex, String addName) {
         return String.format(PROTO_FIELD_NAME_DUPLICATE, addIndex, addName);
-    }
-
-    public static String setPropertyNoAccessible(int index, String name) {
-        return String.format(SET_PROPERTY_NO_ACCESSIBLE, index, name);
     }
 
     public static String objectIdNotFound(Long id) {
