@@ -11,7 +11,7 @@ import ch.qos.logback.core.pattern.color.ForegroundCompositeConverterBase;
  * @description: 日志自定义颜色配置
  * @since: 1.0
  */
-public class LogColorConfiguration extends ForegroundCompositeConverterBase<ILoggingEvent> {
+public class SimpleLogColorConfiguration extends ForegroundCompositeConverterBase<ILoggingEvent> {
 
     @Override
     protected String getForegroundColorCode(ILoggingEvent loggingEvent) {

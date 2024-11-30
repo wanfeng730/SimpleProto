@@ -11,6 +11,7 @@ import cn.wanfeng.sp.common.BusinessTypeConstant;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.ThreadPoolTemplateUtils;
+import com.alibaba.fastjson.JSON;
 import jakarta.annotation.Resource;
 import lombok.Synchronized;
 import org.apache.commons.collections4.CollectionUtils;
@@ -124,6 +125,12 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
         Assertions.assertThrows(SpException.class, () -> new BorrowForm(spSession, null));
 
         LogUtils.info("SpBaseObject功能测试完成");
+    }
+
+    @Test
+    public void testBorrowFormMapper(){
+        List<BorrowFormDO> borrowFormDOList = borrowFormMapper.findById(8L);
+        LogUtils.info("查询借阅单测试完成, borrowFormDOList={}", JSON.toJSONString(borrowFormDOList));
     }
 
 

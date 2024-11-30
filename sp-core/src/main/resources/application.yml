@@ -88,6 +88,6 @@ logging:
     path: ./logs
   level:
     root: INFO
-    # 开启sql查询语句debug打印（仅支持mapper.search包下的Mapper查询语句）
-    cn.wanfeng.sp.config.mybatisplus.SimpleMybatisPlusSqlLogImpl: debug
+    # 开启sql查询语句debug打印，打印指定包下的mybatis sql
+    cn.wanfeng.sp.base.mapper.search: debug
 

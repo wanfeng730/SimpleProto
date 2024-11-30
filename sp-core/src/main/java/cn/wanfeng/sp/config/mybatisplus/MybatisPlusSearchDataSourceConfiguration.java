@@ -53,8 +53,6 @@ public class MybatisPlusSearchDataSourceConfiguration {
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setMapUnderscoreToCamelCase(true);
         configuration.setCacheEnabled(false);
-        // 配置打印sql语句s
-        configuration.setLogImpl(SimpleMybatisPlusSqlLogImpl.class);
         // 添加自定义SQL注入
         factoryBean.setConfiguration(configuration);
 

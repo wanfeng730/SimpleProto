@@ -8,12 +8,12 @@
     <property name="ENCODING" value="UTF-8"/>
 
     <!--自定义颜色配置 此处converterClass引用的是日志颜色类的路径， 此匹配的是第二种控制台色彩输出方式-->
-    <conversionRule conversionWord="logColor" converterClass="cn.wanfeng.sp.config.custom.LogColorConfiguration"/>
+    <conversionRule conversionWord="simpleLogColor" converterClass="cn.wanfeng.sp.config.custom.SimpleLogColorConfiguration"/>
 
     <!-- 控制台日志 -->
     <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %green([%thread]) %logColor(%-5level) %boldMagenta(%logger): %msg%n
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %green([%thread]) %simpleLogColor(%-5level) %boldMagenta(%logger): %msg%n
             </pattern>
             <charset>${ENCODING}</charset>
         </encoder>
@@ -43,7 +43,7 @@
     <!-- Mybatis Sql 打印调试日志 -->
     <appender name="SimpleMybatisPlusSqlAppender" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %green([%thread]) %logColor(%-5level) %magenta(SimpleMybatisSqlLogger): %msg%n
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %green([%thread]) %simpleLogColor(%-5level) %magenta(SimpleMybatisSqlLogger): %msg%n
             </pattern>
             <charset>${ENCODING}</charset>
         </encoder>
