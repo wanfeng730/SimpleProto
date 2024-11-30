@@ -93,8 +93,8 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
         Long maxBaseObjectId = spSettingsDO.getIncreaseLong();
 
         Thread.sleep(1000);
-
-        List<BorrowFormDO> borrowFormDOList = borrowFormMapper.findAll();
+        // 测试search存储查询
+        List<BorrowFormDO> borrowFormDOList = borrowFormMapper.findById(maxBaseObjectId);
         Assertions.assertTrue(CollectionUtils.isNotEmpty(borrowFormDOList));
 
         borrowForm = new BorrowForm(spSession, maxBaseObjectId);

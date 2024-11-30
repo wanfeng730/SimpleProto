@@ -40,6 +40,15 @@
         </rollingPolicy>
     </appender>
 
+    <!-- Mybatis Sql 打印调试日志 -->
+    <appender name="SimpleMybatisPlusSqlAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %green([%thread]) %logColor(%-5level) %magenta(SimpleMybatisSqlLogger): %msg%n
+            </pattern>
+            <charset>${ENCODING}</charset>
+        </encoder>
+    </appender>
+
     <!-- 根日志 -->
     <root level="INFO">
         <appender-ref ref="spLogFileAppender"/>
@@ -52,6 +61,10 @@
 
     <logger name="spLogger" level="debug">
         <appender-ref ref="spLogFileAppender"/>
+    </logger>
+
+    <logger name="SimpleMybatisPlusSqlLogger" level="debug">
+        <appender-ref ref="SimpleMybatisPlusSqlAppender"/>
     </logger>
 
 </configuration>

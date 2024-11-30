@@ -3,6 +3,7 @@ package cn.wanfeng.sp.config.mybatisplus;
 
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import com.amazon.opendistroforelasticsearch.jdbc.ElasticsearchDataSource;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import jakarta.annotation.Resource;
@@ -48,14 +49,14 @@ public class MybatisPlusSearchDataSourceConfiguration {
     @Bean(name = "searchSqlSessionFactory")
     public SqlSessionFactory searchSqlSessionFactory(@Qualifier("searchDataSource") DataSource datasource) throws Exception {
         MybatisSqlSessionFactoryBean factoryBean = new MybatisSqlSessionFactoryBean();
-        //configuration配置bean
-        //MybatisConfiguration configuration = new MybatisConfiguration();
-        //configuration.setMapUnderscoreToCamelCase(true);
-        //configuration.setCacheEnabled(false);
+        // configuration配置bean
+        MybatisConfiguration configuration = new MybatisConfiguration();
+        configuration.setMapUnderscoreToCamelCase(true);
+        configuration.setCacheEnabled(false);
         // 配置打印sql语句s
-        //configuration.setLogImpl(StdOutImpl.class);
+        configuration.setLogImpl(SimpleMybatisPlusSqlLogImpl.class);
         // 添加自定义SQL注入
-        //bean.setConfiguration(configuration);
+        factoryBean.setConfiguration(configuration);
 
         //拦截器
         MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
@@ -65,7 +66,7 @@ public class MybatisPlusSearchDataSourceConfiguration {
         //dynamicTableNameInnerInterceptor.setTableNameHandler(new MonthTableNameHandler("t_table_name"));
         //以拦截器的方式处理表名称
         //可以传递多个拦截器，即：可以传递多个表名处理器TableNameHandler
-        // mybatisPlusInterceptor.addInnerInterceptor(new MybatisPlusTableNameInterceptor());
+        mybatisPlusInterceptor.addInnerInterceptor(new DataTableNameInnerInterceptor());
         //分页插件
         // mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
 
