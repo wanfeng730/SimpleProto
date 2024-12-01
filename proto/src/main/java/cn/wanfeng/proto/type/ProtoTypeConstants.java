@@ -12,8 +12,10 @@ public class ProtoTypeConstants {
     public static final byte DOUBLE_FLAG = 4;
     public static final byte BOOLEAN_FLAG = 5;
     public static final byte DATE_FLAG = 6;
+    // 1000 0000
     public static final byte STRING_FLAG = -128;
-    public static final byte TEXT_FLAG = -64;
+    // 0100 0000
+    public static final byte TEXT_FLAG = 64;
 
     public static final int SMALL_INT_LENGTH = Byte.BYTES;
     public static final int INT_LENGTH = Integer.BYTES;

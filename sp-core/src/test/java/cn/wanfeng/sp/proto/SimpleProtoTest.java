@@ -99,9 +99,8 @@ public class SimpleProtoTest {
 
     @Test
     public void test_print() {
-        byte b = 31;
+        byte b = 64;
         System.out.println(byteToBineryString(b));
-
     }
 
     private static ProtoRecordContainer buildTestContainer() {
