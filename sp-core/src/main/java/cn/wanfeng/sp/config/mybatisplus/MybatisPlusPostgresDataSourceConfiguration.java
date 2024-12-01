@@ -1,6 +1,7 @@
 package cn.wanfeng.sp.config.mybatisplus;
 
 
+import cn.wanfeng.proto.util.LogUtils;
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -36,6 +38,7 @@ public class MybatisPlusPostgresDataSourceConfiguration {
     }
 
     @Bean(name = "postgresSqlSessionFactory")
+    @Primary
     public SqlSessionFactory postgresSqlSessionFactory(@Qualifier("postgresDataSource") DataSource datasource) throws Exception {
         MybatisSqlSessionFactoryBean factoryBean = new MybatisSqlSessionFactoryBean();
         //configuration配置bean
@@ -63,10 +66,13 @@ public class MybatisPlusPostgresDataSourceConfiguration {
         // 设置mybatis的xml所在位置
         factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(POSTGRES_MAPPER_LOCATION));
         factoryBean.setPlugins(mybatisPlusInterceptor);
-        return factoryBean.getObject();
+        SqlSessionFactory sqlSessionFactory = factoryBean.getObject();
+        LogUtils.info("Postgres数据源SqlSessionFactory初始化完成");
+        return sqlSessionFactory;
     }
 
     @Bean("postgresSqlSessionTemplate")
+    @Primary
     public SqlSessionTemplate postgresSqlSessionTemplate(@Qualifier("postgresSqlSessionFactory") SqlSessionFactory sessionFactory) {
         return new SqlSessionTemplate(sessionFactory);
     }

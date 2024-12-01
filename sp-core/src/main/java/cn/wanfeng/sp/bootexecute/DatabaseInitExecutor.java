@@ -13,8 +13,8 @@ import java.util.List;
 /**
  * @date: 2024-11-09 16:27
  * @author: luozh.wanfeng
- * @description:
- * @since:
+ * @description: 数据库启动初始化
+ * @since: 1.0
  */
 @Component
 public class DatabaseInitExecutor {
@@ -37,7 +37,6 @@ public class DatabaseInitExecutor {
             spSession.databaseStorage().initSettingsTableData(SimpleProtoConfig.settingsTable);
             LogUtils.info("初始化创建设置表[{}]", SimpleProtoConfig.settingsTable);
         }
-
-
+        LogUtils.info("数据库存储表初始化完成");
     }
 }

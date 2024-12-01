@@ -32,5 +32,6 @@ public class OpenSearchInitExecutor {
             openSearchClient.indices().create(c -> c.index(SimpleProtoConfig.dataTable));
             LogUtils.info("初始化创建OpenSearch索引[{}]", SimpleProtoConfig.dataTable);
         }
+        LogUtils.info("OpenSearch索引初始化完成");
     }
 }

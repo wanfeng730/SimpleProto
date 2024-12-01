@@ -1,6 +1,7 @@
 package cn.wanfeng.sp.config.mybatisplus;
 
 
+import cn.wanfeng.proto.util.LogUtils;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import com.amazon.opendistroforelasticsearch.jdbc.ElasticsearchDataSource;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -72,7 +73,9 @@ public class MybatisPlusSearchDataSourceConfiguration {
         // 设置mybatis的xml所在位置
         factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(SEARCH_MAPPER_LOCATION));
         factoryBean.setPlugins(mybatisPlusInterceptor);
-        return factoryBean.getObject();
+        SqlSessionFactory sqlSessionFactory = factoryBean.getObject();
+        LogUtils.info("OpenSearch数据源SqlSessionFactory初始化完成");
+        return sqlSessionFactory;
     }
 
     @Bean("searchSqlSessionTemplate")
