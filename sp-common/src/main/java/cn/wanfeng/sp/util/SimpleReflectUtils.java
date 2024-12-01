@@ -10,8 +10,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @date: 2024-10-20 20:50
@@ -48,6 +50,20 @@ public class SimpleReflectUtils {
             throw new SimpleReflectException("EnumClass[%s] must has Unique @ProtoEnumValue Method to store SpBaseObject", clazz.getName());
         }
         return methodList.getFirst();
+    }
+
+    /**
+     * 获取类及其所有父类的属性
+     */
+    public static List<Field> getFieldsWithSuperClass(Class<?> clazz){
+        List<Field> fieldList = new ArrayList<>(Arrays.stream(clazz.getDeclaredFields()).toList());
+        Class<?> superclass = clazz.getSuperclass();
+        if(Objects.isNull(superclass)){
+            return fieldList;
+        }else {
+            fieldList.addAll(getFieldsWithSuperClass(superclass));
+        }
+        return fieldList;
     }
 
     /**
