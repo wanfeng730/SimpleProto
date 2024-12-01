@@ -2,7 +2,6 @@ package cn.wanfeng.sp.util;
 
 import cn.wanfeng.sp.exception.SimpleConvertObjectException;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -74,17 +73,18 @@ public class ObjectConvertUtils {
      * @return 转换后的列表
      * @param <TargetType> 目标类型
      */
-    public static <TargetType> List<TargetType> convertList(List<Object> objectList, Class<TargetType> targetClass){
+    public static <TargetType> List<TargetType> convertList(List<?> objectList, Class<TargetType> targetClass){
         if(Objects.isNull(objectList)){
             return null;
         }
-        List<Object> validObjectList = objectList.stream().filter(Objects::nonNull).toList();
+        List<?> validObjectList = objectList.stream().filter(Objects::nonNull).toList();
         if(CollectionUtils.isEmpty(validObjectList)){
             LogUtils.warn("objectList is Empty after Filter Null Elements，convertList() will Return Empty List");
             return new ArrayList<>();
         }
         resetSourceFieldNameMap();
-        addFieldsToSourceFieldNameMap(List.of(validObjectList.getFirst().getClass().getFields()));
+        List<Field> sourceFieldList = SimpleReflectUtils.getFieldsWithSuperClass(validObjectList.getFirst().getClass());
+        addFieldsToSourceFieldNameMap(sourceFieldList);
 
         List<TargetType> targetObjectList = new ArrayList<>();
         for (Object sourceObject : objectList) {
@@ -104,8 +104,8 @@ public class ObjectConvertUtils {
             }
             TargetType targetObject = constructor.newInstance();
 
-            Field[] targetFields = targetClass.getFields();
-            if(ArrayUtils.isEmpty(targetFields)){
+            List<Field> targetFields = SimpleReflectUtils.getFieldsWithSuperClass(targetClass);
+            if(CollectionUtils.isEmpty(targetFields)){
                 return targetObject;
             }
             for (Field targetField : targetFields) {
@@ -117,8 +117,10 @@ public class ObjectConvertUtils {
                 if(sourceField.getType() != targetField.getType()){
                     continue;
                 }
-                Object value = sourceField.get(object);
+                sourceField.setAccessible(true);
                 targetField.setAccessible(true);
+
+                Object value = sourceField.get(object);
                 targetField.set(targetObject, value);
                 LogUtils.debug("属性[Class={}, name={}]已转换到结果中", targetField.getType().getName(), targetField.getName());
             }
