@@ -1,7 +1,7 @@
 package cn.wanfeng.sp.config.mybatisplus;
 
 
-import cn.wanfeng.proto.util.LogUtils;
+import cn.wanfeng.sp.util.LogUtils;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import com.amazon.opendistroforelasticsearch.jdbc.ElasticsearchDataSource;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;

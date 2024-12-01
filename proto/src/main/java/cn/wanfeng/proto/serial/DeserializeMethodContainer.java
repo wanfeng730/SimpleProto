@@ -1,6 +1,6 @@
 package cn.wanfeng.proto.serial;
 
-import cn.wanfeng.proto.exception.SpException;
+import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.proto.type.ProtoTypeConstants;
 
 import java.lang.reflect.Method;

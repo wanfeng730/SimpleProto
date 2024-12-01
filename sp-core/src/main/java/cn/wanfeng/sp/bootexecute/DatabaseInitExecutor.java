@@ -1,7 +1,7 @@
 package cn.wanfeng.sp.bootexecute;
 
 
-import cn.wanfeng.proto.util.LogUtils;
+import cn.wanfeng.sp.util.LogUtils;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
 import jakarta.annotation.PostConstruct;

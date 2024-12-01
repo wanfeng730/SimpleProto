@@ -1,7 +1,5 @@
 package cn.wanfeng.sp.util;
 
-import cn.wanfeng.proto.util.LogUtils;
-
 import java.io.*;
 import java.util.Objects;
 

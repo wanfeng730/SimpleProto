@@ -6,14 +6,6 @@
         <artifactId>simpleproto</artifactId>
         <version>1.0</version>
     </parent>
+    <artifactId>sp-common</artifactId>
 
-    <artifactId>proto</artifactId>
-
-    <dependencies>
-        <dependency>
-            <groupId>cn.wanfeng</groupId>
-            <artifactId>sp-common</artifactId>
-            <version>1.0</version>
-        </dependency>
-    </dependencies>
 </project>

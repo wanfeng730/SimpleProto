@@ -2,7 +2,7 @@ package cn.wanfeng.sp.storage.search;
 
 
 import cn.wanfeng.proto.constants.SpExceptionMessage;
-import cn.wanfeng.proto.exception.SpException;
+import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.elastic.ElasticDateTimePattern;
 import jakarta.annotation.Resource;
 import org.opensearch.client.opensearch.OpenSearchClient;

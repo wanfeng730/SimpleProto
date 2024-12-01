@@ -2,7 +2,7 @@ package cn.wanfeng.proto.record;
 
 import cn.wanfeng.proto.constant.ProtoConstants;
 import cn.wanfeng.proto.constants.SpExceptionMessage;
-import cn.wanfeng.proto.exception.SpException;
+import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.proto.serial.DeserializeMethodContainer;
 import cn.wanfeng.proto.serial.DeserializeUtils;
 import cn.wanfeng.proto.serial.SerializeMethodContainer;
@@ -11,7 +11,7 @@ import cn.wanfeng.proto.type.ProtoType;
 import cn.wanfeng.proto.type.ProtoTypeConstants;
 import cn.wanfeng.proto.type.ProtoTypeUtils;
 import cn.wanfeng.proto.type.TypeMapContainer;
-import cn.wanfeng.proto.util.ByteArrayUtils;
+import cn.wanfeng.sp.util.ByteArrayUtils;
 import cn.wanfeng.proto.value.ProtoValueConstants;
 
 import java.lang.reflect.Method;

@@ -1,7 +1,7 @@
 package cn.wanfeng.sp.redis;
 
 
-import cn.wanfeng.proto.util.LogUtils;
+import cn.wanfeng.sp.util.LogUtils;
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
 import cn.wanfeng.sp.cache.CacheOperator;
 import jakarta.annotation.Resource;

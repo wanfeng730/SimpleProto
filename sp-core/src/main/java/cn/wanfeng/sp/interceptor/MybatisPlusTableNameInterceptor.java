@@ -1,7 +1,7 @@
 package cn.wanfeng.sp.interceptor;
 
 
-import cn.wanfeng.proto.util.LogUtils;
+import cn.wanfeng.sp.util.LogUtils;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import jakarta.annotation.Resource;
 import org.apache.ibatis.executor.statement.StatementHandler;

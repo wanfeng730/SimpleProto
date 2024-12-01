@@ -2,7 +2,6 @@ package cn.wanfeng.sp.util;
 
 
 import cn.hutool.core.io.FileUtil;
-import cn.wanfeng.proto.util.LogUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;

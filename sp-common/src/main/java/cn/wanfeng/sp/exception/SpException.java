@@ -1,10 +1,8 @@
-package cn.wanfeng.proto.exception;
+package cn.wanfeng.sp.exception;
 
 /**
  * @date: 2024-06-24 10:33
  * @author: luozh
- * @description:
- * @since:
  */
 public class SpException extends RuntimeException {
 

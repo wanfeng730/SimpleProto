@@ -1,6 +1,6 @@
 package cn.wanfeng.sp;
 
-import cn.wanfeng.proto.util.LogUtils;
+import cn.wanfeng.sp.util.LogUtils;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

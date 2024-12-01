@@ -17,8 +17,12 @@
     <name>simpleproto</name>
 
     <modules>
+        <!-- 序列化 -->
         <module>proto</module>
+        <!-- 基础业务对象实现，spring启动配置数据源等-->
         <module>sp-core</module>
+        <!-- 工具类 -->
+        <module>sp-common</module>
     </modules>
 
     <properties>

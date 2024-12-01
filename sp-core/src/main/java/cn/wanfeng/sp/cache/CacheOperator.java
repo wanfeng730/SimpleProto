@@ -2,8 +2,8 @@ package cn.wanfeng.sp.cache;
 
 
 import cn.wanfeng.proto.exception.RedisLockNotGetException;
-import cn.wanfeng.proto.exception.SpException;
-import cn.wanfeng.proto.util.LogUtils;
+import cn.wanfeng.sp.exception.SpException;
+import cn.wanfeng.sp.util.LogUtils;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;

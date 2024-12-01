@@ -12,9 +12,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public class ThreadPoolTemplateUtils {
 
-    private static final int DEFAULT_KEEP_ALIVE_SECONDS = 60;
-
-    public static ThreadPoolTaskExecutor createExecutor(int poolSize){
+    public static ThreadPoolTaskExecutor createDefaultThreadPool(int poolSize){
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(poolSize);
         executor.setMaxPoolSize(poolSize);
@@ -26,6 +24,13 @@ public class ThreadPoolTemplateUtils {
         executor.setThreadNamePrefix("SpBaseObjectTest-Async-Task-");
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         return executor;
+    }
+
+    public static ThreadPoolTaskExecutor initThreadPoolByPrefixName(String prefixName){
+        ThreadPoolTaskExecutor taskExecutor = createDefaultThreadPool(4);
+        taskExecutor.setThreadNamePrefix(prefixName);
+        taskExecutor.initialize();
+        return taskExecutor;
     }
 
 }

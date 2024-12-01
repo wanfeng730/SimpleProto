@@ -1,11 +1,11 @@
 package cn.wanfeng.sp.base.domain;
 
 import cn.wanfeng.proto.constants.SpExceptionMessage;
-import cn.wanfeng.proto.exception.SpException;
+import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.proto.record.ProtoRecord;
 import cn.wanfeng.proto.record.ProtoRecordContainer;
 import cn.wanfeng.proto.record.ProtoRecordFactory;
-import cn.wanfeng.proto.util.LogUtils;
+import cn.wanfeng.sp.util.LogUtils;
 import cn.wanfeng.sp.anno.ProtoField;
 import cn.wanfeng.sp.anno.Type;
 import cn.wanfeng.sp.base.object.SpBaseObjectDO;
@@ -13,7 +13,7 @@ import cn.wanfeng.sp.base.object.SpSettingsDO;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.SpObjectConvertUtils;
-import cn.wanfeng.sp.util.SpReflectUtils;
+import cn.wanfeng.sp.util.SimpleReflectUtils;
 import com.github.f4b6a3.ulid.UlidCreator;
 import org.apache.commons.lang3.StringUtils;
 
@@ -104,7 +104,7 @@ public class SpBaseObject implements ISpBaseObject {
     private void assertProtoFieldUniqueAndBuildIndexNoMap(){
         Set<String> addFieldNameSet = new HashSet<>();
         Set<Integer> addIndexNoSet = new HashSet<>();
-        Field[] fields = SpReflectUtils.getProtoFieldAnnotationFields(this.getClass());
+        Field[] fields = SimpleReflectUtils.getProtoFieldAnnotationFields(this.getClass());
         for (Field field : fields) {
             ProtoField protoField = field.getAnnotation(ProtoField.class);
             int indexNo = protoField.index();
@@ -142,7 +142,7 @@ public class SpBaseObject implements ISpBaseObject {
 
     protected void readRecordMapToAnnotationProperty() {
         ConcurrentHashMap<Integer, ProtoRecord> indexNoRecordMap = recordContainer.getIndexNoRecordMap();
-        Field[] protoField = SpReflectUtils.getProtoFieldAnnotationFields(this.getClass());
+        Field[] protoField = SimpleReflectUtils.getProtoFieldAnnotationFields(this.getClass());
         for (Field declaredField : protoField) {
             int indexNo = declaredField.getAnnotation(ProtoField.class).index();
             String fieldName = declaredField.getAnnotation(ProtoField.class).name();
@@ -156,7 +156,7 @@ public class SpBaseObject implements ISpBaseObject {
                 value = indexNoRecordMap.get(indexNo).getValue();
                 if(fieldClass.isEnum()){
                     //获取ProtoEnumConstructor方法,转换为枚举类实例
-                    Method constructorMethod = SpReflectUtils.getProtoEnumConstructorMethod(fieldClass);
+                    Method constructorMethod = SimpleReflectUtils.getProtoEnumConstructorMethod(fieldClass);
                     value = Objects.isNull(constructorMethod) ? null : constructorMethod.invoke(null, value);
                 }
                 declaredField.set(this, value);
@@ -263,7 +263,7 @@ public class SpBaseObject implements ISpBaseObject {
     }
 
     private void putDeclaredPropertyToContainerAndValueMap(){
-        Field[] fields = SpReflectUtils.getProtoFieldAnnotationFields(this.getClass());
+        Field[] fields = SimpleReflectUtils.getProtoFieldAnnotationFields(this.getClass());
 
         for (Field field : fields) {
             field.setAccessible(true);
@@ -274,7 +274,7 @@ public class SpBaseObject implements ISpBaseObject {
                 Object value = field.get(this);
                 Class<?> fieldClass = field.getType();
                 if(fieldClass.isEnum()){
-                    Method enumValueMethod = SpReflectUtils.getProtoEnumValueMethod(fieldClass);
+                    Method enumValueMethod = SimpleReflectUtils.getProtoEnumValueMethod(fieldClass);
                     assert enumValueMethod != null;
                     fieldClass = enumValueMethod.getReturnType();
                     value = enumValueMethod.invoke(value);

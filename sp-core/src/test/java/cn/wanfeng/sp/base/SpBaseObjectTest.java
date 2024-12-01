@@ -1,8 +1,8 @@
 package cn.wanfeng.sp.base;
 
 import cn.hutool.core.util.RandomUtil;
-import cn.wanfeng.proto.exception.SpException;
-import cn.wanfeng.proto.util.LogUtils;
+import cn.wanfeng.sp.exception.SpException;
+import cn.wanfeng.sp.util.LogUtils;
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
 import cn.wanfeng.sp.base.domain.ISpBaseObject;
 import cn.wanfeng.sp.base.mapper.search.BorrowFormMapper;
@@ -148,7 +148,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
         //由于测试用例的主线程，必须在程序末尾阻塞等待异步方法执行完，否则主线程销毁后ThreadPool也不会执行
         CountDownLatch countDownLatch = new CountDownLatch(100);
 
-        ThreadPoolTaskExecutor executor = ThreadPoolTemplateUtils.createExecutor(100);
+        ThreadPoolTaskExecutor executor = ThreadPoolTemplateUtils.createDefaultThreadPool(100);
         executor.initialize();
         long step0 = System.currentTimeMillis();
         for (int i = 0; i < 100; i++) {
