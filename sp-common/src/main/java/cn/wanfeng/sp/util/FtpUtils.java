@@ -42,7 +42,7 @@ public class FtpUtils {
 
             int reply = ftpClient.getReplyCode();
             if(!FTPReply.isPositiveCompletion(reply)){
-                LogUtils.error("无法连接至FTP服务器[]", host, port);
+                LogUtil.error("无法连接至FTP服务器[]", host, port);
                 ftpClient.disconnect();
                 return null;
             }
@@ -50,7 +50,7 @@ public class FtpUtils {
             // 登入服务器
             boolean login = ftpClient.login(username, password);
             if(!login){
-                LogUtils.error("FTP登录失败，用户名或密码错误, username={}, password={}", username, password);
+                LogUtil.error("FTP登录失败，用户名或密码错误, username={}, password={}", username, password);
                 ftpClient.logout();
                 ftpClient.disconnect();
                 return null;
@@ -63,10 +63,10 @@ public class FtpUtils {
             // 动模式: enterLocalActiveMode(),被动模式: enterLocalPassiveMode(),一般选择被动模式
             ftpClient.enterLocalPassiveMode();
         } catch (Exception e) {
-            LogUtils.error("获取ftp连接失败", e);
+            LogUtil.error("获取ftp连接失败", e);
             throw new RuntimeException(e);
         }
-        LogUtils.debug("FTP服务器[ftp://{}:{}]登录成功", host, port);
+        LogUtil.debug("FTP服务器[ftp://{}:{}]登录成功", host, port);
         return ftpClient;
     }
 
@@ -79,11 +79,11 @@ public class FtpUtils {
             return;
         }
         try {
-            LogUtils.debug("断开ftp连接， host:{}, port:{}", ftpClient.getPassiveHost(), ftpClient.getPassivePort());
+            LogUtil.debug("断开ftp连接， host:{}, port:{}", ftpClient.getPassiveHost(), ftpClient.getPassivePort());
             ftpClient.logout();
             ftpClient.disconnect();
         } catch (Exception e){
-            LogUtils.error("ftp连接断开异常，请检查");
+            LogUtil.error("ftp连接断开异常，请检查");
             throw new RuntimeException(e);
         }
 
@@ -102,7 +102,7 @@ public class FtpUtils {
         try {
             ftpFiles = ftpClient.listFiles(remoteFolderPath);
         } catch (Exception e) {
-            LogUtils.error("获取ftp目录下的文件列表失败", e);
+            LogUtil.error("获取ftp目录下的文件列表失败", e);
             throw new RuntimeException(e);
         }
         return new ArrayList<>(Arrays.asList(ftpFiles));
@@ -136,13 +136,13 @@ public class FtpUtils {
             //从ftp获取流
             InputStream inputStream = ftpClient.retrieveFileStream(remotePath);
             if (inputStream == null) {
-                LogUtils.error("{}在ftp服务器中不存在，请检查", remoteFilePath);
+                LogUtil.error("{}在ftp服务器中不存在，请检查", remoteFilePath);
                 return null;
             }
             //新建本地下载文件
             downloadFile = new File(targetFilePath);
             if(downloadFile.exists()){
-                LogUtils.info("文件{}已存在，将进行覆盖...", targetFilePath);
+                LogUtil.info("文件{}已存在，将进行覆盖...", targetFilePath);
                 FileUtil.del(downloadFile);
             }
             FileUtil.newFile(targetFilePath);
@@ -154,9 +154,9 @@ public class FtpUtils {
             // 关闭流之后必须执行，否则下一个文件导致流为空
             boolean complete = ftpClient.completePendingCommand();
             if(complete){
-                LogUtils.info("文件{}下载完成", remotePath);
+                LogUtil.info("文件{}下载完成", remotePath);
             }else{
-                LogUtils.error("文件{}下载失败", remotePath);
+                LogUtil.error("文件{}下载失败", remotePath);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

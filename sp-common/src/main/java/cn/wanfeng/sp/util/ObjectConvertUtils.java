@@ -58,7 +58,7 @@ public class ObjectConvertUtils {
 
                 Object value = sourceField.get(object);
                 targetField.set(targetObject, value);
-                LogUtils.debug("SourceField[Class={}, name={}, value={}] has Converted into ResultObject", sourceField.getType().getName(), sourceField.getName(), value);
+                LogUtil.debug("SourceField[Class={}, name={}, value={}] has Converted into ResultObject", sourceField.getType().getName(), sourceField.getName(), value);
             }
             return targetObject;
         } catch (Exception e) {
@@ -79,7 +79,7 @@ public class ObjectConvertUtils {
         }
         List<?> validObjectList = objectList.stream().filter(Objects::nonNull).toList();
         if(CollectionUtils.isEmpty(validObjectList)){
-            LogUtils.warn("objectList is Empty after Filter Null Elements，convertList() will Return Empty List");
+            LogUtil.warn("objectList is Empty after Filter Null Elements，convertList() will Return Empty List");
             return new ArrayList<>();
         }
         resetSourceFieldNameMap();
@@ -122,7 +122,7 @@ public class ObjectConvertUtils {
 
                 Object value = sourceField.get(object);
                 targetField.set(targetObject, value);
-                LogUtils.debug("属性[Class={}, name={}]已转换到结果中", targetField.getType().getName(), targetField.getName());
+                LogUtil.debug("属性[Class={}, name={}]已转换到结果中", targetField.getType().getName(), targetField.getName());
             }
             return targetObject;
         } catch (Exception e) {

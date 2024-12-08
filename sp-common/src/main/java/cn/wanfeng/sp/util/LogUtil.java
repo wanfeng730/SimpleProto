@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since: 1.0
  */
 
-public class LogUtils {
+public class LogUtil {
 
     private static final Map<String, Logger> LOGGER_CACHE = new ConcurrentHashMap<>(128);
 

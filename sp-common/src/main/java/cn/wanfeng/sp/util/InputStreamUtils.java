@@ -22,7 +22,7 @@ public class InputStreamUtils {
         try {
             inputStream.close();
         } catch (IOException e) {
-            LogUtils.error("InputStream.close 失败");
+            LogUtil.error("InputStream.close 失败");
             throw new RuntimeException(e);
         }
     }
@@ -44,12 +44,12 @@ public class InputStreamUtils {
             }
 
             byte[] fileBytes = byteArrayOutputStream.toByteArray();
-            LogUtils.debug("InputStreamUtils.getByteArrayInputStreamFromFile[fileBytes.length={}]", fileBytes.length);
+            LogUtil.debug("InputStreamUtils.getByteArrayInputStreamFromFile[fileBytes.length={}]", fileBytes.length);
             byteArrayInputStream = new ByteArrayInputStream(fileBytes);
 
             byteArrayOutputStream.close();
         } catch (Exception e) {
-            LogUtils.error("从文件获取ByteArrayInputStream异常", e);
+            LogUtil.error("从文件获取ByteArrayInputStream异常", e);
             throw new RuntimeException(e);
         }
         return byteArrayInputStream;
