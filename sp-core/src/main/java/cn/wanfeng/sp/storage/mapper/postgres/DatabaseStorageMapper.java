@@ -1,7 +1,7 @@
 package cn.wanfeng.sp.storage.mapper.postgres;
 
-import cn.wanfeng.sp.base.object.SpBaseObjectDO;
-import cn.wanfeng.sp.base.object.SpSettingsDO;
+import cn.wanfeng.sp.api.base.object.SpBaseObjectDO;
+import cn.wanfeng.sp.api.base.object.SpSettingsDO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

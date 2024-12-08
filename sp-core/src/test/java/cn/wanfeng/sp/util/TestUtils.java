@@ -2,8 +2,8 @@ package cn.wanfeng.sp.util;
 
 import cn.wanfeng.proto.record.ProtoRecordContainer;
 import cn.wanfeng.proto.record.ProtoRecordFactory;
-import cn.wanfeng.sp.base.domain.ISpBaseObject;
-import cn.wanfeng.sp.base.object.SpBaseObjectDO;
+import cn.wanfeng.sp.api.base.domain.ISpBaseObject;
+import cn.wanfeng.sp.api.base.object.SpBaseObjectDO;
 
 /**
  * @date: 2024-06-21 13:59

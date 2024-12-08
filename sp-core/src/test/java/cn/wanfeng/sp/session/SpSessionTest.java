@@ -2,7 +2,7 @@ package cn.wanfeng.sp.session;
 
 
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
-import cn.wanfeng.sp.base.object.SpSettingsDO;
+import cn.wanfeng.sp.api.base.object.SpSettingsDO;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.util.LogUtil;
 import jakarta.annotation.Resource;

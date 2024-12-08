@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.base.object;
+package cn.wanfeng.sp.api.base.object;
 
 
 import com.baomidou.mybatisplus.annotation.TableField;

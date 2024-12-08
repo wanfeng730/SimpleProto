@@ -8,7 +8,7 @@
     <sql id="settings_field">
         name, increase_long, increase_string
     </sql>
-    <resultMap id="settingsResultMap" type="cn.wanfeng.sp.base.object.SpSettingsDO">
+    <resultMap id="settingsResultMap" type="cn.wanfeng.sp.api.base.object.SpSettingsDO">
         <id property="name" column="name"/>
         <id property="increaseLong" column="increase_long"/>
         <id property="increaseString" column="increase_string"/>
@@ -18,7 +18,7 @@
     <sql id="object_field">
         id, type, name, create_date, modify_date, is_delete, data
     </sql>
-    <resultMap id="objectResultMap" type="cn.wanfeng.sp.base.object.SpBaseObjectDO">
+    <resultMap id="objectResultMap" type="cn.wanfeng.sp.api.base.object.SpBaseObjectDO">
         <id property="id" column="id"/>
         <id property="type" column="type"/>
         <id property="name" column="name"/>

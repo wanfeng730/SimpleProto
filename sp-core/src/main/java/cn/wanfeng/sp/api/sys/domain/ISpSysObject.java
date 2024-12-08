@@ -1,0 +1,58 @@
+package cn.wanfeng.sp.api.sys.domain;
+
+import cn.wanfeng.sp.api.base.domain.ISpBaseObject;
+
+/**
+ * @date: 2024-12-08 16:33
+ * @author: luozh.wanfeng
+ * @description: 系统对象抽象接口
+ * @since: 1.0
+ */
+public interface ISpSysObject extends ISpBaseObject {
+
+    String SYS_TAG_FIELD = "sys_tag";
+    String PATH_FIELD = "path";
+    String PARENT_ID_FIELD = "parent_id";
+    String PARENT_PATH_FIELD ="parent_path";
+
+    int SYS_TAG_INDEX = 1007;
+    int PATH_INDEX = 1008;
+    int PARENT_ID_INDEX = 1009;
+    int PARENT_PATH_INDEX = 1010;
+
+
+
+    /**
+     * 获取该对象的业务路径
+     */
+    String getPath();
+
+    /**
+     * 获取该对象的父id
+     */
+    String getParentId();
+
+    /**
+     * 获取该对象的父路径
+     */
+    String getParentPath();
+
+    /**
+     * 将该对象移动到父id的对象下
+     */
+    void move(Long parentId);
+
+    /**
+     * 将该对象移动到父路径的对象下
+     */
+    void move(String parentPath);
+
+    /**
+     * 将该对象移动到父对象下
+     */
+    void move(ISpSysObject parentSysObject);
+
+
+
+
+}

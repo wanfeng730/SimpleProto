@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.base.domain;
+package cn.wanfeng.sp.api.base.domain;
 
 /**
  * @date: 2024-04-02 23:48
