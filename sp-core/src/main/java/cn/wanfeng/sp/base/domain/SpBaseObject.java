@@ -1,19 +1,19 @@
 package cn.wanfeng.sp.base.domain;
 
 import cn.wanfeng.proto.constants.SpExceptionMessage;
-import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.proto.record.ProtoRecord;
 import cn.wanfeng.proto.record.ProtoRecordContainer;
 import cn.wanfeng.proto.record.ProtoRecordFactory;
-import cn.wanfeng.sp.util.LogUtils;
 import cn.wanfeng.sp.anno.ProtoField;
 import cn.wanfeng.sp.anno.Type;
 import cn.wanfeng.sp.base.object.SpBaseObjectDO;
 import cn.wanfeng.sp.base.object.SpSettingsDO;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
+import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.session.SpSession;
-import cn.wanfeng.sp.util.SpObjectConvertUtils;
+import cn.wanfeng.sp.util.LogUtil;
 import cn.wanfeng.sp.util.SimpleReflectUtils;
+import cn.wanfeng.sp.util.SpObjectConvertUtils;
 import com.github.f4b6a3.ulid.UlidCreator;
 import org.apache.commons.lang3.StringUtils;
 
@@ -83,7 +83,7 @@ public class SpBaseObject implements ISpBaseObject {
 
         // 反序列化proto二进制数据
         this.recordContainer = ProtoRecordFactory.readBytesToRecordList(objectDO.getData());
-        LogUtils.debug(recordContainer.getIndexNoRecordMap().toString());
+        LogUtil.debug(recordContainer.getIndexNoRecordMap().toString());
 
         // 读取container中的数据并设置到本对象的属性中
         readRecordMap();
@@ -160,9 +160,9 @@ public class SpBaseObject implements ISpBaseObject {
                     value = Objects.isNull(constructorMethod) ? null : constructorMethod.invoke(null, value);
                 }
                 declaredField.set(this, value);
-                LogUtils.debug("Set DeclaredField Property: {}={}", declaredField.getName(), declaredField.get(this));
+                LogUtil.debug("Set DeclaredField Property: {}={}", declaredField.getName(), declaredField.get(this));
             } catch (Exception e) {
-                LogUtils.error("Set Property[index={}, name={}] Unknown Exception", indexNo, fieldName, e);
+                LogUtil.error("Set Property[index={}, name={}] Unknown Exception", indexNo, fieldName, e);
                 throw new SpException(e);
             }
         }
@@ -287,7 +287,7 @@ public class SpBaseObject implements ISpBaseObject {
                     propertyValueContainer.put(fieldName, value);
                 }
             } catch (Exception e) {
-                LogUtils.error("Get Property[index={}, name={}] Unknown Exception", indexNo, fieldName, e);
+                LogUtil.error("Get Property[index={}, name={}] Unknown Exception", indexNo, fieldName, e);
                 throw new SpException(e);
             }
         }
@@ -302,7 +302,7 @@ public class SpBaseObject implements ISpBaseObject {
         try {
             spSession.createObjectToStorage(baseObjectDO, propertyValueContainer);
         } catch (Exception e) {
-            LogUtils.error("对象创建失败，数据已回滚，失败原因", e);
+            LogUtil.error("对象创建失败，数据已回滚，失败原因", e);
         }
     }
 
@@ -314,7 +314,7 @@ public class SpBaseObject implements ISpBaseObject {
         try {
             spSession.updateObjectToStorage(baseObjectDO, propertyValueContainer);
         } catch (Exception e) {
-            LogUtils.error("对象更新失败，数据已回滚，失败原因", e);
+            LogUtil.error("对象更新失败，数据已回滚，失败原因", e);
         }
     }
 
@@ -349,7 +349,7 @@ public class SpBaseObject implements ISpBaseObject {
     @Override
     public void remove() {
         if (isNewObject) {
-            LogUtils.info("对象[id={}, type={}, name={}]为新建对象，未保存到数据库，无需删除", this.id, this.type, this.name);
+            LogUtil.info("对象[id={}, type={}, name={}]为新建对象，未保存到数据库，无需删除", this.id, this.type, this.name);
         } else {
             // 在数据库中删除
             removeObjectFromStorage();
@@ -360,7 +360,7 @@ public class SpBaseObject implements ISpBaseObject {
         try {
             spSession.removeObjectFromStorage(this.id);
         } catch (Exception e) {
-            LogUtils.error("对象删除失败，数据已回滚，失败原因", e);
+            LogUtil.error("对象删除失败，数据已回滚，失败原因", e);
         }
     }
 

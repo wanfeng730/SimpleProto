@@ -1,10 +1,10 @@
 package cn.wanfeng.sp.session;
 
 
-import cn.wanfeng.sp.util.LogUtils;
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
 import cn.wanfeng.sp.base.object.SpSettingsDO;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
+import cn.wanfeng.sp.util.LogUtil;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -42,6 +42,6 @@ public class SpSessionTest extends SimpleprotoApplicationTest {
         Assertions.assertEquals(998L, settingsDO.getIncreaseLong());
         Assertions.assertEquals("777", settingsDO.getIncreaseString());
 
-        LogUtils.info("设置表新建设置测试完成");
+        LogUtil.info("设置表新建设置测试完成");
     }
 }

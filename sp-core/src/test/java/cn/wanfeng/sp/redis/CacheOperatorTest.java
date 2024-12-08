@@ -1,9 +1,9 @@
 package cn.wanfeng.sp.redis;
 
 
-import cn.wanfeng.sp.util.LogUtils;
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
 import cn.wanfeng.sp.cache.CacheOperator;
+import cn.wanfeng.sp.util.LogUtil;
 import jakarta.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Assertions;
@@ -93,6 +93,6 @@ public class CacheOperatorTest extends SimpleprotoApplicationTest {
         Assertions.assertTrue(cacheOperator.lock("testLock-EXPIRE", 10));
 
 
-        LogUtils.info("CacheOperator测试完成");
+        LogUtil.info("CacheOperator测试完成");
     }
 }

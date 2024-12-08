@@ -1,9 +1,9 @@
 package cn.wanfeng.sp.bootexecute;
 
 
-import cn.wanfeng.sp.util.LogUtils;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
+import cn.wanfeng.sp.util.LogUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
@@ -30,13 +30,13 @@ public class DatabaseInitExecutor {
         List<String> tableNameList = spSession.databaseStorage().listAllTable(SimpleProtoConfig.currentScheme);
         if(!tableNameList.contains(SimpleProtoConfig.dataTable)){
             spSession.databaseStorage().createDataTable(SimpleProtoConfig.dataTable);
-            LogUtils.info("初始化创建对象数据表[{}]", SimpleProtoConfig.dataTable);
+            LogUtil.info("初始化创建对象数据表[{}]", SimpleProtoConfig.dataTable);
         }
         if(!tableNameList.contains(SimpleProtoConfig.settingsTable)){
             spSession.databaseStorage().createSettingsTable(SimpleProtoConfig.settingsTable);
             spSession.databaseStorage().initSettingsTableData(SimpleProtoConfig.settingsTable);
-            LogUtils.info("初始化创建设置表[{}]", SimpleProtoConfig.settingsTable);
+            LogUtil.info("初始化创建设置表[{}]", SimpleProtoConfig.settingsTable);
         }
-        LogUtils.info("数据库存储表初始化完成");
+        LogUtil.info("数据库存储表初始化完成");
     }
 }

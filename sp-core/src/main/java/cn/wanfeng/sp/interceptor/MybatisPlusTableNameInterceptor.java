@@ -1,8 +1,8 @@
 package cn.wanfeng.sp.interceptor;
 
 
-import cn.wanfeng.sp.util.LogUtils;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
+import cn.wanfeng.sp.util.LogUtil;
 import jakarta.annotation.Resource;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -46,7 +46,7 @@ public class MybatisPlusTableNameInterceptor implements Interceptor {
         // 可以先打印出原始的sql语句，然后根据实际情况修改，我个人建议是下面这样修改
         // 只在原sql上添加条件而不是删除条件
         sql = customProcessSql(sql);
-        LogUtils.debug("修改之后的sql：" + sql);
+        LogUtil.debug("修改之后的sql：" + sql);
         // 通过反射修改sql语句
         // 下面类似于替换sql
         Field field = boundSql.getClass().getDeclaredField("sql");

@@ -1,15 +1,15 @@
 package cn.wanfeng.sp.base;
 
 import cn.hutool.core.util.RandomUtil;
-import cn.wanfeng.sp.exception.SpException;
-import cn.wanfeng.sp.util.LogUtils;
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
 import cn.wanfeng.sp.base.domain.ISpBaseObject;
 import cn.wanfeng.sp.base.mapper.search.BorrowFormMapper;
 import cn.wanfeng.sp.base.object.SpSettingsDO;
 import cn.wanfeng.sp.common.BusinessTypeConstant;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
+import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.session.SpSession;
+import cn.wanfeng.sp.util.LogUtil;
 import cn.wanfeng.sp.util.ThreadPoolTemplateUtils;
 import com.alibaba.fastjson.JSON;
 import jakarta.annotation.Resource;
@@ -54,7 +54,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
         long step0 = System.currentTimeMillis();
         borrowForm.store();
-        LogUtils.info("SpBaseObject对象新建保存耗时{}ms", System.currentTimeMillis() - step0);
+        LogUtil.info("SpBaseObject对象新建保存耗时{}ms", System.currentTimeMillis() - step0);
 
         Assertions.assertNotNull(borrowForm.getId());
 
@@ -71,7 +71,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
         long step1 = System.currentTimeMillis();
         borrowForm.store();
-        LogUtils.info("SpBaseObject对象更新保存耗时{}ms", System.currentTimeMillis() - step1);
+        LogUtil.info("SpBaseObject对象更新保存耗时{}ms", System.currentTimeMillis() - step1);
     }
 
     @Test
@@ -86,7 +86,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
         long step0 = System.currentTimeMillis();
         borrowForm.store();
-        LogUtils.info("SpBaseObject对象新建保存耗时{}ms", System.currentTimeMillis() - step0);
+        LogUtil.info("SpBaseObject对象新建保存耗时{}ms", System.currentTimeMillis() - step0);
 
         Assertions.assertNotNull(borrowForm.getId());
 
@@ -108,7 +108,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
         long step1 = System.currentTimeMillis();
         borrowForm.store();
-        LogUtils.info("SpBaseObject对象更新保存耗时{}ms", System.currentTimeMillis() - step1);
+        LogUtil.info("SpBaseObject对象更新保存耗时{}ms", System.currentTimeMillis() - step1);
 
         borrowForm = new BorrowForm(spSession, maxBaseObjectId);
         Assertions.assertNotNull(borrowForm);
@@ -118,19 +118,19 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
         long step2 = System.currentTimeMillis();
         borrowForm.remove();
-        LogUtils.info("SpBaseObject对象删除耗时{}ms", System.currentTimeMillis() - step2);
+        LogUtil.info("SpBaseObject对象删除耗时{}ms", System.currentTimeMillis() - step2);
 
         Assertions.assertThrows(SpException.class, () -> new BorrowForm(spSession, maxBaseObjectId));
 
         Assertions.assertThrows(SpException.class, () -> new BorrowForm(spSession, null));
 
-        LogUtils.info("SpBaseObject功能测试完成");
+        LogUtil.info("SpBaseObject功能测试完成");
     }
 
     @Test
     public void testBorrowFormMapper(){
         List<BorrowFormDO> borrowFormDOList = borrowFormMapper.findById(8L);
-        LogUtils.info("查询借阅单测试完成, borrowFormDOList={}", JSON.toJSONString(borrowFormDOList));
+        LogUtil.info("查询借阅单测试完成, borrowFormDOList={}", JSON.toJSONString(borrowFormDOList));
     }
 
 
@@ -157,13 +157,13 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
             executor.execute(() -> {
                 try {
                     Integer delay = randomSeconds();
-                    LogUtils.info("{}毫秒后执行", delay);
+                    LogUtil.info("{}毫秒后执行", delay);
                     Thread.sleep(delay);
 
                     long start = System.currentTimeMillis();
                     BorrowForm borrowForm = new BorrowForm(spSession, formNo, 77, expireDate);
                     borrowForm.store();
-                    LogUtils.info("借阅单[{}]创建成功，耗时={}，剩余数量={}\n", borrowForm.getFormNo(), System.currentTimeMillis() - start, countDownLatch.getCount());
+                    LogUtil.info("借阅单[{}]创建成功，耗时={}，剩余数量={}\n", borrowForm.getFormNo(), System.currentTimeMillis() - start, countDownLatch.getCount());
 
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
@@ -174,7 +174,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
         }
 
         countDownLatch.await();
-        LogUtils.info("SpBaseObject并发测试完成, 总耗时{}s", (System.currentTimeMillis() - step0) / 1000.0);
+        LogUtil.info("SpBaseObject并发测试完成, 总耗时{}s", (System.currentTimeMillis() - step0) / 1000.0);
     }
 
     private Integer randomSeconds(){

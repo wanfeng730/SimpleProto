@@ -1,7 +1,7 @@
 package cn.wanfeng.sp.config.mybatisplus;
 
 
-import cn.wanfeng.sp.util.LogUtils;
+import cn.wanfeng.sp.util.LogUtil;
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
@@ -67,7 +67,7 @@ public class MybatisPlusPostgresDataSourceConfiguration {
         factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(POSTGRES_MAPPER_LOCATION));
         factoryBean.setPlugins(mybatisPlusInterceptor);
         SqlSessionFactory sqlSessionFactory = factoryBean.getObject();
-        LogUtils.info("Postgres数据源SqlSessionFactory初始化完成");
+        LogUtil.info("Postgres数据源SqlSessionFactory初始化完成");
         return sqlSessionFactory;
     }
 

@@ -2,9 +2,9 @@ package cn.wanfeng.sp.cache;
 
 
 import cn.wanfeng.proto.exception.RedisLockNotGetException;
-import cn.wanfeng.sp.exception.SpException;
-import cn.wanfeng.sp.util.LogUtils;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
+import cn.wanfeng.sp.exception.SpException;
+import cn.wanfeng.sp.util.LogUtil;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -256,7 +256,7 @@ public class CacheOperator {
                 redisTemplate.delete(lockKey)
         ).orElse(false);
         if(success){
-            LogUtils.debug("锁[{}]释放成功", lockKey);
+            LogUtil.debug("锁[{}]释放成功", lockKey);
         }
     }
 

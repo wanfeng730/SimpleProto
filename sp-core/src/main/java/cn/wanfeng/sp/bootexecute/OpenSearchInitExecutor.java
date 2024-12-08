@@ -1,8 +1,8 @@
 package cn.wanfeng.sp.bootexecute;
 
 
-import cn.wanfeng.sp.util.LogUtils;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
+import cn.wanfeng.sp.util.LogUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import org.opensearch.client.opensearch.OpenSearchClient;
@@ -30,8 +30,8 @@ public class OpenSearchInitExecutor {
         if (!response.value()) {
             // 创建索引
             openSearchClient.indices().create(c -> c.index(SimpleProtoConfig.dataTable));
-            LogUtils.info("初始化创建OpenSearch索引[{}]", SimpleProtoConfig.dataTable);
+            LogUtil.info("初始化创建OpenSearch索引[{}]", SimpleProtoConfig.dataTable);
         }
-        LogUtils.info("OpenSearch索引初始化完成");
+        LogUtil.info("OpenSearch索引初始化完成");
     }
 }
