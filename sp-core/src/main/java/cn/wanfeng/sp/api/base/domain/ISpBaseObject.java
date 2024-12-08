@@ -1,5 +1,7 @@
 package cn.wanfeng.sp.api.base.domain;
 
+import java.util.Date;
+
 /**
  * @date: 2024-04-02 23:48
  * @author: luozh
@@ -21,6 +23,23 @@ public interface ISpBaseObject {
     int IS_DELETE_INDEX = 1006;
 
     String OBJECT_ID_INCREASE_NAME = "SP_OBJECT_ID_INCREASE";
+
+    Long getId();
+
+    String getType();
+
+    String getName();
+
+    Date getCreateDate();
+
+    Date getModifyDate();
+
+    Boolean getDelete();
+
+    /**
+     * 设置对象名称
+     */
+    void setName(String name);
 
     /**
      * 将对象持久化

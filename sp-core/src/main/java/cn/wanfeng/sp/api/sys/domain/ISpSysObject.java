@@ -1,6 +1,9 @@
 package cn.wanfeng.sp.api.sys.domain;
 
 import cn.wanfeng.sp.api.base.domain.ISpBaseObject;
+import cn.wanfeng.sp.api.sys.enums.SystemTag;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @date: 2024-12-08 16:33
@@ -10,17 +13,22 @@ import cn.wanfeng.sp.api.base.domain.ISpBaseObject;
  */
 public interface ISpSysObject extends ISpBaseObject {
 
-    String SYS_TAG_FIELD = "sys_tag";
+    String TAG_FIELD = "tag";
     String PATH_FIELD = "path";
     String PARENT_ID_FIELD = "parent_id";
     String PARENT_PATH_FIELD ="parent_path";
 
-    int SYS_TAG_INDEX = 1007;
+    int TAG_INDEX = 1007;
     int PATH_INDEX = 1008;
     int PARENT_ID_INDEX = 1009;
     int PARENT_PATH_INDEX = 1010;
 
+    String pathSeparator = "/";
 
+    /**
+     * 设置SysObject系统对象类型
+     */
+    void setTag(@NotNull SystemTag systemTag);
 
     /**
      * 获取该对象的业务路径
@@ -30,7 +38,7 @@ public interface ISpSysObject extends ISpBaseObject {
     /**
      * 获取该对象的父id
      */
-    String getParentId();
+    Long getParentId();
 
     /**
      * 获取该对象的父路径

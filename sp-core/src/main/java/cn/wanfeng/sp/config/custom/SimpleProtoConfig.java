@@ -1,6 +1,7 @@
 package cn.wanfeng.sp.config.custom;
 
 
+import cn.wanfeng.sp.api.sys.domain.ISpSysObject;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.Data;
@@ -43,6 +44,10 @@ public class SimpleProtoConfig {
     public static String redisPort;
     public static String redisPassword;
     public static String redisDatabase;
+
+    public static Long rootSysObjectId = -1208L;
+    public static String rootSysObjectPath = ISpSysObject.pathSeparator;
+
 
 
     @Resource

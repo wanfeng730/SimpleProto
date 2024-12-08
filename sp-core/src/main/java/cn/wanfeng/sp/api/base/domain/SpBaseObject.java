@@ -56,7 +56,7 @@ public class SpBaseObject implements ISpBaseObject {
     protected boolean isNewObject;
 
     public SpBaseObject(SpSession session, String type) {
-        this(session, type, defaultName());
+        this(session, type, defaultUildName());
     }
 
     public SpBaseObject(SpSession session, String type, String name) {
@@ -198,7 +198,7 @@ public class SpBaseObject implements ISpBaseObject {
      *
      * @return ULID
      */
-    private static String defaultName() {
+    private static String defaultUildName() {
         return UlidCreator.getUlid().toString();
     }
 
@@ -209,8 +209,8 @@ public class SpBaseObject implements ISpBaseObject {
         if (isNewObject) {
             // 生成主键id
             generateIncreaseId();
-            // 将继承类中的属性放到indexNoRecordMap和fieldNameValueMap
-            putThisPropertyToContainerAndValueMap();
+            // 将基础对象的属性放到indexNoRecordMap和fieldNameValueMap
+            putBasePropertyToContainers();
             putDeclaredPropertyToContainerAndValueMap();
             // 新建数据到数据库（事务：数据库存储新建、设置自增主键id、高级搜索存储新建）
             createObjectToStorage();
@@ -218,7 +218,7 @@ public class SpBaseObject implements ISpBaseObject {
             // 修改时间刷新
             updateModifyDate();
             // 将继承类中的属性放到indexNoRecordMap和fieldNameValueMap
-            putThisPropertyToContainerAndValueMap();
+            putBasePropertyToContainers();
             putDeclaredPropertyToContainerAndValueMap();
             // 更新数据(事务：数据库存储更新、高级搜索存储更新）
             updateObjectToStorage();
@@ -234,12 +234,12 @@ public class SpBaseObject implements ISpBaseObject {
         }
     }
 
-    private void updateModifyDate() {
+    protected void updateModifyDate() {
         this.modifyDate = new Date();
     }
 
-    private void putThisPropertyToContainerAndValueMap(){
-        //放入Container
+    protected void putBasePropertyToContainers(){
+        //放入recordContainer，生成数据库存储的data数据
         ProtoRecord idRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(ID_INDEX, this.id);
         recordContainer.putRecord(idRecord);
         ProtoRecord typeRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(TYPE_INDEX, this.type);
@@ -253,7 +253,7 @@ public class SpBaseObject implements ISpBaseObject {
         ProtoRecord isDeleteRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(IS_DELETE_INDEX, this.isDelete);
         recordContainer.putRecord(isDeleteRecord);
 
-        //放入fieldNameValueMap
+        //放入propertyValueContainer，生成高级搜索保存的数据
         propertyValueContainer.put(ID_FIELD, this.id);
         propertyValueContainer.put(TYPE_FIELD, this.type);
         propertyValueContainer.put(NAME_FIELD, this.name);
@@ -262,7 +262,7 @@ public class SpBaseObject implements ISpBaseObject {
         propertyValueContainer.put(IS_DELETE_FIELD, this.isDelete);
     }
 
-    private void putDeclaredPropertyToContainerAndValueMap(){
+    protected void putDeclaredPropertyToContainerAndValueMap(){
         Field[] fields = SimpleReflectUtils.getProtoFieldAnnotationFields(this.getClass());
 
         for (Field field : fields) {
@@ -293,7 +293,7 @@ public class SpBaseObject implements ISpBaseObject {
         }
     }
 
-    private void createObjectToStorage(){
+    protected void createObjectToStorage(){
         // 序列化，构造对象数据保存到数据库
         byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
         SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
@@ -306,7 +306,7 @@ public class SpBaseObject implements ISpBaseObject {
         }
     }
 
-    private void updateObjectToStorage(){
+    protected void updateObjectToStorage(){
         // 所有字段序列化成字节数组
         byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
         // 该对象更新到数据库
@@ -365,32 +365,37 @@ public class SpBaseObject implements ISpBaseObject {
     }
 
 
-    ////////////////////////// getter and setter ///////////////////////////////////////
-
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public Date getCreateDate() {
         return createDate;
     }
 
+    @Override
     public Boolean getDelete() {
         return isDelete;
     }
 
+    @Override
     public Date getModifyDate() {
         return modifyDate;
     }

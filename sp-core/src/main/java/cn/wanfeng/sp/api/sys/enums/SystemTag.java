@@ -20,7 +20,7 @@ public enum SystemTag {
 
     FILE_VIDEO("sys_file_video", "视频文件"),
 
-    NONE("The Tag is Not Support", "该文件格式不支持");
+    NONE("The Tag is Not Support", "该文件类型不支持");
 
 
     private String value;
