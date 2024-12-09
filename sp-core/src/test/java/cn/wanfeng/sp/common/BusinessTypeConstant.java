@@ -9,4 +9,5 @@ public class BusinessTypeConstant {
 
     public static final String BORROW_FORM = "borrow_form";
 
+    public static final String TEST_FOLDER = "test_folder";
 }

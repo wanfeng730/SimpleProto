@@ -4,10 +4,13 @@ package cn.wanfeng.sp.api.sys.domain;
 import cn.wanfeng.proto.record.ProtoRecord;
 import cn.wanfeng.proto.record.ProtoRecordFactory;
 import cn.wanfeng.sp.api.base.domain.SpBaseObject;
+import cn.wanfeng.sp.api.base.object.SpSysObjectDO;
 import cn.wanfeng.sp.api.sys.enums.SystemTag;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.session.SpSession;
+import cn.wanfeng.sp.util.LogUtil;
+import cn.wanfeng.sp.util.SpObjectConvertUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotNull;
@@ -50,6 +53,11 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
     }
 
     @Override
+    public String getTag() {
+        return this.tag;
+    }
+
+    @Override
     public String getPath() {
         return path;
     }
@@ -87,9 +95,9 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
         // name不能为空
         assertNameNotBlank();
         // 如果没有设定父对象信息，默认挂接到根对象下
-        linkRootSysObjectIfNoParent();
+        linkRootFolderIfNoParent();
         // LzhTODO: 名称查重校验
-
+        assertPathUnique();
 
         if(isNewObject){
             //生成主键id
@@ -182,7 +190,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
         }
     }
 
-    protected void linkRootSysObjectIfNoParent(){
+    protected void linkRootFolderIfNoParent(){
         if(StringUtils.isBlank(this.parentPath)){
             this.parentId = SimpleProtoConfig.rootSysObjectId;
             this.parentPath = SimpleProtoConfig.rootSysObjectPath;
@@ -190,4 +198,34 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
         }
     }
 
+    protected void assertPathUnique(){
+        SpSysObjectDO existPathObject = spSession.databaseStorage().findSysObjectByPath(SimpleProtoConfig.dataTable, this.path);
+        if(Objects.nonNull(existPathObject)){
+            throw new SpException("Path[%s] has already exist in Table[%s]", path, SimpleProtoConfig.dataTable);
+        }
+    }
+
+    @Override
+    protected void createObjectToStorage() {
+        // 序列化，构造对象数据保存到数据库
+        byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
+        SpSysObjectDO sysObjectDO = SpObjectConvertUtils.convertSpSysObjectToDO(this, data);
+        try {
+            spSession.createSysObjectToStorage(sysObjectDO, propertyValueContainer);
+        } catch (Exception e) {
+            LogUtil.error("对象创建失败，数据已回滚，失败原因", e);
+        }
+    }
+
+    @Override
+    protected void updateObjectToStorage() {
+        // 所有字段序列化成字节数组
+        byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
+        SpSysObjectDO sysObjectDO = SpObjectConvertUtils.convertSpSysObjectToDO(this, data);
+        try {
+            spSession.updateSysObjectToStorage(sysObjectDO, propertyValueContainer);
+        } catch (Exception e) {
+            LogUtil.error("对象更新失败，数据已回滚，失败原因", e);
+        }
+    }
 }

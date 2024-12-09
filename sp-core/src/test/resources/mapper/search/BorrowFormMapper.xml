@@ -27,6 +27,7 @@
         select
         <include refid="all_field"/>
         from {data_table}
+        where type = 'borrow_form'
     </select>
 
 

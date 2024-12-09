@@ -2,6 +2,7 @@ package cn.wanfeng.sp.storage.mapper.postgres;
 
 import cn.wanfeng.sp.api.base.object.SpBaseObjectDO;
 import cn.wanfeng.sp.api.base.object.SpSettingsDO;
+import cn.wanfeng.sp.api.base.object.SpSysObjectDO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -48,6 +49,36 @@ public interface DatabaseStorageMapper {
      * @return 删除行数
      */
     int removeObject(@Param("tableName") String tableName, @Param("id") Long id);
+
+    /**
+     * 根据id查询系统对象
+     * @param id 系统对象id
+     * @return 系统对象
+     */
+    SpSysObjectDO findSysObjectById(@Param("tableName") String tableName, @Param("id") String id);
+
+    /**
+     * 根据路径查询系统对象
+     * @param path 路径
+     * @return 系统对象
+     */
+    SpSysObjectDO findSysObjectByPath(@Param("tableName") String tableName, @Param("path") String path);
+
+    /**
+     * 创建系统对象
+     * @param tableName 表名
+     * @param sysObjectDO 系统对象
+     * @return 新建行数
+     */
+    int insertSysObject(@Param("tableName") String tableName, @Param("sysObjectDO") SpSysObjectDO sysObjectDO);
+
+    /**
+     * 更新系统对象
+     * @param tableName 表名
+     * @param sysObjectDO 系统对象
+     * @return 更新行数
+     */
+    int updateSysObject(@Param("tableName") String tableName, @Param("sysObjectDO") SpSysObjectDO sysObjectDO);
 
     /**
      * 根据设置名称查询

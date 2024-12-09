@@ -297,8 +297,6 @@ public class SpBaseObject implements ISpBaseObject {
         // 序列化，构造对象数据保存到数据库
         byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
         SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
-        //获取id自增锁
-
         try {
             spSession.createObjectToStorage(baseObjectDO, propertyValueContainer);
         } catch (Exception e) {

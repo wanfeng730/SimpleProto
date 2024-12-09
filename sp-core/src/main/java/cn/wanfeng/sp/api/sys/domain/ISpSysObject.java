@@ -31,6 +31,11 @@ public interface ISpSysObject extends ISpBaseObject {
     void setTag(@NotNull SystemTag systemTag);
 
     /**
+     * 获取该对象的系统类型
+     */
+    String getTag();
+
+    /**
      * 获取该对象的业务路径
      */
     String getPath();
@@ -44,6 +49,8 @@ public interface ISpSysObject extends ISpBaseObject {
      * 获取该对象的父路径
      */
     String getParentPath();
+
+
 
     /**
      * 将该对象移动到父id的对象下

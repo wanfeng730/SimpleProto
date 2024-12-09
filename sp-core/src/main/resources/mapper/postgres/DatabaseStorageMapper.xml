@@ -28,6 +28,25 @@
         <id property="data" column="data"/>
     </resultMap>
 
+    <!-- 数据表字段 -->
+    <sql id="sys_object_field">
+        id, type, name, create_date, modify_date, is_delete, tag, path, parent_id, parent_path, data
+    </sql>
+    <resultMap id="sysObjectResultMap" type="cn.wanfeng.sp.api.base.object.SpSysObjectDO">
+        <id property="id" column="id"/>
+        <id property="type" column="type"/>
+        <id property="name" column="name"/>
+        <id property="createDate" column="create_date"/>
+        <id property="modifyDate" column="modify_date"/>
+        <id property="isDelete" column="is_delete"/>
+        <id property="tag" column="tag"/>
+        <id property="path" column="path"/>
+        <id property="parentId" column="parent_id"/>
+        <id property="parentPath" column="parent_path"/>
+        <id property="data" column="data"/>
+    </resultMap>
+
+
     <select id="findObjectById" resultMap="objectResultMap">
         SELECT
         <include refid="object_field"/>
@@ -63,6 +82,51 @@
         DELETE FROM ${tableName}
         WHERE id = #{id}
     </delete>
+
+    <select id="findSysObjectById" resultMap="sysObjectResultMap">
+        SELECT <include refid="sys_object_field"/>
+        FROM ${tableName}
+        WHERE id = #{id}
+    </select>
+
+    <select id="findSysObjectByPath" resultMap="sysObjectResultMap">
+        SELECT <include refid="sys_object_field"/>
+        FROM ${tableName}
+        WHERE path = #{path}
+        limit 1
+    </select>
+
+    <insert id="insertSysObject" useGeneratedKeys="true" keyProperty="sysObjectDO.id">
+        INSERT INTO ${tableName}(<include refid="sys_object_field"/>)
+        VALUES (
+        #{sysObjectDO.id},
+        #{sysObjectDO.type},
+        #{sysObjectDO.name},
+        #{sysObjectDO.createDate},
+        #{sysObjectDO.modifyDate},
+        #{sysObjectDO.isDelete},
+        #{sysObjectDO.tag},
+        #{sysObjectDO.path},
+        #{sysObjectDO.parentId},
+        #{sysObjectDO.parentPath},
+        #{sysObjectDO.data}
+        )
+    </insert>
+
+    <update id="updateSysObject" useGeneratedKeys="true" keyProperty="sysObjectDO.id">
+        UPDATE ${tableName}
+        SET type = #{sysObjectDO.type},
+        name = #{sysObjectDO.name},
+        create_date = #{sysObjectDO.createDate},
+        modify_date = #{sysObjectDO.modifyDate},
+        is_delete = #{sysObjectDO.isDelete},
+        tag = #{sysObjectDO.tag},
+        path = #{sysObjectDO.path},
+        parent_id = #{sysObjectDO.parentId},
+        parent_path = #{sysObjectDO.parentPath},
+        data = #{sysObjectDO.data}
+        WHERE id = #{sysObjectDO.id}
+    </update>
 
     <select id="findSettingsByName" resultMap="settingsResultMap">
         SELECT

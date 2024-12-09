@@ -1,6 +1,7 @@
 package cn.wanfeng.sp.session;
 
 import cn.wanfeng.sp.api.base.object.SpBaseObjectDO;
+import cn.wanfeng.sp.api.base.object.SpSysObjectDO;
 import cn.wanfeng.sp.cache.CacheOperator;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.storage.mapper.postgres.DatabaseStorageMapper;
@@ -49,11 +50,26 @@ public class SpSession {
         //该对象保存到高级搜索存储
         searchStorage().insertObject(SimpleProtoConfig.dataTable, fieldNameValueMap);
     }
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void createSysObjectToStorage(SpSysObjectDO sysObjectDO, Map<String, Object> fieldNameValueMap) throws Exception {
+        //该对象保存到数据库存储
+        databaseStorage().insertSysObject(SimpleProtoConfig.dataTable, sysObjectDO);
+        //该对象保存到高级搜索存储
+        searchStorage().insertObject(SimpleProtoConfig.dataTable, fieldNameValueMap);
+    }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void updateObjectToStorage(SpBaseObjectDO baseObjectDO, Map<String, Object> fieldNameValueMap) throws Exception{
         //更新数据库存储
         databaseStorage().updateObject(SimpleProtoConfig.dataTable, baseObjectDO);
+        //更新高级搜索存储
+        searchStorage().updateObject(SimpleProtoConfig.dataTable, fieldNameValueMap);
+    }
+
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void updateSysObjectToStorage(SpSysObjectDO sysObjectDO, Map<String, Object> fieldNameValueMap) throws Exception{
+        //更新数据库存储
+        databaseStorage().updateSysObject(SimpleProtoConfig.dataTable, sysObjectDO);
         //更新高级搜索存储
         searchStorage().updateObject(SimpleProtoConfig.dataTable, fieldNameValueMap);
     }

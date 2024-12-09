@@ -1,5 +1,6 @@
 package cn.wanfeng.sp.api.base.object;
 
+
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
@@ -7,12 +8,13 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * @date: 2024-06-21 10:46
- * @author: luozh
- * @since: 1.0
+ * @date: 2024-12-09 21:23
+ * @author: luozh.wanfeng
+ * @description:
+ * @since:
  */
 @Data
-public class SpBaseObjectDO {
+public class SpSysObjectDO {
 
     @TableId("id")
     private Long id;
@@ -31,9 +33,19 @@ public class SpBaseObjectDO {
 
     @TableField("is_delete")
     private Boolean isDelete;
-    /**
-     * 十六进制形式的二进制数据
-     */
+
+    @TableField("tag")
+    private String tag;
+
+    @TableField("path")
+    private String path;
+
+    @TableField("parent_id")
+    private Long parentId;
+
+    @TableField("parent_path")
+    private String parentPath;
+
     @TableField("data")
     private byte[] data;
 }
