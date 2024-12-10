@@ -45,7 +45,7 @@ public class SimpleProtoConfig {
     public static String redisPassword;
     public static String redisDatabase;
 
-    public static Long rootSysObjectId = -1208L;
+    public static final Long rootSysObjectId = -1L;
     public static String rootSysObjectPath = ISpSysObject.pathSeparator;
 
 

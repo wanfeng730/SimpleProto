@@ -1,6 +1,5 @@
 package cn.wanfeng.sp.bootexecute;
 
-
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.LogUtil;

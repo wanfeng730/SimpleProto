@@ -55,7 +55,7 @@ public interface DatabaseStorageMapper {
      * @param id 系统对象id
      * @return 系统对象
      */
-    SpSysObjectDO findSysObjectById(@Param("tableName") String tableName, @Param("id") String id);
+    SpSysObjectDO findSysObjectById(@Param("tableName") String tableName, @Param("id") Long id);
 
     /**
      * 根据路径查询系统对象
