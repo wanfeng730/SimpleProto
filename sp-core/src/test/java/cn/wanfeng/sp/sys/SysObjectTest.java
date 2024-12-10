@@ -35,6 +35,16 @@ public class SysObjectTest extends SimpleprotoApplicationTest {
 
         List<TestFolderDO> testFolderDOList = testFolderMapper.findAll();
         Assertions.assertTrue(CollectionUtils.isNotEmpty(testFolderDOList));
+
+        Date date = new Date();
+        testFolder.setDisplayName("更新后的文件夹名称");
+        testFolder.setExpireDate(date);
+        testFolder.store();
+
+        Long folderId = testFolder.getId();
+        TestFolder testFolder1 = new TestFolder(spSession, folderId);
+        Assertions.assertEquals("更新后的文件夹名称", testFolder1.getDisplayName());
+
     }
 
 

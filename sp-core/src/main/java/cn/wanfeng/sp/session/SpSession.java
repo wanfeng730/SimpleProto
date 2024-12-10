@@ -44,9 +44,9 @@ public class SpSession {
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void createObjectToStorage(SpBaseObjectDO baseObjectDO, Map<String, Object> fieldNameValueMap) throws Exception {
+    public void createBaseObjectToStorage(SpBaseObjectDO baseObjectDO, Map<String, Object> fieldNameValueMap) throws Exception {
         //该对象保存到数据库存储
-        databaseStorage().insertObject(SimpleProtoConfig.dataTable, baseObjectDO);
+        databaseStorage().insertBaseObject(SimpleProtoConfig.dataTable, baseObjectDO);
         //该对象保存到高级搜索存储
         searchStorage().insertObject(SimpleProtoConfig.dataTable, fieldNameValueMap);
     }
@@ -59,9 +59,9 @@ public class SpSession {
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void updateObjectToStorage(SpBaseObjectDO baseObjectDO, Map<String, Object> fieldNameValueMap) throws Exception{
+    public void updateBaseObjectToStorage(SpBaseObjectDO baseObjectDO, Map<String, Object> fieldNameValueMap) throws Exception{
         //更新数据库存储
-        databaseStorage().updateObject(SimpleProtoConfig.dataTable, baseObjectDO);
+        databaseStorage().updateBaseObject(SimpleProtoConfig.dataTable, baseObjectDO);
         //更新高级搜索存储
         searchStorage().updateObject(SimpleProtoConfig.dataTable, fieldNameValueMap);
     }

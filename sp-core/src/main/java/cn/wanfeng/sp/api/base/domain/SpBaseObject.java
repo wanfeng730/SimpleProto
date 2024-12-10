@@ -206,6 +206,7 @@ public class SpBaseObject implements ISpBaseObject {
     public void store() {
         assertTypeValueEqualsAnnotation();
         //根据是否为新对象执行store操作
+        isNewObject = Objects.isNull(this.id);
         if (isNewObject) {
             // 生成主键id
             generateIncreaseId();
@@ -214,6 +215,7 @@ public class SpBaseObject implements ISpBaseObject {
             putDeclaredPropertyToContainerAndValueMap();
             // 新建数据到数据库（事务：数据库存储新建、设置自增主键id、高级搜索存储新建）
             createObjectToStorage();
+            isNewObject = false;
         } else {
             // 修改时间刷新
             updateModifyDate();
@@ -298,7 +300,7 @@ public class SpBaseObject implements ISpBaseObject {
         byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
         SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
         try {
-            spSession.createObjectToStorage(baseObjectDO, propertyValueContainer);
+            spSession.createBaseObjectToStorage(baseObjectDO, propertyValueContainer);
         } catch (Exception e) {
             LogUtil.error("对象创建失败，数据已回滚，失败原因", e);
         }
@@ -310,7 +312,7 @@ public class SpBaseObject implements ISpBaseObject {
         // 该对象更新到数据库
         SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
         try {
-            spSession.updateObjectToStorage(baseObjectDO, propertyValueContainer);
+            spSession.updateBaseObjectToStorage(baseObjectDO, propertyValueContainer);
         } catch (Exception e) {
             LogUtil.error("对象更新失败，数据已回滚，失败原因", e);
         }

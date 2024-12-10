@@ -54,7 +54,7 @@
         WHERE id = #{id}
     </select>
 
-    <update id="updateObject" useGeneratedKeys="true" keyProperty="objectDO.id">
+    <update id="updateBaseObject" useGeneratedKeys="true" keyProperty="objectDO.id">
         UPDATE ${tableName}
         SET type = #{objectDO.type},
             name = #{objectDO.name},
@@ -65,7 +65,7 @@
         WHERE id = #{objectDO.id}
     </update>
 
-    <insert id="insertObject" useGeneratedKeys="true" keyProperty="objectDO.id">
+    <insert id="insertBaseObject" useGeneratedKeys="true" keyProperty="objectDO.id">
         INSERT INTO ${tableName}(<include refid="object_field"/>)
         VALUES (
             #{objectDO.id},

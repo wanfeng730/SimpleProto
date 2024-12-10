@@ -96,10 +96,10 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
         assertNameNotBlank();
         // 如果没有设定父对象信息，默认挂接到根对象下
         linkRootFolderIfNoParent();
-        // LzhTODO: 名称查重校验
-        assertPathUnique();
 
         if(isNewObject){
+            // 路径查重校验
+            assertPathUnique();
             //生成主键id
             generateIncreaseId();
             // 将基础对象的属性放到container中
@@ -110,6 +110,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
             putDeclaredPropertyToContainerAndValueMap();
             // 新建数据到数据库
             createObjectToStorage();
+            isNewObject = false;
         }else {
             // 修改时间刷新
             updateModifyDate();

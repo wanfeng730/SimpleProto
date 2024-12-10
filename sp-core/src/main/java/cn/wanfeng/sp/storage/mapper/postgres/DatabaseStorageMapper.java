@@ -31,7 +31,7 @@ public interface DatabaseStorageMapper {
      * @param objectDO 对象数据
      * @return 更新行数
      */
-    int updateObject(@Param("tableName") String tableName, @Param("objectDO") SpBaseObjectDO objectDO);
+    int updateBaseObject(@Param("tableName") String tableName, @Param("objectDO") SpBaseObjectDO objectDO);
 
     /**
      * 新建对象数据
@@ -40,7 +40,7 @@ public interface DatabaseStorageMapper {
      * @param objectDO  对象数据
      * @return 更新行数
      */
-    int insertObject(@Param("tableName") String tableName, @Param("objectDO") SpBaseObjectDO objectDO);
+    int insertBaseObject(@Param("tableName") String tableName, @Param("objectDO") SpBaseObjectDO objectDO);
 
     /**
      * 根据对象id删除
