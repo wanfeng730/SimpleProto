@@ -164,10 +164,15 @@
             modify_date timestamp NOT NULL,
             is_delete bool NOT NULL,
             path varchar NULL,
+            tag varchar NULL,
+            parent_id varchar NULL,
+            parent_path varchar NULL,
             "data" bytea NOT NULL,
             CONSTRAINT ${tableName}_pk PRIMARY KEY (id)
         );
         CREATE INDEX ${tableName}_type_idx ON ${tableName} USING btree (type);
+        CREATE INDEX ${tableName}_path_idx ON ${tableName} USING btree (path);
+        CREATE INDEX ${tableName}_tag_idx ON ${tableName} USING btree (tag);
     </update>
 
     <update id="createSettingsTable">
