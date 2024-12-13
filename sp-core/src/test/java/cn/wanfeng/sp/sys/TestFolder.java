@@ -35,7 +35,7 @@ public class TestFolder extends SpSysObject {
 
     public TestFolder(SpSession session, String name, String displayName, String code, Date expireDate) {
         super(session, BusinessTypeConstant.TEST_FOLDER, name);
-        setTag(SystemTag.FOLDER);
+        updateBySystemTag(SystemTag.FOLDER);
         this.displayName = displayName;
         this.code = code;
         this.expireDate = expireDate;

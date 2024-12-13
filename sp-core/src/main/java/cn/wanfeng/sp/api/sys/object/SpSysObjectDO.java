@@ -1,6 +1,7 @@
-package cn.wanfeng.sp.api.base.object;
+package cn.wanfeng.sp.api.sys.object;
 
 
+import cn.wanfeng.sp.api.base.object.SpBaseObjectDO;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +14,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class SpSysObjectDO extends SpBaseObjectDO{
+public class SpSysObjectDO extends SpBaseObjectDO {
 
     // TableField From SpBaseObjectDO:
 

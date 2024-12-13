@@ -1,9 +1,6 @@
 package cn.wanfeng.sp.api.sys.domain;
 
 import cn.wanfeng.sp.api.base.domain.ISpBaseObject;
-import cn.wanfeng.sp.api.sys.enums.SystemTag;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * @date: 2024-12-08 16:33
@@ -24,11 +21,6 @@ public interface ISpSysObject extends ISpBaseObject {
     int PARENT_PATH_INDEX = 1010;
 
     String pathSeparator = "/";
-
-    /**
-     * 设置SysObject系统对象类型
-     */
-    void setTag(@NotNull SystemTag systemTag);
 
     /**
      * 获取该对象的系统类型

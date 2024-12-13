@@ -32,7 +32,7 @@
     <sql id="sys_object_field">
         id, type, name, create_date, modify_date, is_delete, tag, path, parent_id, parent_path, data
     </sql>
-    <resultMap id="sysObjectResultMap" type="cn.wanfeng.sp.api.base.object.SpSysObjectDO">
+    <resultMap id="sysObjectResultMap" type="cn.wanfeng.sp.api.sys.object.SpSysObjectDO">
         <id property="id" column="id"/>
         <id property="type" column="type"/>
         <id property="name" column="name"/>
@@ -94,6 +94,12 @@
         FROM ${tableName}
         WHERE path = #{path}
         limit 1
+    </select>
+
+    <select id="findSysObjectByLikePath" resultMap="sysObjectResultMap">
+        SELECT <include refid="sys_object_field"/>
+        FROM ${tableName}
+        WHERE path LIKE #{path}
     </select>
 
     <insert id="insertSysObject" useGeneratedKeys="true" keyProperty="sysObjectDO.id">

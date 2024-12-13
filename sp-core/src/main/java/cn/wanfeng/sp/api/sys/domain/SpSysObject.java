@@ -4,16 +4,18 @@ package cn.wanfeng.sp.api.sys.domain;
 import cn.wanfeng.proto.record.ProtoRecord;
 import cn.wanfeng.proto.record.ProtoRecordFactory;
 import cn.wanfeng.sp.api.base.domain.SpBaseObject;
-import cn.wanfeng.sp.api.base.object.SpSysObjectDO;
 import cn.wanfeng.sp.api.sys.enums.SystemTag;
+import cn.wanfeng.sp.api.sys.object.SpSysObjectDO;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.exception.SpException;
+import cn.wanfeng.sp.exception.SpObjectNotFoundException;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.LogUtil;
 import cn.wanfeng.sp.util.SpObjectConvertUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,30 +35,29 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
 
     private String parentPath;
 
+    /**
+     * 父级系统对象
+     */
+    private ISpSysObject parentSysObject;
+
     public SpSysObject(SpSession session, String type, String name) {
         super(session, type, name);
     }
 
     public SpSysObject(SpSession session, String type, String name, ISpSysObject parentSysObject, SystemTag systemTag){
         super(session, type, name);
-        initSysObjectProperty(parentSysObject, systemTag);
+        updateByParentSysObject(parentSysObject);
+        updateBySystemTag(systemTag);
     }
 
     public SpSysObject(SpSession session, Long id) {
-        super(session, id);
+        super(session, session.databaseStorage().findSysObjectById(SimpleProtoConfig.dataTable, id));
     }
 
-    // LzhTODO: 根据路径获取系统对象
-    // public SpSysObject(SpSession session, String path){
-    //     //根据路径获取系统对象
-    //
-    // }
-
-
-    @Override
-    public void setTag(@NotNull SystemTag systemTag) {
-        this.tag = systemTag.getValue();
+    protected SpSysObject(SpSession session, SpSysObjectDO sysObjectDO){
+        super(session, sysObjectDO);
     }
+
 
     @Override
     public String getTag() {
@@ -80,17 +81,23 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
 
     @Override
     public void move(Long parentId) {
-
+        SpSysObjectDO parentObjectDO = session.databaseStorage().findSysObjectById(SimpleProtoConfig.dataTable, parentId);
+        assertIdFoundFromDatabase(parentId, parentObjectDO);
+        SpSysObject parentSysObject = new SpSysObject(session, parentObjectDO);
+        move(parentSysObject);
     }
 
     @Override
     public void move(String parentPath) {
-
+        SpSysObjectDO parentObjectDO = session.databaseStorage().findSysObjectByPath(SimpleProtoConfig.dataTable, parentPath);
+        assertPathFoundFromDatabase(parentPath, parentObjectDO);
+        SpSysObject parentSysObject = new SpSysObject(session, parentObjectDO);
+        move(parentSysObject);
     }
 
     @Override
     public void move(ISpSysObject parentSysObject) {
-
+        updateByParentSysObject(parentSysObject);
     }
 
     @Override
@@ -133,26 +140,40 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
 
     @Override
     public void remove() {
-
+        //级联查询出下级所有的sysObject的id
+        List<SpSysObjectDO> childObjectDOList = findAllChildSysObject();
+        if(CollectionUtils.isNotEmpty(childObjectDOList)){
+            for (SpSysObjectDO spSysObjectDO : childObjectDOList) {
+                removeObjectById(spSysObjectDO.getId());
+            }
+        }
+        //删除自身
+        removeObjectById(this.id);
     }
 
     @Override
-    protected void readRecordMap() {
+    protected void readContainerDataToThis() {
         readRecordMapToBaseObjectProperty();
         readRecordMapToSysObjectProperty();
         readRecordMapToAnnotationProperty();
     }
 
-    protected void initSysObjectProperty(ISpSysObject parentSysObject, SystemTag systemTag){
-        if(Objects.nonNull(parentSysObject)){
+    protected void updateByParentSysObject(ISpSysObject parentSysObject){
+        if (Objects.nonNull(parentSysObject)){
+            this.parentSysObject = parentSysObject;
             this.parentId = parentSysObject.getId();
             this.parentPath = parentSysObject.getPath();
             this.path = this.parentPath + pathSeparator + this.name;
         }
-        if(Objects.nonNull(systemTag)){
+    }
+
+    protected void updateBySystemTag(SystemTag systemTag){
+        if (Objects.nonNull(systemTag)){
             this.tag = systemTag.getValue();
         }
     }
+
+
 
     protected void putSysPropertyToContainers(){
         //放入recordContainer，生成数据库存储的data数据
@@ -206,7 +227,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
     }
 
     protected void assertPathUnique(){
-        SpSysObjectDO existPathObject = spSession.databaseStorage().findSysObjectByPath(SimpleProtoConfig.dataTable, this.path);
+        SpSysObjectDO existPathObject = session.databaseStorage().findSysObjectByPath(SimpleProtoConfig.dataTable, this.path);
         if(Objects.nonNull(existPathObject)){
             throw new SpException("Path[%s] has already exist in Table[%s]", path, SimpleProtoConfig.dataTable);
         }
@@ -218,7 +239,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
         byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
         SpSysObjectDO sysObjectDO = SpObjectConvertUtils.convertSpSysObjectToDO(this, data);
         try {
-            spSession.createSysObjectToStorage(sysObjectDO, propertyValueContainer);
+            session.createSysObjectToStorage(sysObjectDO, propertyValueContainer);
         } catch (Exception e) {
             LogUtil.error("对象创建失败，数据已回滚，失败原因", e);
         }
@@ -230,9 +251,31 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
         byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
         SpSysObjectDO sysObjectDO = SpObjectConvertUtils.convertSpSysObjectToDO(this, data);
         try {
-            spSession.updateSysObjectToStorage(sysObjectDO, propertyValueContainer);
+            session.updateSysObjectToStorage(sysObjectDO, propertyValueContainer);
         } catch (Exception e) {
             LogUtil.error("对象更新失败，数据已回滚，失败原因", e);
+        }
+    }
+
+    public List<SpSysObjectDO> findAllChildSysObject(){
+        return session.databaseStorage().findSysObjectByLikePath(SimpleProtoConfig.dataTable, this.path + "/%");
+    }
+
+    protected void removeObjectById(Long id){
+        try {
+            session.removeObjectFromStorage(id);
+            LogUtil.debug("已删除id[{}]", id);
+        } catch (Exception e) {
+            LogUtil.error("对象删除失败，数据已回滚，失败原因", e);
+        }
+    }
+
+
+    // some assertions
+
+    protected void assertPathFoundFromDatabase(String path, SpSysObjectDO objectDO){
+        if(Objects.isNull(objectDO)){
+            throw new SpObjectNotFoundException("Not Found Path[%s] from Database", path);
         }
     }
 }

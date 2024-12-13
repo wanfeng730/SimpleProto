@@ -10,6 +10,8 @@ import cn.wanfeng.sp.api.base.object.SpBaseObjectDO;
 import cn.wanfeng.sp.api.base.object.SpSettingsDO;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.exception.SpException;
+import cn.wanfeng.sp.exception.SpObjectNotFoundException;
+import cn.wanfeng.sp.exception.SpObjectStoreException;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.LogUtil;
 import cn.wanfeng.sp.util.SimpleReflectUtils;
@@ -17,6 +19,7 @@ import cn.wanfeng.sp.util.SpObjectConvertUtils;
 import com.github.f4b6a3.ulid.UlidCreator;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -30,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SpBaseObject implements ISpBaseObject {
 
-    protected SpSession spSession;
+    protected SpSession session;
 
     protected Long id;
 
@@ -60,7 +63,7 @@ public class SpBaseObject implements ISpBaseObject {
     }
 
     public SpBaseObject(SpSession session, String type, String name) {
-        this.spSession = session;
+        this.session = session;
         this.isNewObject = true;
         initBaseObject(type, name);
         initInternalContainer();
@@ -69,14 +72,14 @@ public class SpBaseObject implements ISpBaseObject {
     }
 
     public SpBaseObject(SpSession session, Long id) {
-        this.spSession = session;
+        this.session = session;
         this.isNewObject = false;
         initInternalContainer();
 
-        assertObjectIdNotNull(id);
+        assertStoreObjectIdNotNull(id);
         // 从数据库获取此id的字段
-        SpBaseObjectDO objectDO = spSession.databaseStorage().findObjectById(SimpleProtoConfig.dataTable, id);
-        assertObjectIdFindFromDatabase(id, objectDO);
+        SpBaseObjectDO objectDO = this.session.databaseStorage().findObjectById(SimpleProtoConfig.dataTable, id);
+        assertIdFoundFromDatabase(id, objectDO);
 
         //校验属性的indexNo和fieldName不重复，并生成映射关系
         assertProtoFieldUniqueAndBuildIndexNoMap();
@@ -86,38 +89,23 @@ public class SpBaseObject implements ISpBaseObject {
         LogUtil.debug(recordContainer.getIndexNoRecordMap().toString());
 
         // 读取container中的数据并设置到本对象的属性中
-        readRecordMap();
+        readContainerDataToThis();
     }
 
-    public SpBaseObject(SpSession session, SpBaseObjectDO spBaseObjectDO){
-        this.spSession = session;
+    protected SpBaseObject(SpSession session, @NotNull SpBaseObjectDO objectDO){
+        this.session = session;
         this.isNewObject = false;
         initInternalContainer();
-
-        assertObjectIdNotNull(spBaseObjectDO.getId());
-        assertObjectIdFindFromDatabase(id, spBaseObjectDO);
 
         //校验属性的indexNo和fieldName不重复，并生成映射关系
         assertProtoFieldUniqueAndBuildIndexNoMap();
 
         // 反序列化proto二进制数据
-        this.recordContainer = ProtoRecordFactory.readBytesToRecordList(spBaseObjectDO.getData());
+        this.recordContainer = ProtoRecordFactory.readBytesToRecordList(objectDO.getData());
         LogUtil.debug(recordContainer.getIndexNoRecordMap().toString());
 
         // 读取container中的数据并设置到本对象的属性中
-        readRecordMap();
-    }
-
-    private static void assertObjectIdNotNull(Long id) {
-        if (Objects.isNull(id)) {
-            throw new SpException(SpExceptionMessage.OBJECT_ID_IS_NULL_WHEN_FIND_OBJECT);
-        }
-    }
-
-    private static void assertObjectIdFindFromDatabase(Long id, SpBaseObjectDO spBaseObjectDO) {
-        if (Objects.isNull(spBaseObjectDO)) {
-            throw new SpException(SpExceptionMessage.objectIdNotFound(id));
-        }
+        readContainerDataToThis();
     }
 
     private void assertProtoFieldUniqueAndBuildIndexNoMap(){
@@ -139,7 +127,7 @@ public class SpBaseObject implements ISpBaseObject {
         }
     }
 
-    protected void readRecordMap() {
+    protected void readContainerDataToThis() {
         // 读取并设置该对象的基本属性
         readRecordMapToBaseObjectProperty();
         // 读取并设置该对象继承类的属性
@@ -319,7 +307,7 @@ public class SpBaseObject implements ISpBaseObject {
         byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
         SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
         try {
-            spSession.createBaseObjectToStorage(baseObjectDO, propertyValueContainer);
+            session.createBaseObjectToStorage(baseObjectDO, propertyValueContainer);
         } catch (Exception e) {
             LogUtil.error("对象创建失败，数据已回滚，失败原因", e);
         }
@@ -331,7 +319,7 @@ public class SpBaseObject implements ISpBaseObject {
         // 该对象更新到数据库
         SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
         try {
-            spSession.updateBaseObjectToStorage(baseObjectDO, propertyValueContainer);
+            session.updateBaseObjectToStorage(baseObjectDO, propertyValueContainer);
         } catch (Exception e) {
             LogUtil.error("对象更新失败，数据已回滚，失败原因", e);
         }
@@ -341,10 +329,10 @@ public class SpBaseObject implements ISpBaseObject {
 
     protected void generateIncreaseId() {
         //从redis获取当前自增的id值，若没有则从数据库加载
-        boolean locked = spSession.cacheOperator().lockRetryable(OBJECT_ID_INCREASE_NAME);
+        boolean locked = session.cacheOperator().lockRetryable(OBJECT_ID_INCREASE_NAME);
         if(locked){
             try {
-                SpSettingsDO idIncreaseDO = spSession.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, OBJECT_ID_INCREASE_NAME);
+                SpSettingsDO idIncreaseDO = session.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, OBJECT_ID_INCREASE_NAME);
                 this.id = Objects.isNull(idIncreaseDO) ? 1L : idIncreaseDO.getIncreaseLong() + 1;
                 // 自增后的id保存到数据库
                 SpSettingsDO settingsDO = new SpSettingsDO();
@@ -352,14 +340,14 @@ public class SpBaseObject implements ISpBaseObject {
                 settingsDO.setIncreaseLong(this.id);
                 //更新设置表
                 if(Objects.isNull(idIncreaseDO)){
-                    spSession.databaseStorage().insertSettings(SimpleProtoConfig.settingsTable, settingsDO);
+                    session.databaseStorage().insertSettings(SimpleProtoConfig.settingsTable, settingsDO);
                 }else {
-                    spSession.databaseStorage().updateSettings(SimpleProtoConfig.settingsTable, settingsDO);
+                    session.databaseStorage().updateSettings(SimpleProtoConfig.settingsTable, settingsDO);
                 }
             } catch (Exception e) {
                 throw new SpException("生成自增id时出现未知异常", e);
             } finally {
-                spSession.cacheOperator().unLock(OBJECT_ID_INCREASE_NAME);
+                session.cacheOperator().unLock(OBJECT_ID_INCREASE_NAME);
             }
         }
     }
@@ -377,7 +365,7 @@ public class SpBaseObject implements ISpBaseObject {
 
     private void removeObjectFromStorage(){
         try {
-            spSession.removeObjectFromStorage(this.id);
+            session.removeObjectFromStorage(this.id);
         } catch (Exception e) {
             LogUtil.error("对象删除失败，数据已回滚，失败原因", e);
         }
@@ -417,5 +405,20 @@ public class SpBaseObject implements ISpBaseObject {
     @Override
     public Date getModifyDate() {
         return modifyDate;
+    }
+
+
+    // Some Assertions
+
+    protected void assertStoreObjectIdNotNull(Long id) {
+        if (Objects.isNull(id)) {
+            throw new SpObjectStoreException("Property id is NULL, Store Object Failed");
+        }
+    }
+
+    protected void assertIdFoundFromDatabase(Long id, SpBaseObjectDO spBaseObjectDO) {
+        if (Objects.isNull(spBaseObjectDO)) {
+            throw new SpObjectNotFoundException("Not Found id[%d] from Database", id);
+        }
     }
 }

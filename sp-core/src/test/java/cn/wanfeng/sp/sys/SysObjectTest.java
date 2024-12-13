@@ -2,7 +2,7 @@ package cn.wanfeng.sp.sys;
 
 
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
-import cn.wanfeng.sp.api.base.object.SpSysObjectDO;
+import cn.wanfeng.sp.api.sys.object.SpSysObjectDO;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.sys.mapper.search.TestFolderMapper;
@@ -35,7 +35,7 @@ public class SysObjectTest extends SimpleprotoApplicationTest {
         TestFolder testFolder = new TestFolder(spSession, UlidCreator.getUlid().toString(), "测试文件夹名称", "TF", new Date());
         testFolder.store();
 
-        SpSysObjectDO spSysObjectDO = spSession.databaseStorage().findSysObjectByPath(SimpleProtoConfig.dataTable, testFolder.getPath());
+
         List<TestFolderDO> testFolderDOList = testFolderMapper.findAll();
         Assertions.assertTrue(CollectionUtils.isNotEmpty(testFolderDOList));
 
@@ -48,11 +48,19 @@ public class SysObjectTest extends SimpleprotoApplicationTest {
         testFolder = new TestFolder(spSession, folderId);
         Assertions.assertEquals("更新后的文件夹名称", testFolder.getDisplayName());
 
-        // TestFolder testFolder2 = new TestFolder(spSession, UlidCreator.getUlid().toString(), "测试子文件夹", "TF", new Date());
-        // testFolder.move(testFolder.getId());
-        // testFolder2.store();
-        // Assertions.assertEquals(testFolder.getPath(), testFolder2.getParentPath());
+        TestFolder testFolder2 = new TestFolder(spSession, UlidCreator.getUlid().toString(), "测试子文件夹", "TF", new Date());
+        testFolder2.move(testFolder.getId());
+        testFolder2.store();
+        Assertions.assertEquals(testFolder.getPath(), testFolder2.getParentPath());
 
+        TestFolder testFolder3 = new TestFolder(spSession, UlidCreator.getUlid().toString(), "测试子子文件夹", "TFFF", new Date());
+        testFolder3.move(testFolder2.getPath());
+        testFolder3.store();
+        Assertions.assertEquals(testFolder2.getPath(), testFolder3.getParentPath());
+
+        testFolder.remove();
+        SpSysObjectDO spSysObjectDO = spSession.databaseStorage().findSysObjectByPath(SimpleProtoConfig.dataTable, testFolder.getPath());
+        Assertions.assertNull(spSysObjectDO);
     }
 
 

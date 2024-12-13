@@ -18,7 +18,11 @@ public class SpException extends RuntimeException {
         super(cause);
     }
 
-    public SpException(String message, Throwable cause) {
+    public SpException(Throwable cause, String message) {
         super(message, cause);
+    }
+
+    public SpException(Throwable cause, String format, Object... args){
+        super(String.format(format, args), cause);
     }
 }

@@ -2,7 +2,7 @@ package cn.wanfeng.sp.storage.mapper.postgres;
 
 import cn.wanfeng.sp.api.base.object.SpBaseObjectDO;
 import cn.wanfeng.sp.api.base.object.SpSettingsDO;
-import cn.wanfeng.sp.api.base.object.SpSysObjectDO;
+import cn.wanfeng.sp.api.sys.object.SpSysObjectDO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -63,6 +63,14 @@ public interface DatabaseStorageMapper {
      * @return 系统对象
      */
     SpSysObjectDO findSysObjectByPath(@Param("tableName") String tableName, @Param("path") String path);
+
+    /**
+     * 根据路径模糊查询系统对象
+     * @param tableName 表名
+     * @param path 路径
+     * @return 系统对象列表
+     */
+    List<SpSysObjectDO> findSysObjectByLikePath(@Param("tableName") String tableName, @Param("path") String path);
 
     /**
      * 创建系统对象

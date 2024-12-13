@@ -2,8 +2,8 @@ package cn.wanfeng.sp.util;
 
 import cn.wanfeng.sp.api.base.domain.SpBaseObject;
 import cn.wanfeng.sp.api.base.object.SpBaseObjectDO;
-import cn.wanfeng.sp.api.base.object.SpSysObjectDO;
 import cn.wanfeng.sp.api.sys.domain.SpSysObject;
+import cn.wanfeng.sp.api.sys.object.SpSysObjectDO;
 
 /**
  * @date: 2024-10-20 21:15

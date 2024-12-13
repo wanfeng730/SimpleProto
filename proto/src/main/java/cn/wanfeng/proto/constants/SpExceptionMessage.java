@@ -16,8 +16,6 @@ public class SpExceptionMessage {
 
     private static final String PROTO_FIELD_NAME_DUPLICATE = "@ProtoField[index=%d, name=%s] Verify Failed! Because Duplicate with name, please confirm index and name all not duplicate！";
 
-    private static final String OBJECT_ID_NOT_FOUND = "Not Found Object Id[%d] in Database";
-
 
     public static String stringValueLengthTooLong(int valueLen) {
         return String.format(STRING_VALUE_LENGTH_TOO_LONG, valueLen);
@@ -29,10 +27,6 @@ public class SpExceptionMessage {
 
     public static String protoFieldNameDuplicate(int addIndex, String addName) {
         return String.format(PROTO_FIELD_NAME_DUPLICATE, addIndex, addName);
-    }
-
-    public static String objectIdNotFound(Long id) {
-        return String.format(OBJECT_ID_NOT_FOUND, id);
     }
 
 
