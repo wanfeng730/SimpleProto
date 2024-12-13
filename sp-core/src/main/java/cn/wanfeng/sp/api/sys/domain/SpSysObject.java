@@ -46,6 +46,12 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
         super(session, id);
     }
 
+    // LzhTODO: 根据路径获取系统对象
+    // public SpSysObject(SpSession session, String path){
+    //     //根据路径获取系统对象
+    //
+    // }
+
 
     @Override
     public void setTag(@NotNull SystemTag systemTag) {

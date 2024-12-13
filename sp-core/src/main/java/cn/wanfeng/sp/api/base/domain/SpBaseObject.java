@@ -89,6 +89,25 @@ public class SpBaseObject implements ISpBaseObject {
         readRecordMap();
     }
 
+    public SpBaseObject(SpSession session, SpBaseObjectDO spBaseObjectDO){
+        this.spSession = session;
+        this.isNewObject = false;
+        initInternalContainer();
+
+        assertObjectIdNotNull(spBaseObjectDO.getId());
+        assertObjectIdFindFromDatabase(id, spBaseObjectDO);
+
+        //校验属性的indexNo和fieldName不重复，并生成映射关系
+        assertProtoFieldUniqueAndBuildIndexNoMap();
+
+        // 反序列化proto二进制数据
+        this.recordContainer = ProtoRecordFactory.readBytesToRecordList(spBaseObjectDO.getData());
+        LogUtil.debug(recordContainer.getIndexNoRecordMap().toString());
+
+        // 读取container中的数据并设置到本对象的属性中
+        readRecordMap();
+    }
+
     private static void assertObjectIdNotNull(Long id) {
         if (Objects.isNull(id)) {
             throw new SpException(SpExceptionMessage.OBJECT_ID_IS_NULL_WHEN_FIND_OBJECT);

@@ -2,6 +2,8 @@ package cn.wanfeng.sp.sys;
 
 
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
+import cn.wanfeng.sp.api.base.object.SpSysObjectDO;
+import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.sys.mapper.search.TestFolderMapper;
 import com.github.f4b6a3.ulid.UlidCreator;
@@ -33,6 +35,7 @@ public class SysObjectTest extends SimpleprotoApplicationTest {
         TestFolder testFolder = new TestFolder(spSession, UlidCreator.getUlid().toString(), "测试文件夹名称", "TF", new Date());
         testFolder.store();
 
+        SpSysObjectDO spSysObjectDO = spSession.databaseStorage().findSysObjectByPath(SimpleProtoConfig.dataTable, testFolder.getPath());
         List<TestFolderDO> testFolderDOList = testFolderMapper.findAll();
         Assertions.assertTrue(CollectionUtils.isNotEmpty(testFolderDOList));
 
@@ -42,8 +45,13 @@ public class SysObjectTest extends SimpleprotoApplicationTest {
         testFolder.store();
 
         Long folderId = testFolder.getId();
-        TestFolder testFolder1 = new TestFolder(spSession, folderId);
-        Assertions.assertEquals("更新后的文件夹名称", testFolder1.getDisplayName());
+        testFolder = new TestFolder(spSession, folderId);
+        Assertions.assertEquals("更新后的文件夹名称", testFolder.getDisplayName());
+
+        // TestFolder testFolder2 = new TestFolder(spSession, UlidCreator.getUlid().toString(), "测试子文件夹", "TF", new Date());
+        // testFolder.move(testFolder.getId());
+        // testFolder2.store();
+        // Assertions.assertEquals(testFolder.getPath(), testFolder2.getParentPath());
 
     }
 
