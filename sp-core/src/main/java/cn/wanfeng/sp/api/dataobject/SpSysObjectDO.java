@@ -1,7 +1,6 @@
-package cn.wanfeng.sp.api.sys.object;
+package cn.wanfeng.sp.api.dataobject;
 
 
-import cn.wanfeng.sp.api.base.object.SpBaseObjectDO;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

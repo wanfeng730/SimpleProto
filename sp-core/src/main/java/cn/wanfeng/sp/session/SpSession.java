@@ -1,7 +1,7 @@
 package cn.wanfeng.sp.session;
 
-import cn.wanfeng.sp.api.base.object.SpBaseObjectDO;
-import cn.wanfeng.sp.api.sys.object.SpSysObjectDO;
+import cn.wanfeng.sp.api.dataobject.SpBaseObjectDO;
+import cn.wanfeng.sp.api.dataobject.SpSysObjectDO;
 import cn.wanfeng.sp.cache.CacheOperator;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.storage.mapper.postgres.DatabaseStorageMapper;

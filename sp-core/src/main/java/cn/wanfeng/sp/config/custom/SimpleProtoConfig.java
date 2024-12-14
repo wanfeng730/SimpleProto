@@ -1,7 +1,7 @@
 package cn.wanfeng.sp.config.custom;
 
 
-import cn.wanfeng.sp.api.sys.domain.ISpSysObject;
+import cn.wanfeng.sp.api.domain.ISpSysObject;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.Data;
@@ -47,6 +47,9 @@ public class SimpleProtoConfig {
 
     public static final Long rootSysObjectId = -1L;
     public static String rootSysObjectPath = ISpSysObject.pathSeparator;
+
+    public static final String userDefaultPassword = "Wanfeng730";
+
 
 
 

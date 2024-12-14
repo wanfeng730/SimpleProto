@@ -2,7 +2,7 @@ package cn.wanfeng.sp.sys;
 
 
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
-import cn.wanfeng.sp.api.sys.object.SpSysObjectDO;
+import cn.wanfeng.sp.api.dataobject.SpSysObjectDO;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.sys.mapper.search.TestFolderMapper;

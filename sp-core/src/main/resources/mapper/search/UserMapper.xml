@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wanfeng.sp.api.mapper.search.UserMapper">
+
+    <sql id="all_field">
+        id, type, name, create_date, modify_date, is_delete,   username, password, display_name, expire_date
+    </sql>
+
+    <resultMap id="userResultMap" type="cn.wanfeng.sp.api.dataobject.SpUserDO">
+        <id property="id" column="id"/>
+        <id property="type" column="type"/>
+        <id property="name" column="name"/>
+        <id property="createDate" column="create_date"/>
+        <id property="modifyDate" column="modify_date"/>
+        <id property="isDelete" column="is_delete"/>
+
+        <id property="username" column="username"/>
+        <id property="password" column="password"/>
+        <id property="displayName" column="display_name"/>
+        <id property="expireDate" column="expire_date"/>
+    </resultMap>
+
+    <select id="findByUsername" resultMap="userResultMap">
+        select <include refid="all_field"/>
+        from {data_table}
+        where type = 'user'
+          and username = #{username}
+    </select>
+
+
+
+
+</mapper>

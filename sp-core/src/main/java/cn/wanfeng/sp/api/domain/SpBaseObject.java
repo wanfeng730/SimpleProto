@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.api.base.domain;
+package cn.wanfeng.sp.api.domain;
 
 import cn.wanfeng.proto.constants.SpExceptionMessage;
 import cn.wanfeng.proto.record.ProtoRecord;
@@ -6,8 +6,8 @@ import cn.wanfeng.proto.record.ProtoRecordContainer;
 import cn.wanfeng.proto.record.ProtoRecordFactory;
 import cn.wanfeng.sp.anno.ProtoField;
 import cn.wanfeng.sp.anno.Type;
-import cn.wanfeng.sp.api.base.object.SpBaseObjectDO;
-import cn.wanfeng.sp.api.base.object.SpSettingsDO;
+import cn.wanfeng.sp.api.dataobject.SpBaseObjectDO;
+import cn.wanfeng.sp.api.dataobject.SpSettingsDO;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.exception.SpObjectNotFoundException;

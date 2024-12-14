@@ -3,8 +3,8 @@ package cn.wanfeng.sp.sys;
 
 import cn.wanfeng.sp.anno.ProtoField;
 import cn.wanfeng.sp.anno.Type;
-import cn.wanfeng.sp.api.sys.domain.SpSysObject;
-import cn.wanfeng.sp.api.sys.enums.SystemTag;
+import cn.wanfeng.sp.api.domain.SpSysObject;
+import cn.wanfeng.sp.api.enums.SystemTag;
 import cn.wanfeng.sp.common.BusinessTypeConstant;
 import cn.wanfeng.sp.session.SpSession;
 import lombok.Getter;

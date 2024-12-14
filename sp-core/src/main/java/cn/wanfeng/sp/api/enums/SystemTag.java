@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.api.sys.enums;
+package cn.wanfeng.sp.api.enums;
 
 import org.apache.commons.lang3.StringUtils;
 

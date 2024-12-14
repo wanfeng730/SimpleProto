@@ -1,6 +1,4 @@
-package cn.wanfeng.sp.api.sys.domain;
-
-import cn.wanfeng.sp.api.base.domain.ISpBaseObject;
+package cn.wanfeng.sp.api.domain;
 
 /**
  * @date: 2024-12-08 16:33

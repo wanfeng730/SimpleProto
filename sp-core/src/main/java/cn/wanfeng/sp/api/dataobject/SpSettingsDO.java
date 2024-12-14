@@ -1,9 +1,8 @@
-package cn.wanfeng.sp.api.base.object;
+package cn.wanfeng.sp.api.dataobject;
 
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
@@ -12,7 +11,6 @@ import lombok.Data;
  * @since: 1.0
  */
 @Data
-@TableName(value = "sp_settings", autoResultMap = true)
 public class SpSettingsDO {
 
     @TableId("name")

@@ -3,7 +3,7 @@ package cn.wanfeng.sp.base;
 
 import cn.wanfeng.sp.anno.ProtoField;
 import cn.wanfeng.sp.anno.Type;
-import cn.wanfeng.sp.api.base.domain.SpBaseObject;
+import cn.wanfeng.sp.api.domain.SpBaseObject;
 import cn.wanfeng.sp.common.BusinessTypeConstant;
 import cn.wanfeng.sp.session.SpSession;
 import lombok.Getter;

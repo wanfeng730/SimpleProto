@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.api.base.domain;
+package cn.wanfeng.sp.api.domain;
 
 import java.util.Date;
 

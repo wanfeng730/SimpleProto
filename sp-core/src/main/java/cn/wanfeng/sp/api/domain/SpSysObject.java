@@ -1,11 +1,10 @@
-package cn.wanfeng.sp.api.sys.domain;
+package cn.wanfeng.sp.api.domain;
 
 
 import cn.wanfeng.proto.record.ProtoRecord;
 import cn.wanfeng.proto.record.ProtoRecordFactory;
-import cn.wanfeng.sp.api.base.domain.SpBaseObject;
-import cn.wanfeng.sp.api.sys.enums.SystemTag;
-import cn.wanfeng.sp.api.sys.object.SpSysObjectDO;
+import cn.wanfeng.sp.api.enums.SystemTag;
+import cn.wanfeng.sp.api.dataobject.SpSysObjectDO;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.exception.SpObjectNotFoundException;
