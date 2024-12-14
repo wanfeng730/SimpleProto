@@ -27,7 +27,8 @@ public class SimpleReflectUtils {
      * 获取类上标注ProtoField注解的属性
      */
     public static Field[] getProtoFieldAnnotationFields(Class<?> clazz) {
-        return Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(ProtoField.class)).toArray(Field[]::new);
+        List<Field> allFields = getFieldsWithSuperClass(clazz);
+        return allFields.stream().filter(field -> field.isAnnotationPresent(ProtoField.class)).toArray(Field[]::new);
     }
 
     /**
