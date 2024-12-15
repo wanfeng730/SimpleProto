@@ -1,5 +1,8 @@
 package cn.wanfeng.sp.storage.file;
 
+import java.io.File;
+import java.io.InputStream;
+
 /**
  * @date: 2024-12-15 23:42
  * @author: luozh.wanfeng
@@ -8,6 +11,35 @@ package cn.wanfeng.sp.storage.file;
  */
 public interface FileStorageClient {
 
+
+    /**
+     * 上传文件对象
+     * @param storageKey 文件存储路径
+     * @param file 本地文件
+     */
+    void setObject(String storageKey, File file);
+
+    /**
+     * 上传文件对象
+     * @param storageKey 文件存储路径
+     * @param inputStream 文件流（建议使用ByteArrayInputStream）
+     */
+    void setObject(String storageKey, InputStream inputStream);
+
+    /**
+     * 获取文件对象的流
+     * @param storageKey 文件存储路径
+     * @return 文件流
+     */
+    InputStream getObjectStream(String storageKey);
+
+    /**
+     * 下载文件对象到本地
+     * @param storageKey 文件存储路径
+     * @param targetFilePath 下载到这个路径
+     * @return 文件流
+     */
+    File downloadObject(String storageKey, String targetFilePath);
 
 
 }
