@@ -194,6 +194,13 @@
             <version>${commons-net.version}</version>
         </dependency>
 
+        <!-- 连接MinIO依赖 -->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.5.14</version>
+        </dependency>
+
         <!-- Amazon S3 存储服务java依赖 -->
         <dependency>
             <groupId>com.amazonaws</groupId>

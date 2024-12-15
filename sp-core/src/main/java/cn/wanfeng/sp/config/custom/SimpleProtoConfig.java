@@ -51,6 +51,13 @@ public class SimpleProtoConfig {
     public static final String userDefaultPassword = "Wanfeng730";
 
 
+    public static final String FILE_STORAGE_TYPE_MINIO = "MinIO";
+
+    public static String fileStorageHost;
+    public static String fileStorageAccessKey;
+    public static String fileStorageSecretKey;
+    public static String fileStorageBucket;
+
 
 
     @Resource
@@ -86,6 +93,11 @@ public class SimpleProtoConfig {
         redisPort = environment.getProperty("simpleproto.redisPort");
         redisPassword = environment.getProperty("simpleproto.redisPassword");
         redisDatabase = environment.getProperty("simpleproto.redisDatabase");
+
+        fileStorageHost = environment.getProperty("simpleproto.fileStorageHost");
+        fileStorageAccessKey = environment.getProperty("simpleproto.fileStorageAccessKey");
+        fileStorageSecretKey = environment.getProperty("simpleproto.fileStorageSecretKey");
+        fileStorageBucket = environment.getProperty("simpleproto.fileStorageBucket");
     }
 
 }
