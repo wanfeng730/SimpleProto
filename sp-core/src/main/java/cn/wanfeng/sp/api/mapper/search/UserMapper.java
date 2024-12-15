@@ -4,6 +4,8 @@ import cn.wanfeng.sp.api.dataobject.SpUserDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * @date: 2024-12-14 18:08
  * @author: luozh.wanfeng
@@ -11,6 +13,15 @@ import org.apache.ibatis.annotations.Param;
  * @since:
  */
 public interface UserMapper extends BaseMapper<SpUserDO> {
+
+    List<SpUserDO> findAll();
+
+    /**
+     * 根据用户id查找
+     * @param id 用户id
+     * @return 用户
+     */
+    SpUserDO findById(@Param("id") Long id);
 
     /**
      * 根据用户名查找

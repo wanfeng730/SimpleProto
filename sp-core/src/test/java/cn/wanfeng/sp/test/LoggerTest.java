@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.log;
+package cn.wanfeng.sp.test;
 
 import cn.wanfeng.sp.SimpleprotoApplication;
 import org.junit.jupiter.api.Test;

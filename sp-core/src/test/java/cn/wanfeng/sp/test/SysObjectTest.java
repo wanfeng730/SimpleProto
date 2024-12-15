@@ -1,10 +1,12 @@
-package cn.wanfeng.sp.sys;
+package cn.wanfeng.sp.test;
 
 
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
 import cn.wanfeng.sp.api.dataobject.SpSysObjectDO;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
+import cn.wanfeng.sp.sys.TestFolder;
+import cn.wanfeng.sp.sys.TestFolderDO;
 import cn.wanfeng.sp.sys.mapper.search.TestFolderMapper;
 import com.github.f4b6a3.ulid.UlidCreator;
 import jakarta.annotation.Resource;

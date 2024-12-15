@@ -1,9 +1,11 @@
-package cn.wanfeng.sp.base;
+package cn.wanfeng.sp.test;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
-import cn.wanfeng.sp.api.domain.ISpBaseObject;
 import cn.wanfeng.sp.api.dataobject.SpSettingsDO;
+import cn.wanfeng.sp.api.domain.ISpBaseObject;
+import cn.wanfeng.sp.base.BorrowForm;
+import cn.wanfeng.sp.base.BorrowFormDO;
 import cn.wanfeng.sp.base.mapper.search.BorrowFormMapper;
 import cn.wanfeng.sp.common.BusinessTypeConstant;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;

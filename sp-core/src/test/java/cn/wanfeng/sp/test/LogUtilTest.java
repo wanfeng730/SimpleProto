@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.log;
+package cn.wanfeng.sp.test;
 
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;

@@ -6,7 +6,7 @@ package cn.wanfeng.sp.api.constant;
  * @description: 对象类型
  * @since: 1.0
  */
-public class ObjectTypeConstants {
+public class SpObjectTypeConstants {
 
     public static final String USER = "user";
 }

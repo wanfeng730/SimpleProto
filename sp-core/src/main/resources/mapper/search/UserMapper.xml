@@ -20,6 +20,19 @@
         <id property="expireDate" column="expire_date"/>
     </resultMap>
 
+    <select id="findAll" resultMap="userResultMap">
+        select <include refid="all_field"/>
+        from {data_table}
+        where type = 'user'
+    </select>
+
+    <select id="findById" resultMap="userResultMap">
+        select <include refid="all_field"/>
+        from {data_table}
+        where type = 'user'
+          and id = #{id}
+    </select>
+
     <select id="findByUsername" resultMap="userResultMap">
         select <include refid="all_field"/>
         from {data_table}

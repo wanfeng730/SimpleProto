@@ -2,7 +2,7 @@ package cn.wanfeng.sp.api.domain;
 
 import cn.wanfeng.sp.anno.ProtoField;
 import cn.wanfeng.sp.anno.Type;
-import cn.wanfeng.sp.api.constant.ObjectTypeConstants;
+import cn.wanfeng.sp.api.constant.SpObjectTypeConstants;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import java.util.Date;
  * @since: 1.0
  */
 @Getter
-@Type(ObjectTypeConstants.USER)
+@Type(SpObjectTypeConstants.USER)
 public class SpUser extends SpBaseObject {
 
     /**
@@ -41,16 +41,16 @@ public class SpUser extends SpBaseObject {
     private Date expireDate;
 
 
-    public SpUser(SpSession session, String type, String username, String password, String displayName, Date expireDate) {
-        super(session, type);
+    public SpUser(SpSession session, String username, String password, String displayName, Date expireDate) {
+        super(session, SpObjectTypeConstants.USER);
         this.username = username;
         this.password = password;
         this.displayName = displayName;
         this.expireDate = expireDate;
     }
 
-    public SpUser(SpSession session, String type, String username) {
-        super(session, type);
+    public SpUser(SpSession session, String username) {
+        super(session, SpObjectTypeConstants.USER);
         this.username = username;
         this.password = SimpleProtoConfig.userDefaultPassword;
         this.displayName = username;

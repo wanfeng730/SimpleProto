@@ -1,6 +1,7 @@
 package cn.wanfeng.sp.session;
 
 import cn.wanfeng.sp.api.dataobject.SpBaseObjectDO;
+import cn.wanfeng.sp.api.dataobject.SpSettingsDO;
 import cn.wanfeng.sp.api.dataobject.SpSysObjectDO;
 import cn.wanfeng.sp.cache.CacheOperator;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @date: 2024-05-06 11:14
@@ -21,6 +24,9 @@ import java.util.Map;
  */
 @Component
 public class SpSession {
+
+    @Resource
+    private SimpleProtoConfig simpleProtoConfig;
 
     @Resource
     private DatabaseStorageMapper databaseStorageMapper;
@@ -80,5 +86,23 @@ public class SpSession {
         databaseStorage().removeObject(SimpleProtoConfig.dataTable, id);
         //删除高级搜索存储
         searchStorage().removeObject(SimpleProtoConfig.dataTable, id);
+    }
+
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public Long increaseLongByName(@NotBlank String name){
+        SpSettingsDO settings = databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, name);
+        if (Objects.isNull(settings)) {
+            settings = new SpSettingsDO();
+            settings.setName(name);
+            settings.setIncreaseLong(1L);
+            settings.setIncreaseString("");
+            databaseStorage().insertSettings(SimpleProtoConfig.settingsTable, settings);
+        }else {
+            Long increaseLong = settings.getIncreaseLong();
+            increaseLong++;
+            settings.setIncreaseLong(increaseLong);
+            databaseStorage().updateSettings(SimpleProtoConfig.settingsTable, settings);
+        }
+        return settings.getIncreaseLong();
     }
 }
