@@ -3,6 +3,7 @@ package cn.wanfeng.sp.test;
 
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
 import cn.wanfeng.sp.api.dataobject.SpUserDO;
+import cn.wanfeng.sp.api.domain.DefaultUser;
 import cn.wanfeng.sp.api.domain.SpUser;
 import cn.wanfeng.sp.api.mapper.search.UserMapper;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
@@ -43,6 +44,10 @@ public class UserTest extends SimpleprotoApplicationTest {
 
         List<SpUserDO> userDOList = userMapper.findAll();
         Assertions.assertTrue(CollectionUtils.isNotEmpty(userDOList));
+
+        DefaultUser defaultUser = new DefaultUser(session, numberStr, "用户的简单描述。。。");
+        defaultUser.store();
+
 
     }
 

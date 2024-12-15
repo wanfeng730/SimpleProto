@@ -40,6 +40,13 @@ public class SpUser extends SpBaseObject {
     @ProtoField(index = 1010, name = "expire_date")
     private Date expireDate;
 
+    public SpUser(SpSession session, String type, String username, String password, String displayName, Date expireDate) {
+        super(session, type);
+        this.displayName = displayName;
+        this.expireDate = expireDate;
+        this.password = password;
+        this.username = username;
+    }
 
     public SpUser(SpSession session, String username, String password, String displayName, Date expireDate) {
         super(session, SpObjectTypeConstants.USER);
@@ -47,6 +54,14 @@ public class SpUser extends SpBaseObject {
         this.password = password;
         this.displayName = displayName;
         this.expireDate = expireDate;
+    }
+
+    public SpUser(SpSession session, String type, String username) {
+        super(session, type);
+        this.username = username;
+        this.password = SimpleProtoConfig.userDefaultPassword;
+        this.displayName = username;
+        this.expireDate = null;
     }
 
     public SpUser(SpSession session, String username) {
