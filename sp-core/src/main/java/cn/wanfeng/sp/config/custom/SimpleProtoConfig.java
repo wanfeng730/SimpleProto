@@ -48,12 +48,19 @@ public class SimpleProtoConfig {
     public static final Long rootSysObjectId = -1L;
     public static String rootSysObjectPath = ISpSysObject.pathSeparator;
 
+    /**
+     * 创建用户默认密码
+     */
     public static final String userDefaultPassword = "Wanfeng730";
 
 
+    /**
+     * 文件存储类型
+     */
     public static final String FILE_STORAGE_TYPE_MINIO = "MinIO";
 
-    public static String fileStorageHost;
+    public static String fileStorageType;
+    public static String fileStorageEndPoint;
     public static String fileStorageAccessKey;
     public static String fileStorageSecretKey;
     public static String fileStorageBucket;
@@ -94,7 +101,8 @@ public class SimpleProtoConfig {
         redisPassword = environment.getProperty("simpleproto.redisPassword");
         redisDatabase = environment.getProperty("simpleproto.redisDatabase");
 
-        fileStorageHost = environment.getProperty("simpleproto.fileStorageHost");
+        fileStorageType = environment.getProperty("simpleproto.fileStorageType");
+        fileStorageEndPoint = environment.getProperty("simpleproto.fileStorageEndPoint");
         fileStorageAccessKey = environment.getProperty("simpleproto.fileStorageAccessKey");
         fileStorageSecretKey = environment.getProperty("simpleproto.fileStorageSecretKey");
         fileStorageBucket = environment.getProperty("simpleproto.fileStorageBucket");

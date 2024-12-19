@@ -28,7 +28,7 @@ simpleproto:
   redisDatabase: 0
   # 文件对象存储连接配置
   fileStorageType: MinIO
-  fileStorageHost: 42.192.108.249:9000
+  fileStorageEndPoint: http://42.192.108.249:9000
   fileStorageAccessKey: minio
   fileStorageSecretKey: Wanfeng730
   fileStorageBucket: simpleproto

@@ -11,8 +11,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 /**
  * @date: 2024-12-15 23:44
  * @author: luozh.wanfeng
- * @description:
- * @since:
+ * @since: 1.0
  */
 public class MinIOFileStorageCondition implements Condition {
 

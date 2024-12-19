@@ -11,6 +11,11 @@ import java.io.InputStream;
  */
 public interface FileStorageClient {
 
+    /**
+     * 桶是否存在
+     * @param bucketName 桶名
+     */
+    void assertBucketExists(String bucketName);
 
     /**
      * 上传文件对象
@@ -41,5 +46,10 @@ public interface FileStorageClient {
      */
     File downloadObject(String storageKey, String targetFilePath);
 
+    /**
+     * 删除文件对象
+     * @param storageKey 文件存储路径
+     */
+    void removeObject(String storageKey);
 
 }

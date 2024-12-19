@@ -1,0 +1,28 @@
+package cn.wanfeng.sp.util;
+
+
+import cn.hutool.core.date.DateUtil;
+
+import java.util.Date;
+
+/**
+ * @date: 2024-12-19 23:28
+ * @author: luozh.wanfeng
+ * @description: 时间工具类，继承了伟大的hutool的日期工具类，在此类上增加更多方便实用的功能
+ * @since: 1.0
+ */
+public class DateUtils extends DateUtil {
+
+    /**
+     * 用于当前时间显示的格式，不使用空格避免不兼容
+     */
+    private static final String DISPLAY_CURRENT_FORMAT = "yyyy-MM-dd_HH:mm:ss";
+
+    /**
+     * 获取当前时间 yyyy-MM-dd HH:mm:ss
+     * @return 当前时间
+     */
+    public static String currentDateTime(){
+        return format(new Date(), DISPLAY_CURRENT_FORMAT);
+    }
+}
