@@ -39,12 +39,27 @@ public interface FileStorageClient {
     InputStream getObjectStream(String storageKey);
 
     /**
+     * 获取文件预览链接
+     * @param storageKey 文件存储路径
+     * @param expireSeconds 有效期（秒）
+     * @return url
+     */
+    String getObjectPreviewUrl(String storageKey, int expireSeconds);
+
+    /**
      * 下载文件对象到本地
      * @param storageKey 文件存储路径
      * @param targetFilePath 下载到这个路径
      * @return 文件流
      */
     File downloadObject(String storageKey, String targetFilePath);
+
+    /**
+     * 下载文件对象到本地随机路径
+     * @param storageKey 文件存储路径
+     * @return 文件流
+     */
+    File downloadObject(String storageKey);
 
     /**
      * 删除文件对象

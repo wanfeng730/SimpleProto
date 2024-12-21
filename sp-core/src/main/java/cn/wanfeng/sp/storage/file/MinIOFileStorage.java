@@ -2,9 +2,12 @@ package cn.wanfeng.sp.storage.file;
 
 
 import cn.wanfeng.sp.exception.SpFileStorageException;
+import cn.wanfeng.sp.util.FileUtils;
 import cn.wanfeng.sp.util.InputStreamUtils;
 import cn.wanfeng.sp.util.LogUtil;
 import io.minio.*;
+import io.minio.http.Method;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -82,16 +85,46 @@ public class MinIOFileStorage implements FileStorageClient {
             LogUtil.error("从MinIO获取文件失败[bucketName={}, storageKey={}]", bucketName, storageKey, e);
             return null;
         }
-
     }
 
     @Override
-    public File downloadObject(String storageKey, String targetFilePath) {
+    public String getObjectPreviewUrl(String storageKey, int expireSeconds) {
+        try {
+            GetPresignedObjectUrlArgs getPresignedObjectUrlArgs = GetPresignedObjectUrlArgs.builder()
+                    .bucket(bucketName)
+                    .object(storageKey)
+                    .expiry(expireSeconds)
+                    .method(Method.GET)
+                    .build();
+            return client.getPresignedObjectUrl(getPresignedObjectUrlArgs);
+        } catch (Exception e) {
+            LogUtil.error("从MinIO获取文件预览链接失败 [bucketName={}, storageKey={}]", bucketName, storageKey, e);
+        }
         return null;
     }
 
     @Override
-    public void removeObject(String storageKey) {
+    public File downloadObject(String storageKey, String targetFilePath) {
+        File file = FileUtils.touch(targetFilePath);
+        InputStream inputStream = getObjectStream(storageKey);
+        return ObjectUtils.isEmpty(inputStream) ? null : FileUtils.writeFromStream(inputStream, file);
+    }
 
+    @Override
+    public File downloadObject(String storageKey) {
+        String tempDirectoryPath = FileUtils.createTempDirectory("minio_").getPath();
+        String filename = FileUtils.getName(storageKey);
+        String targetFilePath = tempDirectoryPath + File.separator + filename;
+        return downloadObject(storageKey, targetFilePath);
+    }
+
+    @Override
+    public void removeObject(String storageKey) {
+        try {
+            RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder().bucket(bucketName).object(storageKey).build();
+            client.removeObject(removeObjectArgs);
+        } catch (Exception e) {
+            LogUtil.error("从MinIO删除文件失败[bucketName={}, storageKey={}]", bucketName, storageKey);
+        }
     }
 }
