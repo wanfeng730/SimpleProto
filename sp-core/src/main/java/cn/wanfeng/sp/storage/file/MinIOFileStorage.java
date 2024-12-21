@@ -82,8 +82,7 @@ public class MinIOFileStorage implements FileStorageClient {
             byte[] objectBytes = response.readAllBytes();
             return new ByteArrayInputStream(objectBytes);
         } catch (Exception e){
-            LogUtil.error("从MinIO获取文件失败[bucketName={}, storageKey={}]", bucketName, storageKey, e);
-            return null;
+            throw new SpFileStorageException(e, "从MinIO获取文件失败[bucketName=%s, storageKey=%s]", bucketName, storageKey);
         }
     }
 

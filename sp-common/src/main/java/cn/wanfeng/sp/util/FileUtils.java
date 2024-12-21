@@ -1,6 +1,7 @@
 package cn.wanfeng.sp.util;
 
 import cn.hutool.core.io.FileUtil;
+import cn.wanfeng.sp.exception.SpException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -29,7 +30,7 @@ public class FileUtils extends FileUtil {
             Path path = Files.createTempDirectory(prefix);
             return path.toFile();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new SpException(e, "创建临时文件夹异常");
         }
     }
 }
