@@ -11,7 +11,9 @@ import cn.wanfeng.sp.common.BusinessTypeConstant;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.session.SpSession;
+import cn.wanfeng.sp.util.DateUtils;
 import cn.wanfeng.sp.util.LogUtil;
+import cn.wanfeng.sp.util.SimpleCollectionUtils;
 import cn.wanfeng.sp.util.ThreadPoolTemplateUtils;
 import com.alibaba.fastjson.JSON;
 import jakarta.annotation.Resource;
@@ -21,9 +23,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @date: 2024-06-21 11:06
@@ -177,6 +182,49 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
         countDownLatch.await();
         LogUtil.info("SpBaseObject并发测试完成, 总耗时{}s", (System.currentTimeMillis() - step0) / 1000.0);
+    }
+
+    @Test
+    public void testCreateByCompletableFuture() throws ExecutionException, InterruptedException {
+        List<BorrowFormDO> borrowFormDOList = borrowFormMapper.findAll();
+        List<List<BorrowFormDO>> partitionList = SimpleCollectionUtils.partitionByItemSize(borrowFormDOList, 5);
+        ThreadPoolTaskExecutor executor = ThreadPoolTemplateUtils.initThreadPoolByPrefixName("test-thread-");
+        List<CompletableFuture<Long>> futureList = new ArrayList<>();
+        for (List<BorrowFormDO> formDOList : partitionList) {
+            CompletableFuture<Long> partitionFuture = CompletableFuture.supplyAsync(() -> {
+                long success = 0L;
+                for (BorrowFormDO borrowFormDO : formDOList) {
+                    try {
+                        BorrowForm borrowForm = new BorrowForm(spSession, borrowFormDO.getId());
+                        borrowForm.setFormNo(DateUtils.currentDateTime() + "多线程异步测试");
+                        borrowForm.store();
+                        success++;
+                    } catch (Exception e) {
+                        LogUtil.error("修改失败", e);
+                    }
+                }
+                return success;
+            }, executor);
+            futureList.add(partitionFuture);
+        }
+
+        CompletableFuture<Void> waitAllFinishFuture = CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0]));
+        CompletableFuture<List<Long>> resultListFuture = waitAllFinishFuture.thenApply(v -> futureList.stream().map(future -> {
+            try {
+                Long success = future.get();
+                LogUtil.info("已修复{}条数据", success);
+                return success;
+            } catch (Exception e) {
+                LogUtil.error("获取future结果失败", e);
+                return 0L;
+            }
+        }).toList());
+
+        LogUtil.info("开始修复");
+        long step0 = System.currentTimeMillis();
+        List<Long> longList = resultListFuture.get();
+        LogUtil.info("修复结束，耗时{}ms", System.currentTimeMillis() - step0);
+        LogUtil.info("");
     }
 
     private Integer randomSeconds(){
