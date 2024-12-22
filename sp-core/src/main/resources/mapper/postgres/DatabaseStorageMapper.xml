@@ -102,6 +102,13 @@
         WHERE path LIKE #{path}
     </select>
 
+    <select id="countSysObjectByLikePathAndTag" resultType="java.lang.Integer">
+        SELECT count(id)
+        FROM ${tableName}
+        WHERE path LIKE #{path}
+        AND tag = #{tag}
+    </select>
+
     <insert id="insertSysObject" useGeneratedKeys="true" keyProperty="sysObjectDO.id">
         INSERT INTO ${tableName}(<include refid="sys_object_field"/>)
         VALUES (

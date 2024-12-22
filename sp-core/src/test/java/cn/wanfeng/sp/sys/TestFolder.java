@@ -3,8 +3,7 @@ package cn.wanfeng.sp.sys;
 
 import cn.wanfeng.sp.anno.ProtoField;
 import cn.wanfeng.sp.anno.Type;
-import cn.wanfeng.sp.api.domain.SpSysObject;
-import cn.wanfeng.sp.api.enums.SystemTag;
+import cn.wanfeng.sp.api.domain.SpFolder;
 import cn.wanfeng.sp.common.BusinessTypeConstant;
 import cn.wanfeng.sp.session.SpSession;
 import lombok.Getter;
@@ -21,7 +20,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Type(BusinessTypeConstant.TEST_FOLDER)
-public class TestFolder extends SpSysObject {
+public class TestFolder extends SpFolder {
 
     @ProtoField(index = 1, name = "display_name")
     private String displayName;
@@ -35,7 +34,6 @@ public class TestFolder extends SpSysObject {
 
     public TestFolder(SpSession session, String name, String displayName, String code, Date expireDate) {
         super(session, BusinessTypeConstant.TEST_FOLDER, name);
-        updateBySystemTag(SystemTag.FOLDER);
         this.displayName = displayName;
         this.code = code;
         this.expireDate = expireDate;

@@ -73,6 +73,15 @@ public interface DatabaseStorageMapper {
     List<SpSysObjectDO> findSysObjectByLikePath(@Param("tableName") String tableName, @Param("path") String path);
 
     /**
+     * 根据路径模糊查询指定类型子对象
+     * @param tableName 表名
+     * @param path 路径
+     * @param tag 系统类型
+     * @return 系统对象列表
+     */
+    Integer countSysObjectByLikePathAndTag(@Param("tableName") String tableName, @Param("path") String path, @Param("tag") String tag);
+
+    /**
      * 创建系统对象
      * @param tableName 表名
      * @param sysObjectDO 系统对象

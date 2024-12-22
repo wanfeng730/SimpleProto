@@ -14,12 +14,6 @@ public enum SystemTag {
 
     FILE("sys_file", "文件"),
 
-    FILE_TEXT("sys_file_text", "文本文件"),
-
-    FILE_IMAGE("sys_file_image", "图片文件"),
-
-    FILE_VIDEO("sys_file_video", "视频文件"),
-
     NONE("The Tag is Not Support", "该文件类型不支持");
 
 

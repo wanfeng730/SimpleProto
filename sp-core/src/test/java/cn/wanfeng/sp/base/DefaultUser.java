@@ -1,8 +1,9 @@
-package cn.wanfeng.sp.api.domain;
+package cn.wanfeng.sp.base;
 
 
 import cn.wanfeng.sp.anno.ProtoField;
 import cn.wanfeng.sp.anno.Type;
+import cn.wanfeng.sp.api.domain.SpUser;
 import cn.wanfeng.sp.session.SpSession;
 import lombok.Getter;
 
@@ -14,7 +15,7 @@ import lombok.Getter;
  */
 @Getter
 @Type("default_user")
-public class DefaultUser extends SpUser{
+public class DefaultUser extends SpUser {
 
     @ProtoField(index = 1, name = "description")
     private String description;

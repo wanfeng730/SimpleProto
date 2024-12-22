@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @description: simpleproto基础对象
  * @since: 1.0
  */
-public class SpBaseObject implements ISpBaseObject {
+public class SpBaseObject implements ISpBaseObject{
 
     protected SpSession session;
 
@@ -59,7 +59,7 @@ public class SpBaseObject implements ISpBaseObject {
     protected boolean isNewObject;
 
     public SpBaseObject(SpSession session, String type) {
-        this(session, type, defaultUildName());
+        this(session, type, defaultUlidName());
     }
 
     public SpBaseObject(SpSession session, String type, String name) {
@@ -90,6 +90,8 @@ public class SpBaseObject implements ISpBaseObject {
 
         // 读取container中的数据并设置到本对象的属性中
         readContainerDataToThis();
+        // 读取container中的数据设置到注解属性中
+        readContainerToAnnotationProperty();
     }
 
     protected SpBaseObject(SpSession session, @NotNull SpBaseObjectDO objectDO){
@@ -106,6 +108,8 @@ public class SpBaseObject implements ISpBaseObject {
 
         // 读取container中的数据并设置到本对象的属性中
         readContainerDataToThis();
+        // 读取container中的数据设置到注解属性中
+        readContainerToAnnotationProperty();
     }
 
     private void assertProtoFieldUniqueAndBuildIndexNoMap(){
@@ -127,17 +131,10 @@ public class SpBaseObject implements ISpBaseObject {
         }
     }
 
-    protected void readContainerDataToThis() {
-        // 读取并设置该对象的基本属性
-        readRecordMapToBaseObjectProperty();
-        // 读取并设置该对象继承类的属性
-        readRecordMapToAnnotationProperty();
-    }
-
     /**
      * 将protoRecord设置到对应的SpBaseObject的成员属性上
      */
-    protected void readRecordMapToBaseObjectProperty() {
+    protected void readContainerToBaseObjectProperty() {
         ConcurrentHashMap<Integer, ProtoRecord> indexNoRecordMap = recordContainer.getIndexNoRecordMap();
         id = (Long) indexNoRecordMap.get(ID_INDEX).getValue();
         type = (String) indexNoRecordMap.get(TYPE_INDEX).getValue();
@@ -147,7 +144,7 @@ public class SpBaseObject implements ISpBaseObject {
         isDelete = (Boolean) indexNoRecordMap.get(IS_DELETE_INDEX).getValue();
     }
 
-    protected void readRecordMapToAnnotationProperty() {
+    protected void readContainerToAnnotationProperty() {
         ConcurrentHashMap<Integer, ProtoRecord> indexNoRecordMap = recordContainer.getIndexNoRecordMap();
         Field[] protoField = SimpleReflectUtils.getProtoFieldAnnotationFields(this.getClass());
         for (Field declaredField : protoField) {
@@ -205,29 +202,32 @@ public class SpBaseObject implements ISpBaseObject {
      *
      * @return ULID
      */
-    private static String defaultUildName() {
+    private static String defaultUlidName() {
         return UlidCreator.getUlid().toString();
     }
 
     @Override
     public void store() {
-        assertTypeValueEqualsAnnotation();
         //根据是否为新对象执行store操作
         isNewObject = Objects.isNull(this.id);
         if (isNewObject) {
+            //校验处理
+            beforeCreateStoreAssertAndHandle();
+
             // 生成主键id
             generateIncreaseId();
             // 将基础对象的属性放到indexNoRecordMap和fieldNameValueMap
-            putBasePropertyToContainers();
+            putThisPropertyToContainers();
             putDeclaredPropertyToContainerAndValueMap();
             // 新建数据到数据库（事务：数据库存储新建、设置自增主键id、高级搜索存储新建）
             createObjectToStorage();
             isNewObject = false;
         } else {
-            // 修改时间刷新
-            updateModifyDate();
+            //校验处理
+            beforeUpdateStoreAssertAndHandle();
+
             // 将继承类中的属性放到indexNoRecordMap和fieldNameValueMap
-            putBasePropertyToContainers();
+            putThisPropertyToContainers();
             putDeclaredPropertyToContainerAndValueMap();
             // 更新数据(事务：数据库存储更新、高级搜索存储更新）
             updateObjectToStorage();
@@ -235,7 +235,43 @@ public class SpBaseObject implements ISpBaseObject {
 
     }
 
-    public void assertTypeValueEqualsAnnotation(){
+    /**
+     * 新建保存对象前的校验和处理，用于给子类重写方法
+     */
+    protected void beforeCreateStoreAssertAndHandle(){
+        assertTypeValueEqualsAnnotation();
+    }
+
+    /**
+     * 更新保存对象前的校验和处理，用于给子类重写方法
+     */
+    protected void beforeUpdateStoreAssertAndHandle(){
+        updateModifyDate();
+    }
+
+    /**
+     * 将本对象属性放到container中，用于给子类重写方法
+     */
+    protected void putThisPropertyToContainers(){
+        putBasePropertyToContainers();
+    }
+
+    /**
+     * 读取数据设置到对象中，用于子类重写方法
+     */
+    protected void readContainerDataToThis() {
+        // 读取并设置该对象的基本属性
+        readContainerToBaseObjectProperty();
+    }
+
+    /**
+     * 删除对象前的校验和处理，用于给子类重写方法
+     */
+    protected void beforeRemoveAssertAndHandle(){
+
+    }
+
+    private void assertTypeValueEqualsAnnotation(){
         Type typeAnnotation = this.getClass().getAnnotation(Type.class);
         String typeAnnoValue = typeAnnotation.value();
         if(!StringUtils.equals(this.type, typeAnnoValue)){
@@ -243,7 +279,7 @@ public class SpBaseObject implements ISpBaseObject {
         }
     }
 
-    protected void updateModifyDate() {
+    private void updateModifyDate() {
         this.modifyDate = new Date();
     }
 
@@ -327,7 +363,7 @@ public class SpBaseObject implements ISpBaseObject {
 
 
 
-    protected void generateIncreaseId() {
+    private void generateIncreaseId() {
         //从redis获取当前自增的id值，若没有则从数据库加载
         boolean locked = session.cacheOperator().lockRetryable(OBJECT_ID_INCREASE_NAME);
         if(locked){
@@ -358,6 +394,8 @@ public class SpBaseObject implements ISpBaseObject {
         if (isNewObject) {
             LogUtil.info("对象[id={}, type={}, name={}]为新建对象，未保存到数据库，无需删除", this.id, this.type, this.name);
         } else {
+            // 校验处理
+            beforeRemoveAssertAndHandle();
             // 在数据库中删除
             removeObjectFromStorage();
         }

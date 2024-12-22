@@ -3,9 +3,9 @@ package cn.wanfeng.sp.test;
 
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
 import cn.wanfeng.sp.api.dataobject.SpUserDO;
-import cn.wanfeng.sp.api.domain.DefaultUser;
 import cn.wanfeng.sp.api.domain.SpUser;
 import cn.wanfeng.sp.api.mapper.search.UserMapper;
+import cn.wanfeng.sp.base.DefaultUser;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.NumberUtils;

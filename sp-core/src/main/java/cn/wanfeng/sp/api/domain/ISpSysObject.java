@@ -1,5 +1,7 @@
 package cn.wanfeng.sp.api.domain;
 
+import cn.wanfeng.sp.api.enums.SystemTag;
+
 /**
  * @date: 2024-12-08 16:33
  * @author: luozh.wanfeng
@@ -39,6 +41,11 @@ public interface ISpSysObject extends ISpBaseObject {
      * 获取该对象的父路径
      */
     String getParentPath();
+
+    /**
+     * 设置系统类型
+     */
+    void setTag(SystemTag systemTag);
 
 
 
