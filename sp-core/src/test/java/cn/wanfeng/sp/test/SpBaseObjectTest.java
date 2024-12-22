@@ -227,6 +227,13 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
         LogUtil.info("");
     }
 
+    @Test
+    public void testPartitionByItemCount(){
+        List<BorrowFormDO> borrowFormDOList = borrowFormMapper.findAll();
+        List<List<BorrowFormDO>> partition = SimpleCollectionUtils.partitionByItemCount(borrowFormDOList, 7);
+        LogUtil.info("");
+    }
+
     private Integer randomSeconds(){
         return RandomUtil.randomInt(2000, 3000);
     }

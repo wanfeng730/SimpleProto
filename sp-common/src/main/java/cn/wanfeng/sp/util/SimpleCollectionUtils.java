@@ -37,7 +37,14 @@ public class SimpleCollectionUtils {
 
     public static <T> List<List<T>> partitionByItemCount(List<T> list, int itemCount){
         List<List<T>> partitionList = new ArrayList<>();
-
+        for (int i = 0; i < itemCount; i++) {
+            partitionList.add(new ArrayList<>());
+        }
+        int pc = 0;
+        for (T t : list) {
+            partitionList.get(pc).add(t);
+            pc = (pc + 1) % itemCount;
+        }
         return partitionList;
     }
 }
