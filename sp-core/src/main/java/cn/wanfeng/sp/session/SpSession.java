@@ -5,6 +5,7 @@ import cn.wanfeng.sp.api.dataobject.SpSettingsDO;
 import cn.wanfeng.sp.api.dataobject.SpSysObjectDO;
 import cn.wanfeng.sp.cache.CacheOperator;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
+import cn.wanfeng.sp.storage.file.FileStorageClient;
 import cn.wanfeng.sp.storage.mapper.postgres.DatabaseStorageMapper;
 import cn.wanfeng.sp.storage.search.SearchStorageClient;
 import jakarta.annotation.Resource;
@@ -37,6 +38,9 @@ public class SpSession {
     @Resource
     private CacheOperator cacheOperator;
 
+    @Resource
+    private FileStorageClient fileStorageClient;
+
     public DatabaseStorageMapper databaseStorage() {
         return this.databaseStorageMapper;
     }
@@ -47,6 +51,10 @@ public class SpSession {
 
     public CacheOperator cacheOperator(){
         return this.cacheOperator;
+    }
+
+    public FileStorageClient fileStorage(){
+        return this.fileStorageClient;
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)

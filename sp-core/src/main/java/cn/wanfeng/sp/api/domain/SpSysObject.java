@@ -8,6 +8,7 @@ import cn.wanfeng.sp.api.enums.SystemTag;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.exception.SpObjectNotFoundException;
+import cn.wanfeng.sp.exception.SpObjectStoreException;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.LogUtil;
 import cn.wanfeng.sp.util.SpObjectConvertUtils;
@@ -26,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SpSysObject extends SpBaseObject implements ISpSysObject{
 
-    protected String tag;
+    protected String systemTag;
 
     protected String path;
 
@@ -46,7 +47,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
     public SpSysObject(SpSession session, String type, String name, ISpSysObject parentSysObject, SystemTag systemTag){
         super(session, type, name);
         updateByParentSysObject(parentSysObject);
-        setTag(systemTag);
+        setSystemTag(systemTag);
     }
 
     public SpSysObject(SpSession session, Long id) {
@@ -85,16 +86,25 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
         linkRootFolderIfNoParent();
     }
 
+    /**
+     * 将对象从数据库删除，用于子类重写方法
+     */
     @Override
-    protected void beforeRemoveAssertAndHandle() {
-        super.beforeRemoveAssertAndHandle();
+    protected void removeObjectFromStorage() {
         //级联查询出下级所有的sysObject的id
         List<SpSysObjectDO> childObjectDOList = findAllChildSysObject();
         if(CollectionUtils.isNotEmpty(childObjectDOList)){
             for (SpSysObjectDO spSysObjectDO : childObjectDOList) {
-                removeObjectById(spSysObjectDO.getId());
+                if(SystemTag.FILE.getValue().equals(spSysObjectDO.getTag())){
+                    SpFile spFile = new SpFile(session, spSysObjectDO.getId());
+                    spFile.remove();
+                }else {
+                    SpFolder spFolder = new SpFolder(session, spSysObjectDO.getId());
+                    spFolder.remove();
+                }
             }
         }
+        super.removeObjectFromStorage();
     }
 
     @Override
@@ -112,8 +122,8 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
 
 
     @Override
-    public String getTag() {
-        return this.tag;
+    public String getSystemTag() {
+        return this.systemTag;
     }
 
     @Override
@@ -132,8 +142,15 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
     }
 
     @Override
-    public void setTag(SystemTag systemTag) {
-        this.tag = systemTag.getValue();
+    public void setSystemTag(SystemTag systemTag) {
+        this.systemTag = systemTag.getValue();
+    }
+
+    @Override
+    public void setName(String name) {
+        if(!isNewObject){
+            throw new SpObjectStoreException("不支持二次修改SpSysObject及子类的名称");
+        }
     }
 
     @Override
@@ -168,7 +185,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
 
     private void putSysPropertyToContainers(){
         //放入recordContainer，生成数据库存储的data数据
-        ProtoRecord tagRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(TAG_INDEX, this.tag);
+        ProtoRecord tagRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(TAG_INDEX, this.systemTag);
         recordContainer.putRecord(tagRecord);
         ProtoRecord pathRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(PATH_INDEX, this.path);
         recordContainer.putRecord(pathRecord);
@@ -178,7 +195,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
         recordContainer.putRecord(parentPathRecord);
 
         //放入propertyValueContainer，生成高级搜索保存的数据
-        propertyValueContainer.put(TAG_FIELD, this.tag);
+        propertyValueContainer.put(TAG_FIELD, this.systemTag);
         propertyValueContainer.put(PATH_FIELD, this.path);
         propertyValueContainer.put(PARENT_ID_FIELD, this.parentId);
         propertyValueContainer.put(PARENT_PATH_FIELD, this.parentPath);
@@ -187,7 +204,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
 
     private void readContainerToSysObjectProperty(){
         ConcurrentHashMap<Integer, ProtoRecord> indexNoRecordMap = recordContainer.getIndexNoRecordMap();
-        tag = (String) indexNoRecordMap.get(TAG_INDEX).getValue();
+        systemTag = (String) indexNoRecordMap.get(TAG_INDEX).getValue();
         path = (String) indexNoRecordMap.get(PATH_INDEX).getValue();
         parentId = (Long) indexNoRecordMap.get(PARENT_ID_INDEX).getValue();
         parentPath = (String) indexNoRecordMap.get(PARENT_PATH_INDEX).getValue();
@@ -200,10 +217,10 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
     }
 
     private void assertTagIsSupported(){
-        if(StringUtils.isBlank(this.tag)){
+        if(StringUtils.isBlank(this.systemTag)){
             throw new SpException("Property[tag] must be not null, Please use Method setTag() to update [tag]");
         }
-        SystemTag systemTag = SystemTag.toEnum(this.tag);
+        SystemTag systemTag = SystemTag.toEnum(this.systemTag);
         if(SystemTag.NONE.equals(systemTag)){
             throw new SpException("Property[tag] is not Supported, Please use Method setTag() to change [tag]");
         }

@@ -12,6 +12,20 @@ import java.util.Objects;
 public class InputStreamUtils {
 
     /**
+     * 获取流的大小
+     * @param inputStream 流
+     * @return 大小
+     */
+    public static long getAvailable(InputStream inputStream){
+        try {
+            return inputStream.available();
+        } catch (IOException e) {
+            LogUtil.info("InputStream.available 失败", e);
+        }
+        return 0L;
+    }
+
+    /**
      * 优雅关闭流
      * @param inputStream 流
      */
@@ -22,8 +36,7 @@ public class InputStreamUtils {
         try {
             inputStream.close();
         } catch (IOException e) {
-            LogUtil.error("InputStream.close 失败");
-            throw new RuntimeException(e);
+            LogUtil.error("InputStream.close 失败", e);
         }
     }
 

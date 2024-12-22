@@ -17,6 +17,11 @@ import java.nio.file.Path;
  */
 public class FileUtils extends FileUtil {
 
+    public static String getFileNameNoSuffix(String path){
+        String name = getName(path);
+        return name.substring(0, name.lastIndexOf("."));
+    }
+
     /**
      * 创建临时文件夹
      * @param prefix 文件夹名称前缀

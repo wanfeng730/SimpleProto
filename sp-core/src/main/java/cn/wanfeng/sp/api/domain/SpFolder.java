@@ -20,7 +20,7 @@ public class SpFolder extends SpSysObject implements ISpFolder {
 
     public SpFolder(SpSession session, String type, String name) {
         super(session, type, name);
-        setTag(SystemTag.FOLDER);
+        setSystemTag(SystemTag.FOLDER);
     }
 
     public SpFolder(SpSession session, Long id) {

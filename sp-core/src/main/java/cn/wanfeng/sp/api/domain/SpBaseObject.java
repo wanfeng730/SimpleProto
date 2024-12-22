@@ -76,7 +76,7 @@ public class SpBaseObject implements ISpBaseObject{
         this.isNewObject = false;
         initInternalContainer();
 
-        assertStoreObjectIdNotNull(id);
+        assertIdNotNull(id);
         // 从数据库获取此id的字段
         SpBaseObjectDO objectDO = this.session.databaseStorage().findObjectById(SimpleProtoConfig.dataTable, id);
         assertIdFoundFromDatabase(id, objectDO);
@@ -216,6 +216,8 @@ public class SpBaseObject implements ISpBaseObject{
 
             // 生成主键id
             generateIncreaseId();
+            // 生成id后校验处理
+            afterGenerateIdAssertAndHandle();
             // 将基础对象的属性放到indexNoRecordMap和fieldNameValueMap
             putThisPropertyToContainers();
             putDeclaredPropertyToContainerAndValueMap();
@@ -243,6 +245,13 @@ public class SpBaseObject implements ISpBaseObject{
     }
 
     /**
+     * 生成id后，新建对象保存前校验和处理，用于子类重写方法
+     */
+    protected void afterGenerateIdAssertAndHandle(){
+
+    }
+
+    /**
      * 更新保存对象前的校验和处理，用于给子类重写方法
      */
     protected void beforeUpdateStoreAssertAndHandle(){
@@ -264,15 +273,11 @@ public class SpBaseObject implements ISpBaseObject{
         readContainerToBaseObjectProperty();
     }
 
-    /**
-     * 删除对象前的校验和处理，用于给子类重写方法
-     */
-    protected void beforeRemoveAssertAndHandle(){
-
-    }
-
     private void assertTypeValueEqualsAnnotation(){
         Type typeAnnotation = this.getClass().getAnnotation(Type.class);
+        if(Objects.isNull(typeAnnotation)){
+            return;
+        }
         String typeAnnoValue = typeAnnotation.value();
         if(!StringUtils.equals(this.type, typeAnnoValue)){
             throw new SpException(String.format("保存对象异常，type的值必须和注解@Type标注的值[%s]一致，当前type=[%s]", typeAnnoValue, this.type));
@@ -394,16 +399,21 @@ public class SpBaseObject implements ISpBaseObject{
         if (isNewObject) {
             LogUtil.info("对象[id={}, type={}, name={}]为新建对象，未保存到数据库，无需删除", this.id, this.type, this.name);
         } else {
-            // 校验处理
-            beforeRemoveAssertAndHandle();
             // 在数据库中删除
             removeObjectFromStorage();
         }
     }
 
-    private void removeObjectFromStorage(){
+    /**
+     * 将对象从数据库删除，用于子类重写方法
+     */
+    protected void removeObjectFromStorage(){
+        removeObjectById(id);
+    }
+
+    private void removeObjectById(Long id){
         try {
-            session.removeObjectFromStorage(this.id);
+            session.removeObjectFromStorage(id);
         } catch (Exception e) {
             LogUtil.error("对象删除失败，数据已回滚，失败原因", e);
         }
@@ -448,13 +458,13 @@ public class SpBaseObject implements ISpBaseObject{
 
     // Some Assertions
 
-    protected void assertStoreObjectIdNotNull(Long id) {
+    protected static void assertIdNotNull(Long id) {
         if (Objects.isNull(id)) {
             throw new SpObjectStoreException("Property id is NULL, Store Object Failed");
         }
     }
 
-    protected void assertIdFoundFromDatabase(Long id, SpBaseObjectDO spBaseObjectDO) {
+    protected static void assertIdFoundFromDatabase(Long id, SpBaseObjectDO spBaseObjectDO) {
         if (Objects.isNull(spBaseObjectDO)) {
             throw new SpObjectNotFoundException("Not Found id[%d] from Database", id);
         }

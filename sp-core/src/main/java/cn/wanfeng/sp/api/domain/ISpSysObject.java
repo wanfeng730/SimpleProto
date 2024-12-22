@@ -25,7 +25,7 @@ public interface ISpSysObject extends ISpBaseObject {
     /**
      * 获取该对象的系统类型
      */
-    String getTag();
+    String getSystemTag();
 
     /**
      * 获取该对象的业务路径
@@ -45,7 +45,7 @@ public interface ISpSysObject extends ISpBaseObject {
     /**
      * 设置系统类型
      */
-    void setTag(SystemTag systemTag);
+    void setSystemTag(SystemTag systemTag);
 
 
 

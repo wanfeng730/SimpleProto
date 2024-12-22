@@ -1,9 +1,9 @@
 package cn.wanfeng.sp.util;
 
-import cn.wanfeng.sp.api.domain.SpBaseObject;
 import cn.wanfeng.sp.api.dataobject.SpBaseObjectDO;
-import cn.wanfeng.sp.api.domain.SpSysObject;
 import cn.wanfeng.sp.api.dataobject.SpSysObjectDO;
+import cn.wanfeng.sp.api.domain.SpBaseObject;
+import cn.wanfeng.sp.api.domain.SpSysObject;
 
 /**
  * @date: 2024-10-20 21:15
@@ -33,7 +33,7 @@ public class SpObjectConvertUtils {
         sysObjectDO.setCreateDate(sysObject.getCreateDate());
         sysObjectDO.setModifyDate(sysObject.getModifyDate());
         sysObjectDO.setIsDelete(sysObject.getDelete());
-        sysObjectDO.setTag(sysObject.getTag());
+        sysObjectDO.setTag(sysObject.getSystemTag());
         sysObjectDO.setPath(sysObject.getPath());
         sysObjectDO.setParentId(sysObject.getParentId());
         sysObjectDO.setParentPath(sysObject.getParentPath());
