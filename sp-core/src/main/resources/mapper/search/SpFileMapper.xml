@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wanfeng.sp.api.mapper.search.SpFileMapper">
+
+    <sql id="all_field">
+        id, type, name, create_date, modify_date, is_delete,
+        tag, path, parent_id, parent_path,
+        file_tag, suffix, file_size, file_storage_key
+    </sql>
+
+    <resultMap id="fileResultMap" type="cn.wanfeng.sp.api.dataobject.SpFileDO">
+        <id property="id" column="id"/>
+        <id property="type" column="type"/>
+        <id property="name" column="name"/>
+        <id property="createDate" column="create_date"/>
+        <id property="modifyDate" column="modify_date"/>
+        <id property="isDelete" column="is_delete"/>
+        
+        <id property="tag" column="tag"/>
+        <id property="path" column="path"/>
+        <id property="parentId" column="parent_id"/>
+        <id property="parentPath" column="parent_path"/>
+        
+        <id property="fileTag" column="file_tag"/>
+        <id property="suffix" column="suffix"/>
+        <id property="fileSize" column="file_size"/>
+        <id property="fileStorageKey" column="file_storage_key"/>
+    </resultMap>
+
+    <select id="findById" resultMap="fileResultMap">
+        select <include refid="all_field"/>
+        from {data_table}
+        where tag = 'sys_file'
+            and id = #{id}
+    </select>
+
+    <select id="findByType" resultMap="fileResultMap">
+        select <include refid="all_field"/>
+        from {data_table}
+        where tag = 'sys_file'
+            and type = #{type}
+    </select>
+
+    <select id="findByName" resultMap="fileResultMap">
+        select <include refid="all_field"/>
+        from {data_table}
+        where tag = 'sys_file'
+            and name = #{name}
+    </select>
+
+    <select id="findByParentId" resultMap="fileResultMap">
+        select <include refid="all_field"/>
+        from {data_table}
+        where tag = 'sys_file'
+            and parent_id = #{parentId}
+    </select>
+
+    <select id="findByParentPathLike" resultMap="fileResultMap">
+        select <include refid="all_field"/>
+        from {data_table}
+        where tag = 'sys_file'
+            and parent_path like #{parentPath}
+    </select>
+
+    <select id="findByParentPathEquals" resultMap="fileResultMap">
+        select <include refid="all_field"/>
+        from {data_table}
+        where tag = 'sys_file'
+            and parent_path = #{parentPath}
+    </select>
+
+    <select id="findByParentPathLikeAndFileTag" resultMap="fileResultMap">
+        select <include refid="all_field"/>
+        from {data_table}
+        where tag = 'sys_file'
+            and parent_path like #{parentPath}
+            and file_tag = #{fileTag}
+    </select>
+
+
+</mapper>

@@ -2,8 +2,10 @@ package cn.wanfeng.sp.test;
 
 
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
+import cn.wanfeng.sp.api.dataobject.SpFileDO;
 import cn.wanfeng.sp.api.domain.SpFile;
 import cn.wanfeng.sp.api.enums.FileTag;
+import cn.wanfeng.sp.api.mapper.search.SpFileMapper;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.sys.TestFolder;
 import cn.wanfeng.sp.util.DateUtils;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @date: 2024-12-22 18:00
@@ -26,6 +29,9 @@ public class SpFileTest extends SimpleprotoApplicationTest {
 
     @Resource
     private SpSession session;
+
+    @Resource
+    private SpFileMapper spFileMapper;
 
     @Test
     public void test(){
@@ -46,6 +52,13 @@ public class SpFileTest extends SimpleprotoApplicationTest {
         // // spFile1.store();
         // SpFile spFile = new SpFile(session, 139L);
         // spFile.remove();
+        LogUtil.info("");
+    }
+
+    @Test
+    public void test2(){
+        SpFileDO fileDO = spFileMapper.findById(145L);
+        List<SpFileDO> spFileDOList = spFileMapper.findByParentPathLikeAndFileTag("/01JFQ065SEJMW55FBPYD3%", FileTag.TEXT.getValue());
         LogUtil.info("");
     }
 }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wanfeng.sp.api.mapper.search.SpBaseObjectMapper">
+
+    <sql id="all_field">
+        id, type, name, create_date, modify_date, is_delete
+    </sql>
+
+    <resultMap id="baseObjectResultMap" type="cn.wanfeng.sp.api.dataobject.SpBaseObjectDO">
+        <id property="id" column="id"/>
+        <id property="type" column="type"/>
+        <id property="name" column="name"/>
+        <id property="createDate" column="create_date"/>
+        <id property="modifyDate" column="modify_date"/>
+        <id property="isDelete" column="is_delete"/>
+    </resultMap>
+
+    <select id="findById" resultMap="baseObjectResultMap">
+        select <include refid="all_field"/>
+        from {data_table}
+        where id = #{id}
+    </select>
+
+    <select id="findByType" resultMap="baseObjectResultMap">
+        select <include refid="all_field"/>
+        from {data_table}
+        where type = #{type}
+    </select>
+
+    <select id="findByName" resultMap="baseObjectResultMap">
+        select <include refid="all_field"/>
+        from {data_table}
+        where name = #{name}
+    </select>
+
+</mapper>

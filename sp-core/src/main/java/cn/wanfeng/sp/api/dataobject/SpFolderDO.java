@@ -9,14 +9,14 @@ import lombok.EqualsAndHashCode;
 import java.util.Date;
 
 /**
- * @date: 2024-12-09 21:23
+ * @date: 2024-12-22 22:35
  * @author: luozh.wanfeng
- * @description: 系统对象数据库交互实体类
+ * @description: 文件夹对象数据库实体类
  * @since: 1.0
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class SpSysObjectDO extends SpBaseObjectDO{
+public class SpFolderDO extends SpSysObjectDO{
 
     @TableId("id")
     private Long id;
@@ -50,6 +50,4 @@ public class SpSysObjectDO extends SpBaseObjectDO{
 
     @TableField("parent_path")
     private String parentPath;
-
-
 }
