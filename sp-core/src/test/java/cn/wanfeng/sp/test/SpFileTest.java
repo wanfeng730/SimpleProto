@@ -47,11 +47,6 @@ public class SpFileTest extends SimpleprotoApplicationTest {
         testFolder.remove();
 
 
-        // // SpFile spFile1 = new SpFile(session, 139L);
-        // // spFile1.setStorage(new File("D:\\WanfengHome\\fileSpace\\ImageRecord\\b1-2.png"));
-        // // spFile1.store();
-        // SpFile spFile = new SpFile(session, 139L);
-        // spFile.remove();
         LogUtil.info("");
     }
 

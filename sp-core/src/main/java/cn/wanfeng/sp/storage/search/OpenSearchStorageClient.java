@@ -2,8 +2,10 @@ package cn.wanfeng.sp.storage.search;
 
 
 import cn.wanfeng.proto.constants.SpExceptionMessage;
-import cn.wanfeng.sp.exception.SpException;
+import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.elastic.ElasticDateTimePattern;
+import cn.wanfeng.sp.exception.SpException;
+import cn.wanfeng.sp.localcache.OpenSearchMappingCache;
 import jakarta.annotation.Resource;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.mapping.Property;
@@ -35,15 +37,15 @@ public class OpenSearchStorageClient implements SearchStorageClient{
     @Resource
     private OpenSearchClient openSearchClient;
 
-    private static final String DEFAULT_DATE_FORMAT = ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern() + "||" +ElasticDateTimePattern.EPOCH_SECOND.toPattern();
 
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern());
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern());
 
+
     @Override
     public void insertObject(String tableName, Map<String, Object> objectData) throws Exception {
         //根据参数类型自动创建mapping
-        autoCreateMappingByObjectData(tableName, objectData);
+        autoAdaptCreateMappingByObjectData(tableName, objectData);
         //将日期的值更换为格式化字符串，以便es查看
         Map<String, Object> dataMap = convertDateValueToDateTimeMillis(objectData);
 
@@ -71,22 +73,34 @@ public class OpenSearchStorageClient implements SearchStorageClient{
     /**
      * 根据属性名和值自动创建mapping
      */
-    private void autoCreateMappingByObjectData(String tableName, Map<String, Object> objectData){
-        try {
-            PutMappingRequest request = PutMappingRequest.of(req -> {
-                //指定索引
-                req.index(tableName);
-                //根据数据类型创建合适的mapping
-                for (Map.Entry<String, Object> data : objectData.entrySet()) {
-                    String fieldName = data.getKey();
-                    Object value = data.getValue();
-                    req.properties(fieldName, builder -> handlePropertyBuilderByValue(builder, value));
-                }
-                return req;
-            });
-            openSearchClient.indices().putMapping(request);
-        } catch (IOException e) {
-            throw new SpException(SpExceptionMessage.AUTO_CREATE_MAPPING_ERROR, e);
+    private void autoAdaptCreateMappingByObjectData(String tableName, Map<String, Object> objectData){
+        boolean needCreateMapping = false;
+
+        PutMappingRequest.Builder requestBuilder = new PutMappingRequest.Builder();
+        requestBuilder.index(SimpleProtoConfig.dataTable);
+
+        for (Map.Entry<String, Object> entry : objectData.entrySet()) {
+            String fieldName = entry.getKey();
+            Object value = entry.getValue();
+            //缓存中已存在，则不用新增该mapping
+            if(OpenSearchMappingCache.checkFieldExistInCache(fieldName)){
+                continue;
+            }
+            requestBuilder.properties(fieldName, ob -> handlePropertyBuilderByValue(ob, value));
+            needCreateMapping = true;
+        }
+
+        if(needCreateMapping){
+            boolean acknowledged = false;
+            try {
+                PutMappingRequest request = requestBuilder.build();
+                acknowledged = openSearchClient.indices().putMapping(request).acknowledged();
+            } catch (IOException e) {
+                throw new SpException(SpExceptionMessage.AUTO_CREATE_MAPPING_ERROR, e);
+            }
+            if(acknowledged){
+
+            }
         }
     }
 
@@ -98,7 +112,7 @@ public class OpenSearchStorageClient implements SearchStorageClient{
     private static ObjectBuilder<Property> handlePropertyBuilderByValue(Property.Builder builder, Object value){
         Class<?> valueClass = value.getClass();
         if(valueClass == String.class){
-            return builder.text(t -> t);
+            return builder.keyword(t -> t);
         }
         if(valueClass == Integer.class || valueClass == Long.class){
             return builder.long_(t -> t);

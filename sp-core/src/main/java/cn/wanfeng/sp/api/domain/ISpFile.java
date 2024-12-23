@@ -29,10 +29,22 @@ public interface ISpFile extends ISpSysObject{
      */
     void setFileTag(FileTag fileTag);
 
+    /**
+     * 设置文件存储（store时上传至存储服务）
+     * @param file 本地文件
+     */
     void setStorage(File file);
 
+    /**
+     * 设置文件存储（服务器的路径，只赋值，store时无需上传）
+     * @param storageKey 文件公共存储路径
+     */
     void setStorage(String storageKey);
 
+    /**
+     * 设置文件存储（store时上传至存储服务）
+     * @param inputStream 文件流
+     */
     void setStorage(InputStream inputStream);
 
     /**
@@ -65,4 +77,11 @@ public interface ISpFile extends ISpSysObject{
      * @return 下载后的文件
      */
     File download(String targetFilePath);
+
+    /**
+     * 获取文件预览链接
+     * @param expireSeconds 有效时间（秒）
+     * @return 预览链接
+     */
+    String getPreviewUrl(int expireSeconds);
 }

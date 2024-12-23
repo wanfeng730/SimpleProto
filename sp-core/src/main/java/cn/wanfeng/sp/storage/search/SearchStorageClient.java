@@ -1,5 +1,7 @@
 package cn.wanfeng.sp.storage.search;
 
+import cn.wanfeng.sp.elastic.ElasticDateTimePattern;
+
 import java.util.Map;
 
 /**
@@ -11,6 +13,8 @@ import java.util.Map;
 public interface SearchStorageClient {
 
     String OBJECT_ID_KEY = "id";
+
+    String DEFAULT_DATE_FORMAT = ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern() + "||" +ElasticDateTimePattern.EPOCH_SECOND.toPattern();
 
     /**
      * 新建对象数据

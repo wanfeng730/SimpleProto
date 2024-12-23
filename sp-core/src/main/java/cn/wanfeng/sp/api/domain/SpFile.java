@@ -6,6 +6,7 @@ import cn.wanfeng.proto.record.ProtoRecordFactory;
 import cn.wanfeng.sp.api.enums.FileTag;
 import cn.wanfeng.sp.api.enums.SystemTag;
 import cn.wanfeng.sp.exception.SpException;
+import cn.wanfeng.sp.exception.SpFileStorageException;
 import cn.wanfeng.sp.exception.SpObjectStoreException;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.FileUtils;
@@ -197,8 +198,6 @@ public class SpFile extends SpSysObject implements ISpFile {
         }
     }
 
-
-
     /**
      * 设置文件类型
      *
@@ -279,6 +278,24 @@ public class SpFile extends SpSysObject implements ISpFile {
     @Override
     public File download(String targetFilePath) {
         return session.fileStorage().downloadObject(fileStorageKey, targetFilePath);
+    }
+
+    /**
+     * 获取文件预览链接
+     *
+     * @param expireSeconds 有效时间（秒）
+     * @return 预览链接
+     */
+    @Override
+    public String getPreviewUrl(int expireSeconds) {
+        assertGetPreviewUrlFileStorageKeyNotBlank();
+        return session.fileStorage().getObjectPreviewUrl(fileStorageKey, expireSeconds);
+    }
+
+    private void assertGetPreviewUrlFileStorageKeyNotBlank(){
+        if(StringUtils.isBlank(fileStorageKey)){
+            throw new SpFileStorageException("获取预览链接失败，fileStorageKey为空");
+        }
     }
 
     private static String defaultFileStorageKey(String type, Long id, String name){

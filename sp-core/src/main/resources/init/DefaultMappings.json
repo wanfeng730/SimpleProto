@@ -1,0 +1,48 @@
+{
+  "properties":{
+    "id": {
+      "type": "long"
+    },
+    "type": {
+      "type": "keyword"
+    },
+    "name": {
+      "type": "keyword"
+    },
+    "create_date": {
+      "type": "date",
+      "format": "yyyy-MM-dd HH:mm:ss.SSS||epoch_second"
+    },
+    "modify_date": {
+      "type": "date",
+      "format": "yyyy-MM-dd HH:mm:ss.SSS||epoch_second"
+    },
+    "is_delete": {
+      "type": "boolean"
+    },
+    "tag": {
+      "type": "keyword"
+    },
+    "path": {
+      "type": "keyword"
+    },
+    "parent_id": {
+      "type": "keyword"
+    },
+    "parent_path": {
+      "type": "keyword"
+    },
+    "file_tag": {
+      "type": "keyword"
+    },
+    "suffix": {
+      "type": "keyword"
+    },
+    "file_size": {
+      "type": "long"
+    },
+    "file_storage_key": {
+      "type": "keyword"
+    }
+  }
+}
