@@ -2,6 +2,7 @@ package cn.wanfeng.sp.config.custom;
 
 
 import cn.wanfeng.sp.api.domain.ISpSysObject;
+import cn.wanfeng.sp.util.LogUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.Data;
@@ -106,6 +107,8 @@ public class SimpleProtoConfig {
         fileStorageAccessKey = environment.getProperty("simpleproto.fileStorageAccessKey");
         fileStorageSecretKey = environment.getProperty("simpleproto.fileStorageSecretKey");
         fileStorageBucket = environment.getProperty("simpleproto.fileStorageBucket");
+
+        LogUtil.info("【初始化】simpleproto配置完成");
     }
 
 }

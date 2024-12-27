@@ -2,6 +2,7 @@ package cn.wanfeng.sp.config.redis;
 
 
 import cn.wanfeng.sp.config.custom.SimpleProtoRedisSerializer;
+import cn.wanfeng.sp.util.LogUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -33,6 +34,7 @@ public class RedisConfiguration {
         template.setHashValueSerializer(redisSerializer);
 
         template.afterPropertiesSet();
+        LogUtil.info("【初始化】RedisTemplate完成");
         return template;
     }
 

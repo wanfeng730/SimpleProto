@@ -1,6 +1,7 @@
 package cn.wanfeng.sp.config.opensearch;
 
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
+import cn.wanfeng.sp.util.LogUtil;
 import jakarta.annotation.Resource;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -27,7 +28,7 @@ public class OpenSearchClientConfiguration {
     private SimpleProtoConfig simpleProtoConfig;
 
     @Bean
-    public OpenSearchClient openSearchClient() throws Exception {
+    public OpenSearchClient openSearchClient() {
         final HttpHost host = new HttpHost(SimpleProtoConfig.opensearchHost, SimpleProtoConfig.opensearchPort, SimpleProtoConfig.opensearchHostScheme);
         final BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         //Only for demo purposes. Don't specify your credentials in code.
@@ -39,6 +40,8 @@ public class OpenSearchClientConfiguration {
         ).build();
 
         final OpenSearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
-        return new OpenSearchClient(transport);
+        OpenSearchClient openSearchClient = new OpenSearchClient(transport);
+        LogUtil.info("【初始化】OpenSearch客户端完成");
+        return openSearchClient;
     }
 }

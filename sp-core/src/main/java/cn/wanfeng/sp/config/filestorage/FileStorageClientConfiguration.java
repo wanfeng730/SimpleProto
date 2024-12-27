@@ -31,7 +31,7 @@ public class FileStorageClientConfiguration {
                 SimpleProtoConfig.fileStorageSecretKey,
                 SimpleProtoConfig.fileStorageBucket
         );
-        LogUtil.info("初始化文件存储客户端完成[type=MinIO, bucket={}]", SimpleProtoConfig.fileStorageBucket);
+        LogUtil.info("【初始化】文件存储客户端完成[type=MinIO, bucket={}]", SimpleProtoConfig.fileStorageBucket);
         return fileStorage;
     }
 

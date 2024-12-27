@@ -67,7 +67,7 @@ public class MybatisPlusPostgresDataSourceConfiguration {
         factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(POSTGRES_MAPPER_LOCATION));
         factoryBean.setPlugins(mybatisPlusInterceptor);
         SqlSessionFactory sqlSessionFactory = factoryBean.getObject();
-        LogUtil.info("Postgres数据源SqlSessionFactory初始化完成");
+        LogUtil.info("【初始化】Postgres数据源完成");
         return sqlSessionFactory;
     }
 

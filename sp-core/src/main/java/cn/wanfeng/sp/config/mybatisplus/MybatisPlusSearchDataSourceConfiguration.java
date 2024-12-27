@@ -74,7 +74,7 @@ public class MybatisPlusSearchDataSourceConfiguration {
         factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(SEARCH_MAPPER_LOCATION));
         factoryBean.setPlugins(mybatisPlusInterceptor);
         SqlSessionFactory sqlSessionFactory = factoryBean.getObject();
-        LogUtil.info("OpenSearch数据源SqlSessionFactory初始化完成");
+        LogUtil.info("【初始化】OpenSearch数据源完成");
         return sqlSessionFactory;
     }
 

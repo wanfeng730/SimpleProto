@@ -34,11 +34,10 @@ public class OpenSearchInitExecutor {
     public void initIndex() {
         //若索引不存在则创建
         createIndexIfNotExist();
-        LogUtil.info("OpenSearch索引初始化完成");
+        LogUtil.info("【初始化】OpenSearch索引完成");
 
         //获取已有的mapping
         OpenSearchMappingCache.syncFieldMappingFromOpenSearch(openSearchClient, SimpleProtoConfig.dataTable);
-        LogUtil.info("已获取OpenSearchMapping缓存");
 
         //初始化基础对象字段的mapping
         boolean acknowledged = putDefaultMappingsIfMissing();
@@ -47,8 +46,7 @@ public class OpenSearchInitExecutor {
             OpenSearchMappingCache.syncFieldMappingFromOpenSearch(openSearchClient, SimpleProtoConfig.dataTable);
             LogUtil.info("刷新OpenSearchMapping缓存");
         }
-
-        LogUtil.info("OpenSearch初始化完成");
+        LogUtil.info("【初始化】OpenSearchMapping缓存完成");
     }
 
     /**
