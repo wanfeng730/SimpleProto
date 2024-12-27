@@ -22,6 +22,13 @@ import java.util.Date;
 @Setter
 public class BorrowForm extends SpBaseObject {
 
+    /**
+     * ProtoField declare index and name of this property
+     * [index] is used to build serialized data and store in database,
+     * [index] is unique in a Class
+     * [name] is used to build document and store in opensearch,
+     * [name] is unique in a Class
+     */
     @ProtoField(index = 1, name = "form_no")
     private String formNo;
 
@@ -31,6 +38,9 @@ public class BorrowForm extends SpBaseObject {
     @ProtoField(index = 3, name = "expire_date")
     private Date expireDate;
 
+    /**
+     * Constructor for Create Object
+     */
     public BorrowForm(SpSession session, String formNo, Integer applyDays, Date expireDate) {
         super(session, BusinessTypeConstant.BORROW_FORM);
         this.formNo = formNo;
@@ -38,6 +48,9 @@ public class BorrowForm extends SpBaseObject {
         this.expireDate = expireDate;
     }
 
+    /**
+     * Constructor for Get Object
+     */
     public BorrowForm(SpSession session, Long id) {
         super(session, id);
     }
