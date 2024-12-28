@@ -327,7 +327,7 @@ public class SpBaseObject implements ISpBaseObject{
                     Method enumValueMethod = SimpleReflectUtils.getProtoEnumValueMethod(fieldClass);
                     assert enumValueMethod != null;
                     fieldClass = enumValueMethod.getReturnType();
-                    value = enumValueMethod.invoke(value);
+                    value = Objects.isNull(value) ? null : enumValueMethod.invoke(value);
                 }
                 //放入recordContainer
                 ProtoRecord record = ProtoRecordFactory.buildProtoRecordByIndexAndValue(indexNo, fieldClass, value);

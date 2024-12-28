@@ -37,6 +37,11 @@ public class BorrowForm extends SpBaseObject {
 
     @ProtoField(index = 3, name = "expire_date")
     private Date expireDate;
+    /**
+     * Enum Type Field
+     */
+    @ProtoField(index = 4, name = "borrow_status")
+    private BorrowStatus borrowStatus;
 
     /**
      * Constructor for Create Object

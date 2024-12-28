@@ -23,17 +23,25 @@ A Simple Framework for Java Business Project
 
 
 
+
+
 ### API Use
 
-1. 继承基础对象cn.wanfeng.sp.api.domain.SpBaseObject，然后在继承类中任意增加一些需要的业务字段（使用@ProtoField注解修饰）。
-2. 在继承类的构造器中调用父类的构造器：
-    - public SpBaseObject(SpSession session, String type)用于新建对象，指定该对象的类型
-    - public SpBaseObject(SpSession session, Long id)用于从存储中根据id获取对象
+1. 继承基础对象`cn.wanfeng.sp.api.domain.SpBaseObject`，使用@Type声明该对象的业务类型。
+2. 在继承类中任意增加一些需要的业务字段，使用`@ProtoField`注解修饰。如果业务字段是一个枚举类，需要在枚举类中使用`@ProtoEnumValue`注解标记声明该字段保存时的值，和`@ProtoEnumConstructor`注解标记获取对象时该字段的值对应哪个枚举类对象）。
+3. 在继承类的构造器中调用父类的构造器：
+    - `public SpBaseObject(SpSession session, String type)`用于新建对象，指定该对象的类型
+    - `public SpBaseObject(SpSession session, Long id)`用于从存储中根据id获取对象
+4. 调用`store()`方法，即可把这些数据一并存储在数据库以及OpenSearch中（包括数据库的字段、OpenSearch的Mapping）
+5. 调用父类的id构造器`public SpBaseObject(SpSession session, Long id)`即可从数据存储中获取所有属性值
 
-3. 调用store()方法，即可把这些数据一并存储在数据库以及OpenSearch中（包括数据库的字段、OpenSearch的Mapping）
-4. 调用父类的id构造器public SpBaseObject(SpSession session, Long id)即可从数据存储中获取所有属性值
-
-> 1. Inherit the basic object `cn.wanfeng.sp.api.domain.SpBaseObject`, and then arbitrarily add some required business fields to the inherited class (decorated with the @ProtoField annotation).
+> 1. Inherit the basic object `cn.wanfeng.sp.api.domain.SpBaseObject`. Use `@Type` to declare the business type of the object.
+> 2. Arbitrarily add some required business fields to the inherited class (decorated with the `@ProtoField` annotation). If the business field is an enumeration class, you need to use the `@ProtoEnumValue` annotation tag in the enumeration class to declare the value of the field when it is saved, and the `@ProtoEnumConstructor` annotation tag to obtain which enumeration class object the value of the field corresponds to when the object is obtained.
+> 3. Call the parent class constructor in the derived class constructor
+>     - `public SpBaseObject(SpSession session, String type)` is used to create a new object and specify the type of the object
+>     - `public SpBaseObject(SpSession session, Long id)` is used to retrieve an object from storage based on id
+> 4. Calling the `store()` method will store these data in the database and OpenSearch (including database fields and OpenSearch Mapping)
+> 5. Call the parent class's id constructor `public SpBaseObject(SpSession session, Long id)` to retrieve all property values from the data storage
 
 **Example Code Using `cn.wanfeng.sp.api.domain.SpBaseObject`**
 
@@ -58,6 +66,12 @@ public class BorrowForm extends SpBaseObject {
 
     @ProtoField(index = 3, name = "expire_date")
     private Date expireDate;
+    
+    /**
+     * Enum Type Field
+     */
+    @ProtoField(index = 4, name = "borrow_status")
+    private BorrowStatus borrowStatus;
 
     /**
      * Constructor for Create Object
@@ -69,7 +83,7 @@ public class BorrowForm extends SpBaseObject {
         this.expireDate = expireDate;
     }
     
-	/**
+    /**
      * Constructor for Get Object
      */
     public BorrowForm(SpSession session, Long id) {
@@ -77,6 +91,92 @@ public class BorrowForm extends SpBaseObject {
     }
 }
 ```
+
+```java
+public enum BorrowStatus {
+    DRAFT(0, "草稿"),
+    EXAMINE(1, "审批中"),
+    COMPLETE(2, "已完成");
+
+    private Integer value;
+    
+    private String desc;
+
+    BorrowStatus(Integer value, String desc) {
+        this.value = value;
+        this.desc = desc;
+    }
+    
+    @ProtoEnumValue
+    public Integer getValue(){
+        return this.value;
+    }
+    
+    @ProtoEnumConstructor
+    public static BorrowStatus toEnum(Integer value){
+        for (BorrowStatus status : values()) {
+            if(status.value.equals(value)){
+                return status;
+            }
+        }
+        return null;
+    }
+}
+```
+
+### MybatisPlus Use
+
+如果你想要批量查询你保存的对象，可以使用Mybatis对OpenSearch进行查询，Mapper接口应在mapper.search包下，XML文件应在mapper/search路径下。用于接收数据的实体类使用默认的Mybatis注解即可。
+
+在XML的SQL语句中，可以使用占位符`{data_table}`替代表名，该占位符会在查询时自动替换为配置文件中的数据表名`simpleproto.dataTable`的值。
+
+> To query your saved objects in batches, you can use Mybatis to query OpenSearch. The Mapper interface should be in `mapper.search` package, the XML file should be under the `mapper/search` path. The entity class used to receive data can use the default Mybatis annotation.
+>
+> In XML SQL statements, you can use the placeholder `{data_table}` to represent a table name, which will be automatically replaced with the value of `simpleproto.dataTable` from the configuration file during the query.
+
+**Example Code**
+
+```java
+// cn.wanfeng.sp.base.mapper.search.BorrowFormMapper
+@Mapper
+public interface BorrowFormMapper extends BaseMapper<BorrowFormDO> {
+    
+    List<BorrowFormDO> findById(@Param("id") Long id);
+
+    List<BorrowFormDO> findAll();
+}
+```
+
+```xml
+<!-- src/test/resources/mapper/search/BorrowFormMapper.xml -->
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wanfeng.sp.base.mapper.search.BorrowFormMapper">
+    <sql id="all_field">
+        id, name, form_no, create_date
+    </sql>
+
+    <select id="findById" resultType="cn.wanfeng.sp.base.BorrowFormDO">
+        select
+        <include refid="all_field"/>
+        from {data_table}
+        where id = #{id}
+    </select>
+
+    <select id="findAll" resultType="cn.wanfeng.sp.base.BorrowFormDO">
+        select
+        <include refid="all_field"/>
+        from {data_table}
+        where type = 'borrow_form'
+    </select>
+</mapper>
+```
+
+
+
+
+
+
 
 ### Examples Using the Project
 
