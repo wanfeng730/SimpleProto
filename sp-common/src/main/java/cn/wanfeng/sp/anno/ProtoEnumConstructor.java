@@ -11,7 +11,5 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ProtoEnumConstructor {
-    String desc = "标记在枚举类的一个静态方法上，该静态方法根据值返回对应的枚举对象，赋值到simpleproto对象中";
-
 
 }

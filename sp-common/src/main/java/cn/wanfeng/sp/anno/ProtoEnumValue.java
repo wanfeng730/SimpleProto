@@ -12,5 +12,5 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ProtoEnumValue {
-    String desc = "标记在枚举类中获取值的方法上，该方法的返回值会作为simpleproto对象的值保存";
+
 }
