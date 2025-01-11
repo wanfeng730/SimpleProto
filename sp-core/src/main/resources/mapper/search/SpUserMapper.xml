@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.wanfeng.sp.api.mapper.search.UserMapper">
+<mapper namespace="cn.wanfeng.sp.api.mapper.search.SpUserMapper">
 
     <sql id="all_field">
         id, type, name, create_date, modify_date, is_delete,   username, password, display_name, expire_date

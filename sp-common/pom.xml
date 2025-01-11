@@ -30,6 +30,10 @@
         <common-collection4.version>4.4</common-collection4.version>
         <commons-net.version>3.6</commons-net.version>
         <aws-java.version>1.12.777</aws-java.version>
+        <easyexcel.version>3.0.3</easyexcel.version>
+        <apache-poi.version>4.1.2</apache-poi.version>
+        <swagger.version>2.9.2</swagger.version>
+        <swagger-bootstrap.version>1.9.1</swagger-bootstrap.version>
     </properties>
 
     <dependencies>
@@ -223,12 +227,29 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
-            <version>3.0.3</version>
+            <version>${easyexcel.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>4.1.2</version>
+            <version>${apache-poi.version}</version>
+        </dependency>
+
+        <!--Swagger UI-->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+            <version>4.4.0</version>
         </dependency>
     </dependencies>
 

@@ -1,5 +1,6 @@
 package cn.wanfeng.sp.api.dataobject;
 
+
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
@@ -7,12 +8,13 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * @date: 2024-12-14 18:09
+ * @date: 2025-01-11 16:22
  * @author: luozh.wanfeng
- * @since: 1.0
+ * @description:
+ * @since:
  */
 @Data
-public class SpUserDO {
+public class SpUserDTO {
 
     @TableId("id")
     private Long id;

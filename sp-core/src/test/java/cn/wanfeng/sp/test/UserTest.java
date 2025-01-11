@@ -4,7 +4,7 @@ package cn.wanfeng.sp.test;
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
 import cn.wanfeng.sp.api.dataobject.SpUserDO;
 import cn.wanfeng.sp.api.domain.SpUser;
-import cn.wanfeng.sp.api.mapper.search.UserMapper;
+import cn.wanfeng.sp.api.mapper.search.SpUserMapper;
 import cn.wanfeng.sp.base.DefaultUser;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
@@ -29,7 +29,7 @@ public class UserTest extends SimpleprotoApplicationTest {
     private SpSession session;
 
     @Resource
-    private UserMapper userMapper;
+    private SpUserMapper spUserMapper;
 
     private static final String USER_NUMBER_INCREASE_NAME = "userNumberIncr";
 
@@ -42,7 +42,7 @@ public class UserTest extends SimpleprotoApplicationTest {
 
         ThreadUtils.sleepQuietly(3000);
 
-        List<SpUserDO> userDOList = userMapper.findAll();
+        List<SpUserDO> userDOList = spUserMapper.findAll();
         Assertions.assertTrue(CollectionUtils.isNotEmpty(userDOList));
 
         DefaultUser defaultUser = new DefaultUser(session, numberStr, "用户的简单描述。。。");

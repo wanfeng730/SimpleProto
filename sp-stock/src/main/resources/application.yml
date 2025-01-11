@@ -1,1 +1,3 @@
-spring.application.name=sp-stock
+spring:
+  application:
+    name: simplestock

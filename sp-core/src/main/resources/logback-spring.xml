@@ -51,13 +51,9 @@
 
     <!-- 根日志 -->
     <root level="INFO">
-        <appender-ref ref="spLogFileAppender"/>
-    </root>
-
-    <logger name="cn.wanfeng.sp" level="info">
         <appender-ref ref="consoleAppender"/>
         <appender-ref ref="spLogFileAppender"/>
-    </logger>
+    </root>
 
     <logger name="spLogger" level="debug">
         <appender-ref ref="spLogFileAppender"/>

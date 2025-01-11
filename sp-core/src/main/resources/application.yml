@@ -34,11 +34,20 @@ simpleproto:
   fileStorageBucket: simpleproto
 
 ######################################################
+server:
+  servlet:
+    context-path: /simpleproto
+  port: 7300
+
+
 spring:
   application:
     name: simpleproto
   profiles:
     active: dev
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   # Postgres数据源
   datasource:
     postgres:
@@ -65,14 +74,15 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         hbm2ddl:
           auto: create
-  # 全局json日期格式
-  jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
+  # # 全局json日期格式
+  # jackson:
+  #   date-format: yyyy-MM-dd HH:mm:ss
   # ElasticSearch数据源
   elasticsearch:
     uris: ${simpleproto.esUris}
     username: ${simpleproto.esUsername}
     password: ${simpleproto.esPassword}
+
 
 hibernate:
   dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -91,7 +101,7 @@ logging:
   file:
     path: ./logs
   level:
-    root: INFO
+    root: info
     # 开启sql查询语句debug打印，打印指定包下的mybatis sql
     cn.wanfeng.sp.base.mapper.search: debug
     cn.wanfeng.sp.api.mapper.search.SpFileMapper: debug

@@ -12,7 +12,7 @@ import java.util.List;
  * @description:
  * @since:
  */
-public interface UserMapper extends BaseMapper<SpUserDO> {
+public interface SpUserMapper extends BaseMapper<SpUserDO> {
 
     List<SpUserDO> findAll();
 
