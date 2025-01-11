@@ -74,9 +74,9 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         hbm2ddl:
           auto: create
-  # # 全局json日期格式
-  # jackson:
-  #   date-format: yyyy-MM-dd HH:mm:ss
+  # 全局json日期格式
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
   # ElasticSearch数据源
   elasticsearch:
     uris: ${simpleproto.esUris}

@@ -1,19 +1,18 @@
 package cn.wanfeng.sp.config.swagger;
 
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
-import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
 /**
  * @date: 2025-01-11 16:46
  * @author: luozh.wanfeng
- * @description: 
+ * @description: SwaggerUI配置
  * @since: 1.1
  */
 @Configuration
@@ -24,23 +23,24 @@ public class SimpleSwaggerConfiguration {
     // 第一个模块
     @Bean
     public GroupedOpenApi PayApi() {
-        return GroupedOpenApi.builder().group("教师文档API").pathsToMatch("/**").build();
+        return GroupedOpenApi.builder().group("SimpleProto-API 接口文档").pathsToMatch("/**").build();
     }
 
 
     @Bean
-    public OpenAPI springShopOpenAPI() {
-        return new OpenAPI()
-                .info(new Info().title("swagger页面标题")
-                        .description("描述")
-                        .version("v1.0")
-                        .license(new License().name("Apache 2.0").url("http://springdoc.org")))
-                .externalDocs(new ExternalDocumentation()
-                        .description("SpringShop Wiki Documentation")
-                        .url("https://springshop.wiki.github.org/docs")
-                );
-
+    public OpenAPI openAPI() {
+        return new OpenAPI().info(defaultSwaggerInfo());
     }
+
+    private static Info defaultSwaggerInfo(){
+        return new Info()
+                .title("SimpleProto-API 接口文档")
+                .contact(new Contact().name("晚风").url("晚风的URL").email("2580330397@qq.com"))
+                .description("SimpleProto-API 接口文档")
+                .version("1.1")
+                .license(new License().name("Apache 2.0").url("http://springdoc.org"));
+    }
+
 
 
 }
