@@ -64,6 +64,7 @@ public class SimpleProtoConfig {
     public static String fileStorageSecretKey;
     public static String fileStorageBucket;
 
+    public static String swaggerScanPackages;
     public static String swaggerTitle;
     public static String swaggerAuthor;
     public static String swaggerAuthorUrl;
@@ -113,6 +114,7 @@ public class SimpleProtoConfig {
         fileStorageSecretKey = environment.getProperty("simpleproto.fileStorageSecretKey");
         fileStorageBucket = environment.getProperty("simpleproto.fileStorageBucket");
 
+        swaggerScanPackages = environment.getProperty("simpleproto.swaggerScanPackages");
         swaggerTitle = environment.getProperty("simpleproto.swaggerTitle");
         swaggerAuthor = environment.getProperty("simpleproto.swaggerAuthor");
         swaggerAuthorUrl = environment.getProperty("simpleproto.swaggerAuthorUrl");

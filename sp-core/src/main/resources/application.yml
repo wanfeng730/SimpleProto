@@ -33,6 +33,8 @@ simpleproto:
   fileStorageSecretKey: Wanfeng730
   fileStorageBucket: simpleproto
   # Swagger UI配置
+  # swaggerScanPackages扫描包路径，多个路径用","分隔
+  swaggerScanPackages: cn.wanfeng.sp.api.controller
   swaggerTitle: SimpleProto-API 接口文档
   swaggerAuthor: 晚风
   swaggerAuthorUrl: 晚风的URL

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,8 +28,11 @@ public class SimpleSwaggerConfiguration {
     // 此处为模块化配置，将API文档配置成几个模块，添加每个模块名，此次模块下所有API接口的统一前缀
     // 第一个模块
     @Bean
-    public GroupedOpenApi PayApi() {
-        return GroupedOpenApi.builder().group("SimpleProto-API 接口文档").pathsToMatch("/**").build();
+    public GroupedOpenApi groupedOpenApi() {
+        return GroupedOpenApi.builder()
+                .group(SimpleProtoConfig.swaggerTitle)
+                .packagesToScan(splitScanPackages(SimpleProtoConfig.swaggerScanPackages))
+                .build();
     }
 
 
@@ -36,6 +40,8 @@ public class SimpleSwaggerConfiguration {
     public OpenAPI openAPI() {
         return new OpenAPI().info(defaultSwaggerInfo());
     }
+
+    private static final String packageSeparator = ",";
 
     private static Info defaultSwaggerInfo(){
         return new Info()
@@ -49,6 +55,15 @@ public class SimpleSwaggerConfiguration {
                 .license(new License().name("Apache 2.0").url("http://springdoc.org"));
     }
 
+    private static String[] splitScanPackages(String scanPackages){
+        if(StringUtils.isBlank(scanPackages)){
+            return new String[0];
+        }
+        if(!scanPackages.contains(packageSeparator)){
+            return new String[]{scanPackages};
+        }
+        return scanPackages.split(packageSeparator);
+    }
 
 
 }
