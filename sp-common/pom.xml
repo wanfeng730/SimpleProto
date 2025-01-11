@@ -34,6 +34,7 @@
         <apache-poi.version>4.1.2</apache-poi.version>
         <swagger.version>2.9.2</swagger.version>
         <swagger-bootstrap.version>1.9.1</swagger-bootstrap.version>
+        <dubbo.version>3.2.7</dubbo.version>
     </properties>
 
     <dependencies>
@@ -250,6 +251,25 @@
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
             <version>4.4.0</version>
+        </dependency>
+
+        <!-- Dubbo -->
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>${dubbo.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-x-discovery</artifactId>
+            <version>5.2.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>3.9.2</version>
         </dependency>
     </dependencies>
 

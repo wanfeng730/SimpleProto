@@ -1,10 +1,12 @@
 package cn.wanfeng.sp.config.swagger;
 
+import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import jakarta.annotation.Resource;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +20,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableKnife4j
 public class SimpleSwaggerConfiguration {
+
+    @Resource
+    private SimpleProtoConfig simpleProtoConfig;
 
     // 此处为模块化配置，将API文档配置成几个模块，添加每个模块名，此次模块下所有API接口的统一前缀
     // 第一个模块
@@ -34,10 +39,13 @@ public class SimpleSwaggerConfiguration {
 
     private static Info defaultSwaggerInfo(){
         return new Info()
-                .title("SimpleProto-API 接口文档")
-                .contact(new Contact().name("晚风").url("晚风的URL").email("2580330397@qq.com"))
-                .description("SimpleProto-API 接口文档")
-                .version("1.1")
+                .title(SimpleProtoConfig.swaggerTitle)
+                .contact(new Contact()
+                        .name(SimpleProtoConfig.swaggerAuthor)
+                        .url(SimpleProtoConfig.swaggerAuthorUrl)
+                        .email(SimpleProtoConfig.swaggerAuthorEmail))
+                .description(SimpleProtoConfig.swaggerDescription)
+                .version(SimpleProtoConfig.swaggerVersion)
                 .license(new License().name("Apache 2.0").url("http://springdoc.org"));
     }
 

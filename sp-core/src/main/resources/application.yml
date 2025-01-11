@@ -32,6 +32,13 @@ simpleproto:
   fileStorageAccessKey: minio
   fileStorageSecretKey: Wanfeng730
   fileStorageBucket: simpleproto
+  # Swagger UI配置
+  swaggerTitle: SimpleProto-API 接口文档
+  swaggerAuthor: 晚风
+  swaggerAuthorUrl: 晚风的URL
+  swaggerAuthorEmail: 2580330397@qq.com
+  swaggerDescription: SimpleProto-API 接口文档
+  swaggerVersion: 1.1
 
 ######################################################
 server:

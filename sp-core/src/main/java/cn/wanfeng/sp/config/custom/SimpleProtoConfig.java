@@ -53,8 +53,6 @@ public class SimpleProtoConfig {
      * 创建用户默认密码
      */
     public static final String userDefaultPassword = "Wanfeng730";
-
-
     /**
      * 文件存储类型
      */
@@ -65,6 +63,13 @@ public class SimpleProtoConfig {
     public static String fileStorageAccessKey;
     public static String fileStorageSecretKey;
     public static String fileStorageBucket;
+
+    public static String swaggerTitle;
+    public static String swaggerAuthor;
+    public static String swaggerAuthorUrl;
+    public static String swaggerAuthorEmail;
+    public static String swaggerDescription;
+    public static String swaggerVersion;
 
 
 
@@ -107,6 +112,13 @@ public class SimpleProtoConfig {
         fileStorageAccessKey = environment.getProperty("simpleproto.fileStorageAccessKey");
         fileStorageSecretKey = environment.getProperty("simpleproto.fileStorageSecretKey");
         fileStorageBucket = environment.getProperty("simpleproto.fileStorageBucket");
+
+        swaggerTitle = environment.getProperty("simpleproto.swaggerTitle");
+        swaggerAuthor = environment.getProperty("simpleproto.swaggerAuthor");
+        swaggerAuthorUrl = environment.getProperty("simpleproto.swaggerAuthorUrl");
+        swaggerAuthorEmail = environment.getProperty("simpleproto.swaggerAuthorEmail");
+        swaggerDescription = environment.getProperty("simpleproto.swaggerDescription");
+        swaggerVersion = environment.getProperty("simpleproto.swaggerVersion");
 
         LogUtil.info("【初始化】simpleproto配置完成");
     }
