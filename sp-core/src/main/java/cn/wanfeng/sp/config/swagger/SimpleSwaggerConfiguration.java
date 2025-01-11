@@ -12,6 +12,10 @@ import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @date: 2025-01-11 16:46
  * @author: luozh.wanfeng
@@ -22,6 +26,8 @@ import org.springframework.context.annotation.Configuration;
 @EnableKnife4j
 public class SimpleSwaggerConfiguration {
 
+    private static final String DEFAULT_SCAN_PACKAGE = "cn.wanfeng.sp.api.controller";
+
     @Resource
     private SimpleProtoConfig simpleProtoConfig;
 
@@ -31,7 +37,7 @@ public class SimpleSwaggerConfiguration {
     public GroupedOpenApi groupedOpenApi() {
         return GroupedOpenApi.builder()
                 .group(SimpleProtoConfig.swaggerTitle)
-                .packagesToScan(splitScanPackages(SimpleProtoConfig.swaggerScanPackages))
+                .packagesToScan(handleScanPackagesConfig(SimpleProtoConfig.swaggerScanPackages))
                 .build();
     }
 
@@ -55,14 +61,25 @@ public class SimpleSwaggerConfiguration {
                 .license(new License().name("Apache 2.0").url("http://springdoc.org"));
     }
 
-    private static String[] splitScanPackages(String scanPackages){
+    /**
+     * 处理swagger扫描包路径
+     * @param scanPackages 包路径（用逗号分割）
+     * @return 包路径数组
+     */
+    private static String[] handleScanPackagesConfig(String scanPackages){
         if(StringUtils.isBlank(scanPackages)){
             return new String[0];
         }
         if(!scanPackages.contains(packageSeparator)){
             return new String[]{scanPackages};
         }
-        return scanPackages.split(packageSeparator);
+        String[] packages = scanPackages.split(packageSeparator);
+        List<String> packageList = new ArrayList<>(Arrays.asList(packages));
+        if(packageList.contains(DEFAULT_SCAN_PACKAGE)){
+            return packages;
+        }
+        packageList.add(DEFAULT_SCAN_PACKAGE);
+        return packageList.toArray(new String[0]);
     }
 
 
