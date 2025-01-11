@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @description: 用户模块
  * @since: 1.1
  */
-@Tag(name = "用户模块")
+@Tag(name = "【SimpleProto】用户模块")
 @RestController
 @RequestMapping("/user")
 public class SpUserController {

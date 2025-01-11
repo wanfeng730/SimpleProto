@@ -75,10 +75,9 @@ public class SimpleSwaggerConfiguration {
         }
         String[] packages = scanPackages.split(packageSeparator);
         List<String> packageList = new ArrayList<>(Arrays.asList(packages));
-        if(packageList.contains(DEFAULT_SCAN_PACKAGE)){
-            return packages;
-        }
-        packageList.add(DEFAULT_SCAN_PACKAGE);
+        //去掉空的包名
+        packageList.removeIf(StringUtils::isBlank);
+
         return packageList.toArray(new String[0]);
     }
 
