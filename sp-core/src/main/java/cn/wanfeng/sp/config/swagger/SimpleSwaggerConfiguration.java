@@ -1,6 +1,7 @@
 package cn.wanfeng.sp.config.swagger;
 
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
+import cn.wanfeng.sp.util.LogUtil;
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -35,10 +36,12 @@ public class SimpleSwaggerConfiguration {
     // 第一个模块
     @Bean
     public GroupedOpenApi groupedOpenApi() {
-        return GroupedOpenApi.builder()
+        GroupedOpenApi openApi = GroupedOpenApi.builder()
                 .group(SimpleProtoConfig.swaggerTitle)
                 .packagesToScan(handleScanPackagesConfig(SimpleProtoConfig.swaggerScanPackages))
                 .build();
+        LogUtil.info("Swagger文档初始化成功，访问地址：http://IP:{}{}/doc.html", SimpleProtoConfig.appPort, SimpleProtoConfig.appContextPath);
+        return openApi;
     }
 
 

@@ -21,6 +21,8 @@ import java.util.Objects;
 public class SimpleProtoConfig {
 
     public static String appName;
+    public static String appPort;
+    public static String appContextPath;
 
     public static String currentScheme;
     public static String dataTable;
@@ -83,6 +85,8 @@ public class SimpleProtoConfig {
     @PostConstruct
     public void init() {
         appName = environment.getProperty("spring.application.name");
+        appPort = environment.getProperty("server.port");
+        appContextPath = environment.getProperty("server.servlet.context-path");
 
         currentScheme = environment.getProperty("simpleproto.currentScheme");
         dataTable = environment.getProperty("simpleproto.dataTable");
