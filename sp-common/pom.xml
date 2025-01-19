@@ -17,6 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <springboot.version>3.3.0</springboot.version>
+        <springcloud.version>4.0.0</springcloud.version>
         <springretry.version>2.0.6</springretry.version>
         <junit.version>5.10.0</junit.version>
         <java.validation.version>2.0.1.Final</java.validation.version>
@@ -37,6 +38,7 @@
         <swagger.version>2.9.2</swagger.version>
         <swagger-bootstrap.version>1.9.1</swagger-bootstrap.version>
         <dubbo.version>3.2.7</dubbo.version>
+        <nacos-stater.version>2023.0.1.2</nacos-stater.version>
     </properties>
 
     <dependencies>
@@ -71,7 +73,7 @@
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <artifactId>junit-jupiter-api</artifactId>
             <version>${junit.version}</version>
         </dependency>
 
@@ -273,7 +275,23 @@
             <artifactId>zookeeper</artifactId>
             <version>3.9.2</version>
         </dependency>
+
+        <!-- Nacos -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+            <version>${springcloud.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <version>${nacos-stater.version}</version>
+        </dependency>
+
     </dependencies>
+
+
+
 
     <repositories>
         <repository>

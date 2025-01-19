@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: simpleproto
+  profiles:
+    active: dev # 切换环境
+  cloud:
+    nacos:
+      config:
+        server-addr: 42.192.108.249:8848
+        namespace: wanfeng-dev # 填命名空间id
+        file-extension: yaml
+        group: DEFAULT_GROUP
+        refresh-enabled: true
+        # 如果开启认证的话需要用户名和密码
+        username: nacos
+        password: nacos
+      discovery:
+        server-addr: 42.192.108.249:8848
+        namespace: wanfeng-dev # 填命名空间id
+        # 如果开启认证的话需要用户名和密码
+        username: nacos
+        password: nacos

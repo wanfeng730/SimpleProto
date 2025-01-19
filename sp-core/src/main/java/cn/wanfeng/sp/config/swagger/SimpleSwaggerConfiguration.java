@@ -40,7 +40,7 @@ public class SimpleSwaggerConfiguration {
                 .group(SimpleProtoConfig.swaggerTitle)
                 .packagesToScan(handleScanPackagesConfig(SimpleProtoConfig.swaggerScanPackages))
                 .build();
-        LogUtil.info("Swagger文档初始化成功，访问地址：http://IP:{}{}/doc.html", SimpleProtoConfig.appPort, SimpleProtoConfig.appContextPath);
+        LogUtil.info("Swagger文档初始化成功，访问地址：http://localhost:{}{}/doc.html", SimpleProtoConfig.appPort, SimpleProtoConfig.appContextPath);
         return openApi;
     }
 
