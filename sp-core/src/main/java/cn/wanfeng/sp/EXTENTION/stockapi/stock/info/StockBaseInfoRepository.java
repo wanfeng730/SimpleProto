@@ -1,8 +1,8 @@
-package cn.wanfeng.spstock.api.stock.info;
+package cn.wanfeng.sp.EXTENTION.stockapi.stock.info;
 
-import cn.wanfeng.spstock.api.stock.info.dto.CountryDTO;
-import cn.wanfeng.spstock.api.stock.info.params.GetCountryParams;
-import cn.wanfeng.spstock.api.common.CommonGetResult;
+import cn.wanfeng.sp.EXTENTION.stockapi.stock.info.dto.CountryDTO;
+import cn.wanfeng.sp.EXTENTION.stockapi.stock.info.params.GetCountryParams;
+import cn.wanfeng.sp.EXTENTION.stockapi.common.CommonGetResult;
 
 /**
  * StockBaseInfoRepository: 股票 基本信息获取接口.

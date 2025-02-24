@@ -1,7 +1,0 @@
-spStock:
-  apiSource: tsanghi
-  apiToken: 284bff0a447f408d869468aca8f86338
-
-spring:
-  application:
-    name: simplestock

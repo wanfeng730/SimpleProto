@@ -1,6 +1,6 @@
-package cn.wanfeng.spstock.api.common;
+package cn.wanfeng.sp.EXTENTION.stockapi.common;
 
-import cn.wanfeng.spstock.config.SimpleStockConfig;
+import cn.wanfeng.sp.config.custom.SimpleStockConfig;
 import lombok.Getter;
 
 /**
@@ -17,6 +17,12 @@ public class CommonGetParams {
     private final String format;
 
     private final String columns;
+
+    public CommonGetParams() {
+        this.token = SimpleStockConfig.apiToken;
+        this.format = SimpleStockConfig.apiResultFormat;
+        this.columns = null;
+    }
 
     public CommonGetParams(String columns) {
         this.token = SimpleStockConfig.apiToken;

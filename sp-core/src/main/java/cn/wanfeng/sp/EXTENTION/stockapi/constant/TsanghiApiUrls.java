@@ -1,4 +1,4 @@
-package cn.wanfeng.spstock.api.constant;
+package cn.wanfeng.sp.EXTENTION.stockapi.constant;
 
 /**
  * TsanghiApiUrls: 沧海数据api接口地址.

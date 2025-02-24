@@ -1,4 +1,4 @@
-package cn.wanfeng.spstock.api.common;
+package cn.wanfeng.sp.EXTENTION.stockapi.common;
 
 import cn.wanfeng.spstock.config.SimpleStockConfig;
 import com.alibaba.fastjson.JSON;

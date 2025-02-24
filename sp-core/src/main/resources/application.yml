@@ -42,6 +42,11 @@ simpleproto:
   swaggerDescription: SimpleProto-API 接口文档
   swaggerVersion: 1.1
 
+
+spStock:
+  apiSource: tsanghi
+  apiToken: 284bff0a447f408d869468aca8f86338
+
 ######################################################
 server:
   servlet:

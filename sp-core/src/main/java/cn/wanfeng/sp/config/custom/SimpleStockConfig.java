@@ -1,4 +1,4 @@
-package cn.wanfeng.spstock.config;
+package cn.wanfeng.sp.config.custom;
 
 import com.alibaba.fastjson.PropertyNamingStrategy;
 import com.alibaba.fastjson.parser.ParserConfig;
