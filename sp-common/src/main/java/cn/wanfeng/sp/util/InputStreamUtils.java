@@ -1,5 +1,7 @@
 package cn.wanfeng.sp.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.*;
 import java.util.Objects;
 
@@ -47,7 +49,7 @@ public class InputStreamUtils {
      * @return ByteArrayInputStream
      */
     public static ByteArrayInputStream getByteArrayInputStreamFromFile(File file) {
-        ByteArrayInputStream byteArrayInputStream;
+        ByteArrayInputStream byteArrayInputStream = null;
         try(FileInputStream fileInputStream = new FileInputStream(file)) {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             byte[] buffer = new byte[1024];
@@ -63,9 +65,26 @@ public class InputStreamUtils {
             byteArrayOutputStream.close();
         } catch (Exception e) {
             LogUtil.error("从文件获取ByteArrayInputStream异常", e);
-            throw new RuntimeException(e);
         }
         return byteArrayInputStream;
+    }
+
+
+    /**
+     * 从字符串获取ByteArrayInputStream
+     * @param content 字符串内容
+     * @return ByteArrayInputStream
+     */
+    public static ByteArrayInputStream getByteArrayInputStreamFromString(String content) {
+        if(StringUtils.isNotBlank(content)){
+            return null;
+        }
+        try {
+            return new ByteArrayInputStream(content.getBytes());
+        } catch (Exception e) {
+            LogUtil.error("从字符串获取ByteArrayInputStream异常", e);
+        }
+        return null;
     }
 
 }

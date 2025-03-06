@@ -38,4 +38,12 @@ public class FileUtils extends FileUtil {
             throw new SpException(e, "创建临时文件夹异常");
         }
     }
+
+    /**
+     * 创建临时文件夹
+     * @return 临时文件夹
+     */
+    public static File createTempDirectory(){
+        return createTempDirectory("");
+    }
 }

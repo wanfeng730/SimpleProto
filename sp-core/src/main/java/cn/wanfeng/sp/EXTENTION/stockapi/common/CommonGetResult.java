@@ -1,6 +1,6 @@
 package cn.wanfeng.sp.EXTENTION.stockapi.common;
 
-import cn.wanfeng.spstock.config.SimpleStockConfig;
+import cn.wanfeng.sp.config.custom.SimpleStockConfig;
 import com.alibaba.fastjson.JSON;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;

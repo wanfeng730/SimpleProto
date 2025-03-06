@@ -146,11 +146,19 @@ public class NoApplicationTest {
             }
             String fieldNameCN = (String) itemData.get("title");
             String randomFieldName = (String) itemData.get("id");
-            System.out.printf("{%s}%n", fieldNameCN);
+            // System.out.printf("{%s}", fieldNameCN);
             Object value = fieldData.get(randomFieldName);
             if(Objects.nonNull(value)){
                 resultData.put(fieldNameCN, value);
             }
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            // System.out.print("\r");
+            System.out.print(String.format("进度：%d/%d", i, items.size()));
         }
 
 
