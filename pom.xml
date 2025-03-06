@@ -23,7 +23,6 @@
         <module>proto</module>
         <!-- 常用工具类， 所有的外部依赖都在此模块中配置管理 -->
         <module>sp-common</module>
-        <module>sp-stock</module>
     </modules>
 
     <!-- Dependency Versions Use in sp-common Module -->
