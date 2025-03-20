@@ -1,9 +1,8 @@
 package cn.wanfeng.sp.EXTENTION.stockapi.stock;
 
 import cn.wanfeng.sp.EXTENTION.stockapi.common.CommonGetResult;
-import cn.wanfeng.sp.EXTENTION.stockapi.stock.info.StockBaseInfoRepository;
-import cn.wanfeng.sp.EXTENTION.stockapi.stock.info.dto.CountryDTO;
-import cn.wanfeng.sp.EXTENTION.stockapi.stock.info.params.GetCountryParams;
+import cn.wanfeng.sp.EXTENTION.stockapi.stock.dto.CountryDTO;
+import cn.wanfeng.sp.EXTENTION.stockapi.stock.params.GetCountryParams;
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
 import cn.wanfeng.sp.util.LogUtil;
 import com.alibaba.fastjson.JSON;

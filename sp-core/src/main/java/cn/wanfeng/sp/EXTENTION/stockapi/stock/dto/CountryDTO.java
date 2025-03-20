@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.EXTENTION.stockapi.stock.info.dto;
+package cn.wanfeng.sp.EXTENTION.stockapi.stock.dto;
 
 import lombok.Data;
 

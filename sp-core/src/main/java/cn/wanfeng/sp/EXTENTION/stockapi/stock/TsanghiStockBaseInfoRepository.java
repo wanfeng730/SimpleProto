@@ -1,11 +1,11 @@
-package cn.wanfeng.sp.EXTENTION.stockapi.stock.info;
+package cn.wanfeng.sp.EXTENTION.stockapi.stock;
 
 import cn.hutool.http.HttpUtil;
 import cn.wanfeng.sp.EXTENTION.stockapi.common.CommonGetResult;
 import cn.wanfeng.sp.EXTENTION.stockapi.constant.TsanghiApiParamNames;
 import cn.wanfeng.sp.EXTENTION.stockapi.constant.TsanghiApiUrls;
-import cn.wanfeng.sp.EXTENTION.stockapi.stock.info.dto.CountryDTO;
-import cn.wanfeng.sp.EXTENTION.stockapi.stock.info.params.GetCountryParams;
+import cn.wanfeng.sp.EXTENTION.stockapi.stock.dto.CountryDTO;
+import cn.wanfeng.sp.EXTENTION.stockapi.stock.params.GetCountryParams;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.EXTENTION.stockapi.stock.info.params;
+package cn.wanfeng.sp.EXTENTION.stockapi.stock.params;
 
 import lombok.Builder;
 import lombok.Data;
