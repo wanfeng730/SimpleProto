@@ -14,7 +14,7 @@ import java.util.Objects;
  * @date: 2025-03-18 00:34
  * @author: luozh.wanfeng
  */
-public class SimpleLogUtil {
+public class PrettyLogUtil {
 
     public static void printPrettyJson(Object data){
         if(Objects.isNull(data)){
