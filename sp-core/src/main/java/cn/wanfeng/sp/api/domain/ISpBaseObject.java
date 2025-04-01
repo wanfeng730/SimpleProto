@@ -1,6 +1,9 @@
 package cn.wanfeng.sp.api.domain;
 
+import cn.wanfeng.sp.api.dataobject.SpBaseObjectDO;
+
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @date: 2024-04-02 23:48
@@ -50,5 +53,15 @@ public interface ISpBaseObject {
      * 将对象从持久化删除
      */
     void remove();
+
+    /**
+     * 生成数据库存储实体对象
+     */
+    SpBaseObjectDO generateBaseObjectDO();
+
+    /**
+     * 获取高级搜索存储数据
+     */
+    Map<String, Object> getDocument();
 
 }

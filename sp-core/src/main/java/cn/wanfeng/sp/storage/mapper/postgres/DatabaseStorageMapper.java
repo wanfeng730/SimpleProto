@@ -26,14 +26,6 @@ public interface DatabaseStorageMapper {
     SpBaseObjectDO findObjectById(@Param("tableName") String tableName, @Param("id") Long id);
 
     /**
-     * 根据对象id更新
-     * @param tableName 对象数据表名
-     * @param objectDO 对象数据
-     * @return 更新行数
-     */
-    int updateBaseObject(@Param("tableName") String tableName, @Param("objectDO") SpBaseObjectDO objectDO);
-
-    /**
      * 新建对象数据
      *
      * @param tableName 对象数据表名
@@ -41,6 +33,22 @@ public interface DatabaseStorageMapper {
      * @return 更新行数
      */
     int insertBaseObject(@Param("tableName") String tableName, @Param("objectDO") SpBaseObjectDO objectDO);
+
+    /**
+     * 批量新建对象数据
+     * @param tableName 对象数据表名
+     * @param objectDOList 对象数据列表
+     * @return 更新行数
+     */
+    int batchInsertBaseObject(@Param("tableName") String tableName, @Param("objectDOList") List<SpBaseObjectDO> objectDOList);
+
+    /**
+     * 根据对象id更新
+     * @param tableName 对象数据表名
+     * @param objectDO 对象数据
+     * @return 更新行数
+     */
+    int updateBaseObject(@Param("tableName") String tableName, @Param("objectDO") SpBaseObjectDO objectDO);
 
     /**
      * 根据对象id删除

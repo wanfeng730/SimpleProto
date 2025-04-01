@@ -78,6 +78,22 @@
         )
     </insert>
 
+    <insert id="batchInsertBaseObject" >
+        INSERT INTO ${tableName}(<include refid="object_field"/>)
+        VALUES
+        <foreach collection="objectDOList" item="objectDO" open="" separator="," close="">
+            (
+            #{objectDO.id},
+            #{objectDO.type},
+            #{objectDO.name},
+            #{objectDO.createDate},
+            #{objectDO.modifyDate},
+            #{objectDO.isDelete},
+            #{objectDO.data}
+            )
+        </foreach>
+    </insert>
+
     <delete id="removeObject">
         DELETE FROM ${tableName}
         WHERE id = #{id}

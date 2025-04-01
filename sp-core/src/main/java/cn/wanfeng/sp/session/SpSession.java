@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotBlank;
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -58,34 +60,35 @@ public class SpSession {
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void createBaseObjectToStorage(SpBaseObjectDO baseObjectDO, Map<String, Object> fieldNameValueMap) throws Exception {
+    public void createBaseObjectToStorage(SpBaseObjectDO baseObjectDO, Map<String, Object> documentList) throws Exception {
         //该对象保存到数据库存储
         databaseStorage().insertBaseObject(SimpleProtoConfig.dataTable, baseObjectDO);
         //该对象保存到高级搜索存储
-        searchStorage().insertObject(SimpleProtoConfig.dataTable, fieldNameValueMap);
+        searchStorage().insertObject(SimpleProtoConfig.dataTable, documentList);
     }
+
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void createSysObjectToStorage(SpSysObjectDO sysObjectDO, Map<String, Object> fieldNameValueMap) throws Exception {
+    public void createSysObjectToStorage(SpSysObjectDO sysObjectDO, Map<String, Object> documentList) throws Exception {
         //该对象保存到数据库存储
         databaseStorage().insertSysObject(SimpleProtoConfig.dataTable, sysObjectDO);
         //该对象保存到高级搜索存储
-        searchStorage().insertObject(SimpleProtoConfig.dataTable, fieldNameValueMap);
+        searchStorage().insertObject(SimpleProtoConfig.dataTable, documentList);
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void updateBaseObjectToStorage(SpBaseObjectDO baseObjectDO, Map<String, Object> fieldNameValueMap) throws Exception{
+    public void updateBaseObjectToStorage(SpBaseObjectDO baseObjectDO, Map<String, Object> documentList) throws Exception{
         //更新数据库存储
         databaseStorage().updateBaseObject(SimpleProtoConfig.dataTable, baseObjectDO);
         //更新高级搜索存储
-        searchStorage().updateObject(SimpleProtoConfig.dataTable, fieldNameValueMap);
+        searchStorage().updateObject(SimpleProtoConfig.dataTable, documentList);
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void updateSysObjectToStorage(SpSysObjectDO sysObjectDO, Map<String, Object> fieldNameValueMap) throws Exception{
+    public void updateSysObjectToStorage(SpSysObjectDO sysObjectDO, Map<String, Object> documentList) throws Exception{
         //更新数据库存储
         databaseStorage().updateSysObject(SimpleProtoConfig.dataTable, sysObjectDO);
         //更新高级搜索存储
-        searchStorage().updateObject(SimpleProtoConfig.dataTable, fieldNameValueMap);
+        searchStorage().updateObject(SimpleProtoConfig.dataTable, documentList);
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -112,5 +115,11 @@ public class SpSession {
             databaseStorage().updateSettings(SimpleProtoConfig.settingsTable, settings);
         }
         return settings.getIncreaseLong();
+    }
+
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void bulkCreateBaseObjectToStorage(List<SpBaseObjectDO> baseObjectDOList, List<Map<String, Object>> documentList) throws IOException {
+        databaseStorage().batchInsertBaseObject(SimpleProtoConfig.dataTable, baseObjectDOList);
+        searchStorage().bulkInsertObject(SimpleProtoConfig.dataTable, documentList);
     }
 }

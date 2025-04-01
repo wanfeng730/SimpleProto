@@ -208,34 +208,42 @@ public class SpBaseObject implements ISpBaseObject{
 
     @Override
     public void store() {
+        // @luozh-code: 测试批量保存
+        // 保存前的一些操作
+        beforeStoreOperations();
+        // 若为新数据则新建，否则更新
+        if (isNewObject) {
+            createObjectToStorage();
+        } else {
+            updateObjectToStorage();
+        }
+        // 保存后的一些操作
+        afterStoreOperations();
+    }
+
+    protected void beforeStoreOperations(){
         //根据是否为新对象执行store操作
         isNewObject = Objects.isNull(this.id);
         if (isNewObject) {
             //校验处理
             beforeCreateStoreAssertAndHandle();
-
             // 生成主键id
             generateIncreaseId();
             // 生成id后校验处理
             afterGenerateIdAssertAndHandle();
-            // 将基础对象的属性放到indexNoRecordMap和fieldNameValueMap
-            putThisPropertyToContainers();
-            putDeclaredPropertyToContainerAndValueMap();
-            // 新建数据到数据库（事务：数据库存储新建、设置自增主键id、高级搜索存储新建）
-            createObjectToStorage();
-            isNewObject = false;
         } else {
             //校验处理
             beforeUpdateStoreAssertAndHandle();
-
-            // 将继承类中的属性放到indexNoRecordMap和fieldNameValueMap
-            putThisPropertyToContainers();
-            putDeclaredPropertyToContainerAndValueMap();
-            // 更新数据(事务：数据库存储更新、高级搜索存储更新）
-            updateObjectToStorage();
         }
-
+        // 将基础对象的属性放到indexNoRecordMap和fieldNameValueMap
+        putThisPropertyToContainers();
+        putDeclaredPropertyToContainerAndValueMap();
     }
+
+    protected void afterStoreOperations(){
+        isNewObject = false;
+    }
+
 
     /**
      * 新建保存对象前的校验和处理，用于给子类重写方法
@@ -344,9 +352,7 @@ public class SpBaseObject implements ISpBaseObject{
     }
 
     protected void createObjectToStorage(){
-        // 序列化，构造对象数据保存到数据库
-        byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
-        SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
+        SpBaseObjectDO baseObjectDO = generateBaseObjectDO();
         try {
             session.createBaseObjectToStorage(baseObjectDO, propertyValueContainer);
         } catch (Exception e) {
@@ -355,10 +361,8 @@ public class SpBaseObject implements ISpBaseObject{
     }
 
     protected void updateObjectToStorage(){
-        // 所有字段序列化成字节数组
-        byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
         // 该对象更新到数据库
-        SpBaseObjectDO baseObjectDO = SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
+        SpBaseObjectDO baseObjectDO = generateBaseObjectDO();
         try {
             session.updateBaseObjectToStorage(baseObjectDO, propertyValueContainer);
         } catch (Exception e) {
@@ -455,6 +459,22 @@ public class SpBaseObject implements ISpBaseObject{
         return modifyDate;
     }
 
+    /**
+     * 生成数据库存储实体对象
+     */
+    @Override
+    public SpBaseObjectDO generateBaseObjectDO() {
+        byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
+        return SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
+    }
+
+    /**
+     * 获取高级搜索存储数据
+     */
+    @Override
+    public Map<String, Object> getDocument() {
+        return this.propertyValueContainer;
+    }
 
     // Some Assertions
 
