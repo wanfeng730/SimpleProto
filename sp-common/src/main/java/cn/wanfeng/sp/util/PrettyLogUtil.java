@@ -16,21 +16,36 @@ import java.util.Objects;
  */
 public class PrettyLogUtil {
 
+    private static final String BLANK = StringUtils.EMPTY;
+
     public static void printPrettyJson(Object data){
         if(Objects.isNull(data)){
             System.out.println("data is Null");
             return;
         }
-        String pretty = JSON.toJSONString(data, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteDateUseDateFormat);
-        System.out.println(pretty);
+        System.out.println(prettyJson(data));
     }
 
     public static void printPrettyJson(String jsonString){
         if(StringUtils.isBlank(jsonString)){
             System.out.println("jsonString is Null or Blank");
         }
-        JSONObject jsonObject = JSONObject.parseObject(jsonString);
-        printPrettyJson(jsonObject);
+        System.out.println(prettyJson(jsonString));
     }
 
+
+    public static String prettyJson(Object data){
+        if(Objects.isNull(data)){
+            return BLANK;
+        }
+        return JSON.toJSONString(data, SerializerFeature.PrettyFormat, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteDateUseDateFormat);
+    }
+
+    public static String prettyJson(String jsonString){
+        if(StringUtils.isBlank(jsonString)){
+            System.out.println("jsonString is Null or Blank");
+        }
+        JSONObject jsonObject = JSONObject.parseObject(jsonString);
+        return prettyJson(jsonObject);
+    }
 }
