@@ -19,10 +19,12 @@ public class ThreadPoolTemplateUtils {
         executor.setKeepAliveSeconds(60);
         executor.setQueueCapacity(100);
         executor.setAllowCoreThreadTimeOut(false);
-        executor.setPrestartAllCoreThreads(false);
-        executor.setStrictEarlyShutdown(false);
-        executor.setThreadNamePrefix("SpBaseObjectTest-Async-Task-");
+        executor.setThreadNamePrefix("Untitled-Async-Task-");
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        // JDK 21
+        executor.setPrestartAllCoreThreads(false);
+        // JDK 21
+        executor.setStrictEarlyShutdown(false);
         return executor;
     }
 
