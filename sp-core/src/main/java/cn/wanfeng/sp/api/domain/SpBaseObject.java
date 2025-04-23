@@ -16,7 +16,7 @@ import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.LogUtil;
 import cn.wanfeng.sp.util.SimpleReflectUtils;
 import cn.wanfeng.sp.util.SpObjectConvertUtils;
-import com.github.f4b6a3.ulid.UlidCreator;
+import cn.wanfeng.sp.util.UlidUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotNull;
@@ -203,7 +203,7 @@ public class SpBaseObject implements ISpBaseObject{
      * @return ULID
      */
     private static String defaultUlidName() {
-        return UlidCreator.getUlid().toString();
+        return UlidUtil.generateUlid();
     }
 
     @Override
