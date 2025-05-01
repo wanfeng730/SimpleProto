@@ -46,4 +46,22 @@ public class FileUtils extends FileUtil {
     public static File createTempDirectory(){
         return createTempDirectory("");
     }
+
+    /**
+     * 创建临时文件
+     * @param fileName 文件名
+     * @return 空文件
+     */
+    public static File createTempFile(String fileName){
+        try {
+            File tempDir = createTempDirectory();
+            String tempFilePath = tempDir.getPath() + File.separator + fileName;
+            File tempFile = new File(tempFilePath);
+            boolean create = tempFile.createNewFile();
+            return tempFile;
+        } catch (Exception e) {
+            LogUtil.error("创建临时文件{}异常", fileName, e);
+        }
+        return null;
+    }
 }
