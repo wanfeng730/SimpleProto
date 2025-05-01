@@ -5,6 +5,8 @@ simpleproto:
   dataSourceUrl: jdbc:postgresql://42.192.108.249:5432/${spring.application.name}?currentSchema=${spring.profiles.active}&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
   dataSourceUsername: postgres
   dataSourcePassword: Wanfeng730
+  # 数据库名称取spring应用名称
+  currentScheme: ${spring.profiles.active}
   # OpenSearch 连接配置
   opensearchHostScheme: http
   opensearchHost: 42.192.108.249
@@ -15,8 +17,6 @@ simpleproto:
   opensearchJdbcDriver: com.amazon.opendistroforelasticsearch.jdbc.Driver
   opensearchJdbcUrl: jdbc:elasticsearch://http://42.192.108.249:9200
   opensearchJdbcUseSSL: false
-  # 数据库名称取spring应用名称
-  currentScheme: ${spring.profiles.active}
   # 业务数据表名
   dataTable: sp_object_table
   # 业务设置表名
@@ -96,6 +96,9 @@ spring:
     uris: ${simpleproto.esUris}
     username: ${simpleproto.esUsername}
     password: ${simpleproto.esPassword}
+  # message国际化资源文件配置 src/main/resources/i18n/messages.properties
+  messages:
+    basename: i18n/messages
 
 
 hibernate:
