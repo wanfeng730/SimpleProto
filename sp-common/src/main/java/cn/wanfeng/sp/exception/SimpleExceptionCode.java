@@ -1,21 +1,22 @@
 package cn.wanfeng.sp.exception;
 
-import lombok.Getter;
-
 /**
- * ExceptionCode: 异常编码.
+ * ExceptionCode: SimpleProto异常编码.
  *
  * @date: 2025-05-01 13:50
  * @author: luozh.wanfeng
  */
-@Getter
-public enum ExceptionCode {
+public enum SimpleExceptionCode implements ExceptionInfoGetter {
 
 
     /**
      * 测试
      */
     TEST("00000", "TEST_MESSAGE_CODE"),
+    /**
+     * 测试携带参数：%s
+     */
+    TEST_HAS_ARGS("00001", "TEST_MESSAGE_HAS_ARGS"),
     /**
      * 未知异常，请根据日志排查原因
      */
@@ -25,8 +26,18 @@ public enum ExceptionCode {
 
     private final String message;
 
-    ExceptionCode(String code, String message) {
+    SimpleExceptionCode(String code, String message) {
         this.code = code;
         this.message = message;
+    }
+
+    @Override
+    public String getCode() {
+        return code;
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
     }
 }

@@ -1,6 +1,6 @@
 package cn.wanfeng.sp;
 
-import cn.wanfeng.sp.util.LogUtil;
+import cn.wanfeng.sp.config.swagger.SimpleSwaggerConfiguration;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,9 +20,15 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableDiscoveryClient
 public class SimpleprotoApplication {
 
+    private static final String VERSION = "1.1";
+
     public static void main(String[] args) {
         SpringApplication.run(SimpleprotoApplication.class, args);
-        LogUtil.info("SimpleProto Application Start Success (づ￣ 3￣)づ");
+        System.out.println();
+        System.out.println("SimpleProto Application Start Success (づ￣ 3￣)づ");
+        System.out.println("* Version: " + VERSION);
+        System.out.println("* Swagger Browse Url: " + SimpleSwaggerConfiguration.swaggerBrowseUrl);
+        System.out.println();
     }
 
 }

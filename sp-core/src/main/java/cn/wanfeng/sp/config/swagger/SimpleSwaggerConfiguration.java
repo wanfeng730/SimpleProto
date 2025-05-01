@@ -2,6 +2,7 @@ package cn.wanfeng.sp.config.swagger;
 
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.util.LogUtil;
+import cn.wanfeng.sp.util.PrettyLogUtil;
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -29,18 +30,21 @@ public class SimpleSwaggerConfiguration {
 
     private static final String DEFAULT_SCAN_PACKAGE = "cn.wanfeng.sp.api.controller";
 
+    public static String swaggerBrowseUrl = "Not Init";
+
     @Resource
     private SimpleProtoConfig simpleProtoConfig;
 
     // 此处为模块化配置，将API文档配置成几个模块，添加每个模块名，此次模块下所有API接口的统一前缀
-    // 第一个模块
     @Bean
     public GroupedOpenApi groupedOpenApi() {
+        String[] scanPackages = handleScanPackagesConfig(SimpleProtoConfig.swaggerScanPackages);
         GroupedOpenApi openApi = GroupedOpenApi.builder()
                 .group(SimpleProtoConfig.swaggerTitle)
-                .packagesToScan(handleScanPackagesConfig(SimpleProtoConfig.swaggerScanPackages))
+                .packagesToScan(scanPackages)
                 .build();
-        LogUtil.info("Swagger文档初始化成功，访问地址：http://localhost:{}{}/doc.html", SimpleProtoConfig.appPort, SimpleProtoConfig.appContextPath);
+        swaggerBrowseUrl = String.format("http://localhost:%s%s/doc.html", SimpleProtoConfig.appPort, SimpleProtoConfig.appContextPath);
+        LogUtil.info("Swagger文档初始化成功，扫描包路径：\n{}", PrettyLogUtil.prettyJson(scanPackages));
         return openApi;
     }
 

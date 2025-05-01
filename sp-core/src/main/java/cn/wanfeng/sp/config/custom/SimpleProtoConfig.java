@@ -2,7 +2,6 @@ package cn.wanfeng.sp.config.custom;
 
 
 import cn.wanfeng.sp.api.domain.ISpSysObject;
-import cn.wanfeng.sp.util.LogUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.Data;
@@ -126,7 +125,7 @@ public class SimpleProtoConfig {
         swaggerDescription = environment.getProperty("simpleproto.swaggerDescription");
         swaggerVersion = environment.getProperty("simpleproto.swaggerVersion");
 
-        LogUtil.info("【初始化】simpleproto配置完成");
+        System.out.println("【初始化】simpleproto配置完成");
     }
 
 }

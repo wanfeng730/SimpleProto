@@ -18,22 +18,6 @@ public class PrettyLogUtil {
 
     private static final String BLANK = StringUtils.EMPTY;
 
-    public static void printPrettyJson(Object data){
-        if(Objects.isNull(data)){
-            System.out.println("data is Null");
-            return;
-        }
-        System.out.println(prettyJson(data));
-    }
-
-    public static void printPrettyJson(String jsonString){
-        if(StringUtils.isBlank(jsonString)){
-            System.out.println("jsonString is Null or Blank");
-        }
-        System.out.println(prettyJson(jsonString));
-    }
-
-
     public static String prettyJson(Object data){
         if(Objects.isNull(data)){
             return BLANK;
