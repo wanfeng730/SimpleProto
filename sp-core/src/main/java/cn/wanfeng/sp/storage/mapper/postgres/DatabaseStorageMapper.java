@@ -1,8 +1,7 @@
 package cn.wanfeng.sp.storage.mapper.postgres;
 
-import cn.wanfeng.sp.api.dataobject.SpBaseObjectDO;
+import cn.wanfeng.sp.api.dataobject.SpDataObjectDO;
 import cn.wanfeng.sp.api.dataobject.SpSettingsDO;
-import cn.wanfeng.sp.api.dataobject.SpSysObjectDO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -18,37 +17,36 @@ import java.util.List;
 public interface DatabaseStorageMapper {
 
     /**
-     * 根据对象id查询
-     * @param tableName 对象数据表名
-     * @param id 对象id
-     * @return 对象数据
+     * 创建对象
+     * @param tableName 表名
+     * @param dataObjectDO 对象
+     * @return 新建行数
      */
-    SpBaseObjectDO findObjectById(@Param("tableName") String tableName, @Param("id") Long id);
+    int insertObject(@Param("tableName") String tableName, @Param("dataObjectDO") SpDataObjectDO dataObjectDO);
 
     /**
-     * 新建对象数据
-     *
-     * @param tableName 对象数据表名
-     * @param objectDO  对象数据
-     * @return 更新行数
+     * 批量创建对象
+     * @param tableName 表名
+     * @param dataObjectDOList 系统对象列表
+     * @return 新建行数
      */
-    int insertBaseObject(@Param("tableName") String tableName, @Param("objectDO") SpBaseObjectDO objectDO);
+    int batchInsertObject(@Param("tableName") String tableName, @Param("dataObjectDOList") List<SpDataObjectDO> dataObjectDOList);
 
     /**
-     * 批量新建对象数据
-     * @param tableName 对象数据表名
-     * @param objectDOList 对象数据列表
+     * 更新对象
+     * @param tableName 表名
+     * @param dataObjectDO 对象
      * @return 更新行数
      */
-    int batchInsertBaseObject(@Param("tableName") String tableName, @Param("objectDOList") List<SpBaseObjectDO> objectDOList);
+    int updateObject(@Param("tableName") String tableName, @Param("dataObjectDO") SpDataObjectDO dataObjectDO);
 
     /**
-     * 根据对象id更新
-     * @param tableName 对象数据表名
-     * @param objectDO 对象数据
+     * 批量更新对象
+     * @param tableName 表名
+     * @param dataObjectDOList 对象列表
      * @return 更新行数
      */
-    int updateBaseObject(@Param("tableName") String tableName, @Param("objectDO") SpBaseObjectDO objectDO);
+    int batchUpdateObject(@Param("tableName") String tableName, @Param("dataObjectDOList") List<SpDataObjectDO> dataObjectDOList);
 
     /**
      * 根据对象id删除
@@ -59,51 +57,36 @@ public interface DatabaseStorageMapper {
     int removeObject(@Param("tableName") String tableName, @Param("id") Long id);
 
     /**
-     * 根据id查询系统对象
-     * @param id 系统对象id
-     * @return 系统对象
+     * 根据对象id查询
+     * @param tableName 对象数据表名
+     * @param id 对象id
+     * @return 对象数据
      */
-    SpSysObjectDO findSysObjectById(@Param("tableName") String tableName, @Param("id") Long id);
+    SpDataObjectDO findObjectById(@Param("tableName") String tableName, @Param("id") Long id);
 
     /**
-     * 根据路径查询系统对象
+     * 根据路径查询对象
      * @param path 路径
-     * @return 系统对象
+     * @return 对象
      */
-    SpSysObjectDO findSysObjectByPath(@Param("tableName") String tableName, @Param("path") String path);
+    SpDataObjectDO findObjectByPath(@Param("tableName") String tableName, @Param("path") String path);
 
     /**
-     * 根据路径模糊查询系统对象
+     * 根据路径模糊查询对象
      * @param tableName 表名
      * @param path 路径
-     * @return 系统对象列表
+     * @return 对象列表
      */
-    List<SpSysObjectDO> findSysObjectByLikePath(@Param("tableName") String tableName, @Param("path") String path);
+    List<SpDataObjectDO> findObjectByLikePath(@Param("tableName") String tableName, @Param("path") String path);
 
     /**
      * 根据路径模糊查询指定类型子对象
      * @param tableName 表名
      * @param path 路径
-     * @param tag 系统类型
-     * @return 系统对象列表
+     * @param tag 类型
+     * @return 对象列表
      */
-    Integer countSysObjectByLikePathAndTag(@Param("tableName") String tableName, @Param("path") String path, @Param("tag") String tag);
-
-    /**
-     * 创建系统对象
-     * @param tableName 表名
-     * @param sysObjectDO 系统对象
-     * @return 新建行数
-     */
-    int insertSysObject(@Param("tableName") String tableName, @Param("sysObjectDO") SpSysObjectDO sysObjectDO);
-
-    /**
-     * 更新系统对象
-     * @param tableName 表名
-     * @param sysObjectDO 系统对象
-     * @return 更新行数
-     */
-    int updateSysObject(@Param("tableName") String tableName, @Param("sysObjectDO") SpSysObjectDO sysObjectDO);
+    Integer countObjectByLikePathAndTag(@Param("tableName") String tableName, @Param("path") String path, @Param("tag") String tag);
 
     /**
      * 根据设置名称查询

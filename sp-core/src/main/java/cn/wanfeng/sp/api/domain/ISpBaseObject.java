@@ -1,6 +1,6 @@
 package cn.wanfeng.sp.api.domain;
 
-import cn.wanfeng.sp.api.dataobject.SpBaseObjectDO;
+import cn.wanfeng.sp.api.dataobject.SpDataObjectDO;
 
 import java.util.Date;
 import java.util.Map;
@@ -40,6 +40,11 @@ public interface ISpBaseObject {
     Boolean getDelete();
 
     /**
+     * 是否为新建对象
+     */
+    boolean isNewObject();
+
+    /**
      * 设置对象名称
      */
     void setName(String name);
@@ -57,11 +62,21 @@ public interface ISpBaseObject {
     /**
      * 生成数据库存储实体对象
      */
-    SpBaseObjectDO generateBaseObjectDO();
+    SpDataObjectDO generateDataObjectDO();
 
     /**
      * 获取高级搜索存储数据
      */
     Map<String, Object> getDocument();
+
+    /**
+     * 保存对象前的操作
+     */
+    void beforeStoreOperations();
+
+    /**
+     * 保存对象后的操作
+     */
+    void afterStoreOperations();
 
 }

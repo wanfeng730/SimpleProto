@@ -1,8 +1,7 @@
 package cn.wanfeng.sp.session;
 
-import cn.wanfeng.sp.api.dataobject.SpBaseObjectDO;
+import cn.wanfeng.sp.api.dataobject.SpDataObjectDO;
 import cn.wanfeng.sp.api.dataobject.SpSettingsDO;
-import cn.wanfeng.sp.api.dataobject.SpSysObjectDO;
 import cn.wanfeng.sp.cache.CacheOperator;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.storage.file.FileStorageClient;
@@ -60,66 +59,58 @@ public class SpSession {
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void createBaseObjectToStorage(SpBaseObjectDO baseObjectDO, Map<String, Object> documentList) throws Exception {
+    public void createObjectToStorage(SpDataObjectDO dataObjectDO, Map<String, Object> documentList) throws Exception {
         //该对象保存到数据库存储
-        databaseStorage().insertBaseObject(SimpleProtoConfig.dataTable, baseObjectDO);
+        databaseStorageMapper.insertObject(SimpleProtoConfig.dataTable, dataObjectDO);
         //该对象保存到高级搜索存储
-        searchStorage().insertObject(SimpleProtoConfig.dataTable, documentList);
+        searchStorageClient.insertObject(SimpleProtoConfig.dataTable, documentList);
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void createSysObjectToStorage(SpSysObjectDO sysObjectDO, Map<String, Object> documentList) throws Exception {
-        //该对象保存到数据库存储
-        databaseStorage().insertSysObject(SimpleProtoConfig.dataTable, sysObjectDO);
-        //该对象保存到高级搜索存储
-        searchStorage().insertObject(SimpleProtoConfig.dataTable, documentList);
-    }
-
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void updateBaseObjectToStorage(SpBaseObjectDO baseObjectDO, Map<String, Object> documentList) throws Exception{
+    public void updateObjectToStorage(SpDataObjectDO sysObjectDO, Map<String, Object> documentList) throws Exception{
         //更新数据库存储
-        databaseStorage().updateBaseObject(SimpleProtoConfig.dataTable, baseObjectDO);
+        databaseStorageMapper.updateObject(SimpleProtoConfig.dataTable, sysObjectDO);
         //更新高级搜索存储
-        searchStorage().updateObject(SimpleProtoConfig.dataTable, documentList);
-    }
-
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void updateSysObjectToStorage(SpSysObjectDO sysObjectDO, Map<String, Object> documentList) throws Exception{
-        //更新数据库存储
-        databaseStorage().updateSysObject(SimpleProtoConfig.dataTable, sysObjectDO);
-        //更新高级搜索存储
-        searchStorage().updateObject(SimpleProtoConfig.dataTable, documentList);
+        searchStorageClient.updateObject(SimpleProtoConfig.dataTable, documentList);
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void removeObjectFromStorage(Long id) throws Exception{
         //删除数据库存储
-        databaseStorage().removeObject(SimpleProtoConfig.dataTable, id);
+        databaseStorageMapper.removeObject(SimpleProtoConfig.dataTable, id);
         //删除高级搜索存储
-        searchStorage().removeObject(SimpleProtoConfig.dataTable, id);
+        searchStorageClient.removeObject(SimpleProtoConfig.dataTable, id);
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public Long increaseLongByName(@NotBlank String name){
-        SpSettingsDO settings = databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, name);
+        SpSettingsDO settings = databaseStorageMapper.findSettingsByName(SimpleProtoConfig.settingsTable, name);
         if (Objects.isNull(settings)) {
             settings = new SpSettingsDO();
             settings.setName(name);
             settings.setIncreaseLong(1L);
             settings.setIncreaseString("");
-            databaseStorage().insertSettings(SimpleProtoConfig.settingsTable, settings);
+            databaseStorageMapper.insertSettings(SimpleProtoConfig.settingsTable, settings);
         }else {
             Long increaseLong = settings.getIncreaseLong();
             increaseLong++;
             settings.setIncreaseLong(increaseLong);
-            databaseStorage().updateSettings(SimpleProtoConfig.settingsTable, settings);
+            databaseStorageMapper.updateSettings(SimpleProtoConfig.settingsTable, settings);
         }
         return settings.getIncreaseLong();
     }
 
+
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void bulkCreateBaseObjectToStorage(List<SpBaseObjectDO> baseObjectDOList, List<Map<String, Object>> documentList) throws IOException {
-        databaseStorage().batchInsertBaseObject(SimpleProtoConfig.dataTable, baseObjectDOList);
-        searchStorage().bulkInsertObject(SimpleProtoConfig.dataTable, documentList);
+    public void bulkCreateObjectToStorage(List<SpDataObjectDO> dataObjectDOList, List<Map<String, Object>> documentList) throws IOException {
+        databaseStorageMapper.batchInsertObject(SimpleProtoConfig.dataTable, dataObjectDOList);
+        searchStorageClient.bulkInsertObject(SimpleProtoConfig.dataTable, documentList);
     }
+
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void bulkUpdateObjectToStorage(List<SpDataObjectDO> dataObjectDOList, List<Map<String, Object>> documentList) throws IOException {
+        databaseStorageMapper.batchUpdateObject(SimpleProtoConfig.dataTable, dataObjectDOList);
+        searchStorageClient.bulkUpdateObject(SimpleProtoConfig.dataTable, documentList);
+    }
+
 }

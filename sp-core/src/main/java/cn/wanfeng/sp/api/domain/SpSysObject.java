@@ -3,7 +3,7 @@ package cn.wanfeng.sp.api.domain;
 
 import cn.wanfeng.proto.record.ProtoRecord;
 import cn.wanfeng.proto.record.ProtoRecordFactory;
-import cn.wanfeng.sp.api.dataobject.SpSysObjectDO;
+import cn.wanfeng.sp.api.dataobject.SpDataObjectDO;
 import cn.wanfeng.sp.api.enums.SystemTag;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.exception.SpException;
@@ -51,10 +51,10 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
     }
 
     public SpSysObject(SpSession session, Long id) {
-        super(session, session.databaseStorage().findSysObjectById(SimpleProtoConfig.dataTable, id));
+        super(session, session.databaseStorage().findObjectById(SimpleProtoConfig.dataTable, id));
     }
 
-    protected SpSysObject(SpSession session, SpSysObjectDO sysObjectDO){
+    protected SpSysObject(SpSession session, SpDataObjectDO sysObjectDO){
         super(session, sysObjectDO);
     }
 
@@ -92,14 +92,14 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
     @Override
     protected void removeObjectFromStorage() {
         //级联查询出下级所有的sysObject的id
-        List<SpSysObjectDO> childObjectDOList = findAllChildSysObject();
+        List<SpDataObjectDO> childObjectDOList = findAllChildSysObject();
         if(CollectionUtils.isNotEmpty(childObjectDOList)){
-            for (SpSysObjectDO spSysObjectDO : childObjectDOList) {
-                if(SystemTag.FILE.getValue().equals(spSysObjectDO.getTag())){
-                    SpFile spFile = new SpFile(session, spSysObjectDO.getId());
+            for (SpDataObjectDO spDataObjectDO : childObjectDOList) {
+                if(SystemTag.FILE.getValue().equals(spDataObjectDO.getTag())){
+                    SpFile spFile = new SpFile(session, spDataObjectDO.getId());
                     spFile.remove();
                 }else {
-                    SpFolder spFolder = new SpFolder(session, spSysObjectDO.getId());
+                    SpFolder spFolder = new SpFolder(session, spDataObjectDO.getId());
                     spFolder.remove();
                 }
             }
@@ -155,7 +155,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
 
     @Override
     public void move(Long parentId) {
-        SpSysObjectDO parentObjectDO = session.databaseStorage().findSysObjectById(SimpleProtoConfig.dataTable, parentId);
+        SpDataObjectDO parentObjectDO = session.databaseStorage().findObjectById(SimpleProtoConfig.dataTable, parentId);
         assertIdFoundFromDatabase(parentId, parentObjectDO);
         SpSysObject parentSysObject = new SpSysObject(session, parentObjectDO);
         move(parentSysObject);
@@ -163,7 +163,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
 
     @Override
     public void move(String parentPath) {
-        SpSysObjectDO parentObjectDO = session.databaseStorage().findSysObjectByPath(SimpleProtoConfig.dataTable, parentPath);
+        SpDataObjectDO parentObjectDO = session.databaseStorage().findObjectByPath(SimpleProtoConfig.dataTable, parentPath);
         assertPathFoundFromDatabase(parentPath, parentObjectDO);
         SpSysObject parentSysObject = new SpSysObject(session, parentObjectDO);
         move(parentSysObject);
@@ -235,9 +235,9 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
     }
 
     private void assertPathUnique(){
-        SpSysObjectDO existPathObject = session.databaseStorage().findSysObjectByPath(SimpleProtoConfig.dataTable, this.path);
+        SpDataObjectDO existPathObject = session.databaseStorage().findObjectByPath(SimpleProtoConfig.dataTable, this.path);
         if(Objects.nonNull(existPathObject)){
-            throw new SpException("Path[%s] has already exist in Table[%s]", path, SimpleProtoConfig.dataTable);
+            throw new SpException("路径已存在[%s]，保存到数据表[%s]失败", path, SimpleProtoConfig.dataTable);
         }
     }
 
@@ -245,9 +245,9 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
     protected void createObjectToStorage() {
         // 序列化，构造对象数据保存到数据库
         byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
-        SpSysObjectDO sysObjectDO = SpObjectConvertUtils.convertSpSysObjectToDO(this, data);
+        SpDataObjectDO sysObjectDO = SpObjectConvertUtils.convertSpSysObjectToDO(this, data);
         try {
-            session.createSysObjectToStorage(sysObjectDO, propertyValueContainer);
+            session.createObjectToStorage(sysObjectDO, propertyValueContainer);
         } catch (Exception e) {
             LogUtil.error("对象创建失败，数据已回滚，失败原因", e);
         }
@@ -257,16 +257,16 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
     protected void updateObjectToStorage() {
         // 所有字段序列化成字节数组
         byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
-        SpSysObjectDO sysObjectDO = SpObjectConvertUtils.convertSpSysObjectToDO(this, data);
+        SpDataObjectDO sysObjectDO = SpObjectConvertUtils.convertSpSysObjectToDO(this, data);
         try {
-            session.updateSysObjectToStorage(sysObjectDO, propertyValueContainer);
+            session.updateObjectToStorage(sysObjectDO, propertyValueContainer);
         } catch (Exception e) {
             LogUtil.error("对象更新失败，数据已回滚，失败原因", e);
         }
     }
 
-    private List<SpSysObjectDO> findAllChildSysObject(){
-        return session.databaseStorage().findSysObjectByLikePath(SimpleProtoConfig.dataTable, this.path + "/%");
+    private List<SpDataObjectDO> findAllChildSysObject(){
+        return session.databaseStorage().findObjectByLikePath(SimpleProtoConfig.dataTable, this.path + "/%");
     }
 
     protected void removeObjectById(Long id){
@@ -281,7 +281,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
 
     // some assertions
 
-    private void assertPathFoundFromDatabase(String path, SpSysObjectDO objectDO){
+    private void assertPathFoundFromDatabase(String path, SpDataObjectDO objectDO){
         if(Objects.isNull(objectDO)){
             throw new SpObjectNotFoundException("Not Found Path[%s] from Database", path);
         }

@@ -7,15 +7,17 @@ spring:
     nacos:
       config:
         server-addr: ${NACOS_HOST}:8848
-        namespace: ${NACOS_NAMESPACE} # 填命名空间id
+        namespace: ${NACOS_NAMESPACE} # 命名空间
         file-extension: yaml
         group: DEFAULT_GROUP
         # 如果开启认证的话需要用户名和密码
         username: nacos
         password: nacos
+        # 运行测试类，先关闭
+        # enabled: false
       discovery:
         server-addr: ${NACOS_HOST}:8848
-        namespace: ${NACOS_NAMESPACE} # 填命名空间id
+        namespace: ${NACOS_NAMESPACE} # 命名空间
         # 如果开启认证的话需要用户名和密码
         username: nacos
         password: nacos

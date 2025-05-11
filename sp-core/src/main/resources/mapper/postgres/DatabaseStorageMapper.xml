@@ -15,24 +15,10 @@
     </resultMap>
 
     <!-- 数据表字段 -->
-    <sql id="object_field">
-        id, type, name, create_date, modify_date, is_delete, data
-    </sql>
-    <resultMap id="objectResultMap" type="cn.wanfeng.sp.api.dataobject.SpBaseObjectDO">
-        <id property="id" column="id"/>
-        <id property="type" column="type"/>
-        <id property="name" column="name"/>
-        <id property="createDate" column="create_date"/>
-        <id property="modifyDate" column="modify_date"/>
-        <id property="isDelete" column="is_delete"/>
-        <id property="data" column="data"/>
-    </resultMap>
-
-    <!-- 数据表字段 -->
-    <sql id="sys_object_field">
+    <sql id="data_object_field">
         id, type, name, create_date, modify_date, is_delete, tag, path, parent_id, parent_path, data
     </sql>
-    <resultMap id="sysObjectResultMap" type="cn.wanfeng.sp.api.dataobject.SpSysObjectDO">
+    <resultMap id="objectResultMap" type="cn.wanfeng.sp.api.dataobject.SpDataObjectDO">
         <id property="id" column="id"/>
         <id property="type" column="type"/>
         <id property="name" column="name"/>
@@ -49,7 +35,7 @@
 
     <select id="findObjectById" resultMap="objectResultMap">
         SELECT
-        <include refid="object_field"/>
+        <include refid="data_object_field"/>
         FROM ${tableName}
         WHERE id = #{id}
     </select>
@@ -66,7 +52,7 @@
     </update>
 
     <insert id="insertBaseObject" useGeneratedKeys="true" keyProperty="objectDO.id">
-        INSERT INTO ${tableName}(<include refid="object_field"/>)
+        INSERT INTO ${tableName}(<include refid="data_object_field"/>)
         VALUES (
             #{objectDO.id},
             #{objectDO.type},
@@ -79,7 +65,7 @@
     </insert>
 
     <insert id="batchInsertBaseObject" >
-        INSERT INTO ${tableName}(<include refid="object_field"/>)
+        INSERT INTO ${tableName}(<include refid="data_object_field"/>)
         VALUES
         <foreach collection="objectDOList" item="objectDO" open="" separator="," close="">
             (
@@ -99,62 +85,118 @@
         WHERE id = #{id}
     </delete>
 
-    <select id="findSysObjectById" resultMap="sysObjectResultMap">
-        SELECT <include refid="sys_object_field"/>
+    <select id="findSysObjectById" resultMap="objectResultMap">
+        SELECT <include refid="data_object_field"/>
         FROM ${tableName}
         WHERE id = #{id}
     </select>
 
-    <select id="findSysObjectByPath" resultMap="sysObjectResultMap">
-        SELECT <include refid="sys_object_field"/>
+    <select id="findObjectByPath" resultMap="objectResultMap">
+        SELECT <include refid="data_object_field"/>
         FROM ${tableName}
         WHERE path = #{path}
         limit 1
     </select>
 
-    <select id="findSysObjectByLikePath" resultMap="sysObjectResultMap">
-        SELECT <include refid="sys_object_field"/>
+    <select id="findObjectByLikePath" resultMap="objectResultMap">
+        SELECT <include refid="data_object_field"/>
         FROM ${tableName}
         WHERE path LIKE #{path}
     </select>
 
-    <select id="countSysObjectByLikePathAndTag" resultType="java.lang.Integer">
+    <select id="countObjectByLikePathAndTag" resultType="java.lang.Integer">
         SELECT count(id)
         FROM ${tableName}
         WHERE path LIKE #{path}
         AND tag = #{tag}
     </select>
 
-    <insert id="insertSysObject" useGeneratedKeys="true" keyProperty="sysObjectDO.id">
-        INSERT INTO ${tableName}(<include refid="sys_object_field"/>)
+    <insert id="insertObject" useGeneratedKeys="true" keyProperty="dataObjectDO.id">
+        INSERT INTO ${tableName}(<include refid="data_object_field"/>)
         VALUES (
-        #{sysObjectDO.id},
-        #{sysObjectDO.type},
-        #{sysObjectDO.name},
-        #{sysObjectDO.createDate},
-        #{sysObjectDO.modifyDate},
-        #{sysObjectDO.isDelete},
-        #{sysObjectDO.tag},
-        #{sysObjectDO.path},
-        #{sysObjectDO.parentId},
-        #{sysObjectDO.parentPath},
-        #{sysObjectDO.data}
+        #{dataObjectDO.id},
+        #{dataObjectDO.type},
+        #{dataObjectDO.name},
+        #{dataObjectDO.createDate},
+        #{dataObjectDO.modifyDate},
+        #{dataObjectDO.isDelete},
+        #{dataObjectDO.tag},
+        #{dataObjectDO.path},
+        #{dataObjectDO.parentId},
+        #{dataObjectDO.parentPath},
+        #{dataObjectDO.data}
         )
     </insert>
 
-    <update id="updateSysObject" useGeneratedKeys="true" keyProperty="sysObjectDO.id">
+    <insert id="batchInsertObject" >
+        INSERT INTO ${tableName}(<include refid="data_object_field"/>)
+        VALUES
+        <foreach collection="dataObjectDOList" item="objectDO" open="" separator="," close="">
+            (
+            #{objectDO.id},
+            #{objectDO.type},
+            #{objectDO.name},
+            #{objectDO.createDate},
+            #{objectDO.modifyDate},
+            #{objectDO.isDelete},
+            #{objectDO.tag},
+            #{objectDO.path},
+            #{objectDO.parentId},
+            #{objectDO.parentPath},
+            #{objectDO.data}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateObject" useGeneratedKeys="true" keyProperty="dataObjectDO.id">
         UPDATE ${tableName}
-        SET type = #{sysObjectDO.type},
-        name = #{sysObjectDO.name},
-        create_date = #{sysObjectDO.createDate},
-        modify_date = #{sysObjectDO.modifyDate},
-        is_delete = #{sysObjectDO.isDelete},
-        tag = #{sysObjectDO.tag},
-        path = #{sysObjectDO.path},
-        parent_id = #{sysObjectDO.parentId},
-        parent_path = #{sysObjectDO.parentPath},
-        data = #{sysObjectDO.data}
-        WHERE id = #{sysObjectDO.id}
+        SET type = #{dataObjectDO.type},
+        name = #{dataObjectDO.name},
+        create_date = #{dataObjectDO.createDate},
+        modify_date = #{dataObjectDO.modifyDate},
+        is_delete = #{dataObjectDO.isDelete},
+        tag = #{dataObjectDO.tag},
+        path = #{dataObjectDO.path},
+        parent_id = #{dataObjectDO.parentId},
+        parent_path = #{dataObjectDO.parentPath},
+        data = #{dataObjectDO.data}
+        WHERE id = #{dataObjectDO.id}
+    </update>
+
+    <!--
+        Postgres 批量更新，若id不存在则新建，若id存在则更新 DO UPDATE SET的字段
+        需要Postgres版本9.5及以上
+    -->
+    <update id="batchUpdateObject" >
+        INSERT INTO ${tableName} (<include refid="data_object_field"/>)
+        VALUES
+        <foreach collection="dataObjectDOList" item="objectDO" open="" separator="," close="">
+            (
+            #{objectDO.id},
+            #{objectDO.type},
+            #{objectDO.name},
+            #{objectDO.createDate},
+            #{objectDO.modifyDate},
+            #{objectDO.isDelete},
+            #{objectDO.tag},
+            #{objectDO.path},
+            #{objectDO.parentId},
+            #{objectDO.parentPath},
+            #{objectDO.data}
+            )
+        </foreach>
+        ON CONFLICT (id)
+        DO UPDATE SET
+            type = excluded.type,
+            name = excluded.name,
+            create_date = excluded.create_date,
+            modify_date = excluded.modify_date,
+            is_delete = excluded.is_delete,
+            tag = excluded.tag,
+            path = excluded.path,
+            parent_id = excluded.parent_id,
+            parent_path = excluded.parent_path,
+            data = excluded.data
     </update>
 
     <select id="findSettingsByName" resultMap="settingsResultMap">

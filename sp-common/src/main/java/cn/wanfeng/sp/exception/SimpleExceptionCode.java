@@ -18,6 +18,10 @@ public enum SimpleExceptionCode implements ExceptionInfoGetter {
      */
     TEST_HAS_ARGS("00001", "TEST_MESSAGE_HAS_ARGS"),
     /**
+     * 批量保存暂不支持文件类型的对象，请检查
+     */
+    BULK_STORE_NOT_SUPPORT_FILE_OBJECT("00002", "BULK_STORE_NOT_SUPPORT_FILE_OBJECT"),
+    /**
      * 未知异常，请根据日志排查原因
      */
     UNKNOWN_EXCEPTION("99999", "UNKNOWN_EXCEPTION");

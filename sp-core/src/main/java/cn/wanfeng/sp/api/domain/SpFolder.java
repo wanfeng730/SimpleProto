@@ -32,7 +32,7 @@ public class SpFolder extends SpSysObject implements ISpFolder {
     public int getChildFolderCount() {
         int count = 0;
         if(StringUtils.isNotBlank(this.path)){
-            count = session.databaseStorage().countSysObjectByLikePathAndTag(SimpleProtoConfig.dataTable, this.path + "/%", SystemTag.FOLDER.getValue());
+            count = session.databaseStorage().countObjectByLikePathAndTag(SimpleProtoConfig.dataTable, this.path + "/%", SystemTag.FOLDER.getValue());
         }
         return count;
     }
@@ -41,7 +41,7 @@ public class SpFolder extends SpSysObject implements ISpFolder {
     public int getChildFileCount() {
         int count = 0;
         if(StringUtils.isNotBlank(this.path)){
-            count = session.databaseStorage().countSysObjectByLikePathAndTag(SimpleProtoConfig.dataTable, this.path + "/%", SystemTag.FILE.getValue());
+            count = session.databaseStorage().countObjectByLikePathAndTag(SimpleProtoConfig.dataTable, this.path + "/%", SystemTag.FILE.getValue());
         }
         return count;
     }

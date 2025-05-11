@@ -1,7 +1,6 @@
 package cn.wanfeng.sp.util;
 
-import cn.wanfeng.sp.api.dataobject.SpBaseObjectDO;
-import cn.wanfeng.sp.api.dataobject.SpSysObjectDO;
+import cn.wanfeng.sp.api.dataobject.SpDataObjectDO;
 import cn.wanfeng.sp.api.domain.SpBaseObject;
 import cn.wanfeng.sp.api.domain.SpSysObject;
 
@@ -13,8 +12,8 @@ import cn.wanfeng.sp.api.domain.SpSysObject;
  */
 public class SpObjectConvertUtils {
 
-    public static SpBaseObjectDO convertSpBaseObjectToDO(SpBaseObject baseObject, byte[] data) {
-        SpBaseObjectDO spBaseObjectDO = new SpBaseObjectDO();
+    public static SpDataObjectDO convertSpBaseObjectToDO(SpBaseObject baseObject, byte[] data) {
+        SpDataObjectDO spBaseObjectDO = new SpDataObjectDO();
         spBaseObjectDO.setId(baseObject.getId());
         spBaseObjectDO.setType(baseObject.getType());
         spBaseObjectDO.setName(baseObject.getName());
@@ -25,8 +24,8 @@ public class SpObjectConvertUtils {
         return spBaseObjectDO;
     }
 
-    public static SpSysObjectDO convertSpSysObjectToDO(SpSysObject sysObject, byte[] data){
-        SpSysObjectDO sysObjectDO = new SpSysObjectDO();
+    public static SpDataObjectDO convertSpSysObjectToDO(SpSysObject sysObject, byte[] data){
+        SpDataObjectDO sysObjectDO = new SpDataObjectDO();
         sysObjectDO.setId(sysObject.getId());
         sysObjectDO.setType(sysObject.getType());
         sysObjectDO.setName(sysObject.getName());
@@ -39,10 +38,6 @@ public class SpObjectConvertUtils {
         sysObjectDO.setParentPath(sysObject.getParentPath());
         sysObjectDO.setData(data);
         return sysObjectDO;
-    }
-
-    public static SpBaseObjectDO convertSpBaseObjectToDO(SpBaseObject spBaseObject) {
-        return convertSpBaseObjectToDO(spBaseObject, null);
     }
 
 }

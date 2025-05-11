@@ -6,7 +6,7 @@ import cn.wanfeng.proto.record.ProtoRecordContainer;
 import cn.wanfeng.proto.record.ProtoRecordFactory;
 import cn.wanfeng.sp.anno.ProtoField;
 import cn.wanfeng.sp.anno.Type;
-import cn.wanfeng.sp.api.dataobject.SpBaseObjectDO;
+import cn.wanfeng.sp.api.dataobject.SpDataObjectDO;
 import cn.wanfeng.sp.api.dataobject.SpSettingsDO;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.exception.SpException;
@@ -78,27 +78,22 @@ public class SpBaseObject implements ISpBaseObject{
 
         assertIdNotNull(id);
         // 从数据库获取此id的字段
-        SpBaseObjectDO objectDO = this.session.databaseStorage().findObjectById(SimpleProtoConfig.dataTable, id);
-        assertIdFoundFromDatabase(id, objectDO);
+        SpDataObjectDO dataObjectDO = this.session.databaseStorage().findObjectById(SimpleProtoConfig.dataTable, id);
+        assertIdFoundFromDatabase(id, dataObjectDO);
 
-        //校验属性的indexNo和fieldName不重复，并生成映射关系
-        assertProtoFieldUniqueAndBuildIndexNoMap();
-
-        // 反序列化proto二进制数据
-        this.recordContainer = ProtoRecordFactory.readBytesToRecordList(objectDO.getData());
-        LogUtil.debug(recordContainer.getIndexNoRecordMap().toString());
-
-        // 读取container中的数据并设置到本对象的属性中
-        readContainerDataToThis();
-        // 读取container中的数据设置到注解属性中
-        readContainerToAnnotationProperty();
+        // 读取数据库数据，构建对象
+        readSpDataObjectDO(dataObjectDO);
     }
 
-    protected SpBaseObject(SpSession session, @NotNull SpBaseObjectDO objectDO){
+    protected SpBaseObject(SpSession session, @NotNull SpDataObjectDO objectDO){
         this.session = session;
         this.isNewObject = false;
         initInternalContainer();
+        // 读取数据库数据，构建对象
+        readSpDataObjectDO(objectDO);
+    }
 
+    protected void readSpDataObjectDO(@NotNull SpDataObjectDO objectDO){
         //校验属性的indexNo和fieldName不重复，并生成映射关系
         assertProtoFieldUniqueAndBuildIndexNoMap();
 
@@ -111,6 +106,7 @@ public class SpBaseObject implements ISpBaseObject{
         // 读取container中的数据设置到注解属性中
         readContainerToAnnotationProperty();
     }
+
 
     private void assertProtoFieldUniqueAndBuildIndexNoMap(){
         Set<String> addFieldNameSet = new HashSet<>();
@@ -221,7 +217,11 @@ public class SpBaseObject implements ISpBaseObject{
         afterStoreOperations();
     }
 
-    protected void beforeStoreOperations(){
+    /**
+     * 保存对象前的操作，设置为public提供给批量操作
+     */
+    @Override
+    public void beforeStoreOperations(){
         //根据是否为新对象执行store操作
         isNewObject = Objects.isNull(this.id);
         if (isNewObject) {
@@ -240,7 +240,10 @@ public class SpBaseObject implements ISpBaseObject{
         putDeclaredPropertyToContainerAndValueMap();
     }
 
-    protected void afterStoreOperations(){
+    /**
+     * 保存对象后的操作，设置为public提供给批量操作
+     */
+    public void afterStoreOperations(){
         isNewObject = false;
     }
 
@@ -352,9 +355,9 @@ public class SpBaseObject implements ISpBaseObject{
     }
 
     protected void createObjectToStorage(){
-        SpBaseObjectDO baseObjectDO = generateBaseObjectDO();
+        SpDataObjectDO dataObjectDO = generateDataObjectDO();
         try {
-            session.createBaseObjectToStorage(baseObjectDO, propertyValueContainer);
+            session.createObjectToStorage(dataObjectDO, propertyValueContainer);
         } catch (Exception e) {
             LogUtil.error("对象创建失败，数据已回滚，失败原因", e);
         }
@@ -362,9 +365,9 @@ public class SpBaseObject implements ISpBaseObject{
 
     protected void updateObjectToStorage(){
         // 该对象更新到数据库
-        SpBaseObjectDO baseObjectDO = generateBaseObjectDO();
+        SpDataObjectDO dataObjectDO = generateDataObjectDO();
         try {
-            session.updateBaseObjectToStorage(baseObjectDO, propertyValueContainer);
+            session.updateObjectToStorage(dataObjectDO, propertyValueContainer);
         } catch (Exception e) {
             LogUtil.error("对象更新失败，数据已回滚，失败原因", e);
         }
@@ -450,20 +453,28 @@ public class SpBaseObject implements ISpBaseObject{
     }
 
     @Override
+    public Date getModifyDate() {
+        return modifyDate;
+    }
+
+    @Override
     public Boolean getDelete() {
         return isDelete;
     }
 
+    /**
+     * 是否为新建对象
+     */
     @Override
-    public Date getModifyDate() {
-        return modifyDate;
+    public boolean isNewObject() {
+        return Objects.isNull(id);
     }
 
     /**
      * 生成数据库存储实体对象
      */
     @Override
-    public SpBaseObjectDO generateBaseObjectDO() {
+    public SpDataObjectDO generateDataObjectDO() {
         byte[] data = ProtoRecordFactory.writeRecordListToBytes(recordContainer);
         return SpObjectConvertUtils.convertSpBaseObjectToDO(this, data);
     }
@@ -484,8 +495,8 @@ public class SpBaseObject implements ISpBaseObject{
         }
     }
 
-    protected static void assertIdFoundFromDatabase(Long id, SpBaseObjectDO spBaseObjectDO) {
-        if (Objects.isNull(spBaseObjectDO)) {
+    protected static void assertIdFoundFromDatabase(Long id, SpDataObjectDO dataObjectDO) {
+        if (Objects.isNull(dataObjectDO)) {
             throw new SpObjectNotFoundException("Not Found id[%d] from Database", id);
         }
     }

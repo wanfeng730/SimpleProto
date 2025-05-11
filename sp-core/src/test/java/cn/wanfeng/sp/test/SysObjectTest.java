@@ -2,13 +2,12 @@ package cn.wanfeng.sp.test;
 
 
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
-import cn.wanfeng.sp.api.dataobject.SpSysObjectDO;
+import cn.wanfeng.sp.api.dataobject.SpDataObjectDO;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.sys.TestFolder;
 import cn.wanfeng.sp.sys.TestFolderDO;
 import cn.wanfeng.sp.sys.mapper.search.TestFolderMapper;
-import com.github.f4b6a3.ulid.UlidCreator;
 import jakarta.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Assertions;
@@ -34,7 +33,7 @@ public class SysObjectTest extends SimpleprotoApplicationTest {
     @Test
     public void test(){
         // test create
-        TestFolder testFolder = new TestFolder(spSession, UlidCreator.getUlid().toString(), "测试文件夹名称", "TF", new Date());
+        TestFolder testFolder = new TestFolder(spSession, "一级目录" + System.currentTimeMillis(), "测试文件夹名称", "TF", new Date());
         testFolder.store();
 
 
@@ -50,19 +49,19 @@ public class SysObjectTest extends SimpleprotoApplicationTest {
         testFolder = new TestFolder(spSession, folderId);
         Assertions.assertEquals("更新后的文件夹名称", testFolder.getDisplayName());
 
-        TestFolder testFolder2 = new TestFolder(spSession, UlidCreator.getUlid().toString(), "测试子文件夹", "TF", new Date());
+        TestFolder testFolder2 = new TestFolder(spSession, "二级目录" + System.currentTimeMillis(), "测试子文件夹", "TF", new Date());
         testFolder2.move(testFolder.getId());
         testFolder2.store();
         Assertions.assertEquals(testFolder.getPath(), testFolder2.getParentPath());
 
-        TestFolder testFolder3 = new TestFolder(spSession, UlidCreator.getUlid().toString(), "测试子子文件夹", "TFFF", new Date());
+        TestFolder testFolder3 = new TestFolder(spSession, "三级目录" + System.currentTimeMillis(), "测试子子文件夹", "TFFF", new Date());
         testFolder3.move(testFolder2.getPath());
         testFolder3.store();
         Assertions.assertEquals(testFolder2.getPath(), testFolder3.getParentPath());
 
         testFolder.remove();
-        SpSysObjectDO spSysObjectDO = spSession.databaseStorage().findSysObjectByPath(SimpleProtoConfig.dataTable, testFolder.getPath());
-        Assertions.assertNull(spSysObjectDO);
+        SpDataObjectDO spDataObjectDO = spSession.databaseStorage().findObjectByPath(SimpleProtoConfig.dataTable, testFolder.getPath());
+        Assertions.assertNull(spDataObjectDO);
     }
 
 

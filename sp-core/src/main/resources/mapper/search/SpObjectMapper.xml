@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.wanfeng.sp.api.mapper.search.SpSysObjectMapper">
+<mapper namespace="cn.wanfeng.sp.api.mapper.search.SpObjectMapper">
 
     <sql id="all_field">
         id, type, name, create_date, modify_date, is_delete,
         tag, path, parent_id, parent_path
     </sql>
 
-    <resultMap id="sysObjectResultMap" type="cn.wanfeng.sp.api.dataobject.SpSysObjectDO">
+    <resultMap id="objectResultMap" type="cn.wanfeng.sp.api.dataobject.SpDataObjectDO">
         <id property="id" column="id"/>
         <id property="type" column="type"/>
         <id property="name" column="name"/>
@@ -20,44 +20,44 @@
         <id property="parentPath" column="parent_path"/>
     </resultMap>
 
-    <select id="findById" resultMap="sysObjectResultMap">
+    <select id="findById" resultMap="objectResultMap">
         select <include refid="all_field"/>
         from {data_table}
         where id = #{id}
     </select>
 
-    <select id="findByType" resultMap="sysObjectResultMap">
+    <select id="findByType" resultMap="objectResultMap">
         select <include refid="all_field"/>
         from {data_table}
         where type = #{type}
     </select>
 
-    <select id="findByName" resultMap="sysObjectResultMap">
+    <select id="findByName" resultMap="objectResultMap">
         select <include refid="all_field"/>
         from {data_table}
         where name = #{name}
             and tag in ('sys_folder', 'sys_file')
     </select>
 
-    <select id="findByParentId" resultMap="sysObjectResultMap">
+    <select id="findByParentId" resultMap="objectResultMap">
         select <include refid="all_field"/>
         from {data_table}
         where parent_id = #{parentId}
     </select>
 
-    <select id="findByParentPathLike" resultMap="sysObjectResultMap">
+    <select id="findByParentPathLike" resultMap="objectResultMap">
         select <include refid="all_field"/>
         from {data_table}
         where parent_path like #{parentPath}
     </select>
 
-    <select id="findByParentPathEquals" resultMap="sysObjectResultMap">
+    <select id="findByParentPathEquals" resultMap="objectResultMap">
         select <include refid="all_field"/>
         from {data_table}
         where parent_path = #{parentPath}
     </select>
 
-    <select id="findByParentPathLikeAndTag" resultMap="sysObjectResultMap">
+    <select id="findByParentPathLikeAndTag" resultMap="objectResultMap">
         select <include refid="all_field"/>
         from {data_table}
         where parent_path like #{parentPath}

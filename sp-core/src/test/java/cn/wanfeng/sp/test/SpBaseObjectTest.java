@@ -136,7 +136,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
 
     @Test
     public void testBorrowFormMapper(){
-        List<BorrowFormDO> borrowFormDOList = borrowFormMapper.findById(8L);
+        List<BorrowFormDO> borrowFormDOList = borrowFormMapper.findById(173L);
         LogUtil.info("查询借阅单测试完成, borrowFormDOList={}", JSON.toJSONString(borrowFormDOList));
     }
 

@@ -16,7 +16,7 @@ import java.util.Date;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class SpFileDO extends SpSysObjectDO{
+public class SpFileDO extends SpDataObjectDO {
 
     @TableId("id")
     private Long id;
