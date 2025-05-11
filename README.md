@@ -10,7 +10,9 @@ A Simple Framework for Java Business Project
 ### Description
 本项目提供了一系列基础对象用于快速实现Java业务对象的存储管理，你只需要在继承这些基础对象，并定义号属性编号和属性名称，即可自动在数据库中存储下这些数据，并且提供了id构造方法以方便的获取已保存的对象。
 
-> This project provides a series of basic objects for quickly implementing the storage and management of Java business objects. You only need to inherit these basic objects and define the attribute number and attribute name to automatically store these data in the database, and provide an id constructor to easily obtain the saved objects.
+> *This project provides a series of basic objects for quickly implementing the storage and management of Java business
+objects. You only need to inherit these basic objects and define the attribute number and attribute name to
+automatically store these data in the database, and provide an id constructor to easily obtain the saved objects.*
 
 
 ### Required Docker Deployments
@@ -35,13 +37,22 @@ A Simple Framework for Java Business Project
 4. 调用`store()`方法，即可把这些数据一并存储在数据库以及OpenSearch中（包括数据库的字段、OpenSearch的Mapping）
 5. 调用父类的id构造器`public SpBaseObject(SpSession session, Long id)`即可从数据存储中获取所有属性值
 
-> 1. Inherit the basic object `cn.wanfeng.sp.api.domain.SpBaseObject`. Use `@Type` to declare the business type of the object.
-> 2. Arbitrarily add some required business fields to the inherited class (decorated with the `@ProtoField` annotation). If the business field is an enumeration class, you need to use the `@ProtoEnumValue` annotation tag in the enumeration class to declare the value of the field when it is saved, and the `@ProtoEnumConstructor` annotation tag to obtain which enumeration class object the value of the field corresponds to when the object is obtained.
-> 3. Call the parent class constructor in the derived class constructor
->     - `public SpBaseObject(SpSession session, String type)` is used to create a new object and specify the type of the object
->     - `public SpBaseObject(SpSession session, Long id)` is used to retrieve an object from storage based on id
-> 4. Calling the `store()` method will store these data in the database and OpenSearch (including database fields and OpenSearch Mapping)
-> 5. Call the parent class's id constructor `public SpBaseObject(SpSession session, Long id)` to retrieve all property values from the data storage
+> 1. *Inherit the basic object `cn.wanfeng.sp.api.domain.SpBaseObject`. Use `@Type` to declare the business type of the
+     object.*
+> 2. *Arbitrarily add some required business fields to the inherited class (decorated with the `@ProtoField`
+     annotation). If the business field is an enumeration class, you need to use the `@ProtoEnumValue` annotation tag in
+     the enumeration class to declare the value of the field when it is saved, and the `@ProtoEnumConstructor`
+     annotation tag to obtain which enumeration class object the value of the field corresponds to when the object is
+     obtained.*
+> 3. *Call the parent class constructor in the derived class constructor*
+     >
+- *`public SpBaseObject(SpSession session, String type)` is used to create a new object and specify the type of the
+  object*
+>     - *`public SpBaseObject(SpSession session, Long id)` is used to retrieve an object from storage based on id*
+> 4. *Calling the `store()` method will store these data in the database and OpenSearch (including database fields and
+     OpenSearch Mapping)*
+> 5. *Call the parent class's id constructor `public SpBaseObject(SpSession session, Long id)` to retrieve all property
+     values from the data storage*
 
 **Example Code Using `cn.wanfeng.sp.api.domain.SpBaseObject`**
 
@@ -130,9 +141,12 @@ public enum BorrowStatus {
 
 在XML的SQL语句中，可以使用占位符`{data_table}`替代表名，该占位符会在查询时自动替换为配置文件中的数据表名`simpleproto.dataTable`的值。
 
-> To query your saved objects in batches, you can use Mybatis to query OpenSearch. The Mapper interface should be in `mapper.search` package, the XML file should be under the `mapper/search` path. The entity class used to receive data can use the default Mybatis annotation.
+> *To query your saved objects in batches, you can use Mybatis to query OpenSearch. The Mapper interface should be
+in `mapper.search` package, the XML file should be under the `mapper/search` path. The entity class used to receive data
+can use the default Mybatis annotation.*
 >
-> In XML SQL statements, you can use the placeholder `{data_table}` to represent a table name, which will be automatically replaced with the value of `simpleproto.dataTable` from the configuration file during the query.
+> *In XML SQL statements, you can use the placeholder `{data_table}` to represent a table name, which will be
+automatically replaced with the value of `simpleproto.dataTable` from the configuration file during the query.*
 
 **Example Code**
 
@@ -172,11 +186,30 @@ public interface BorrowFormMapper extends BaseMapper<BorrowFormDO> {
 </mapper>
 ```
 
+### Bulk Operation
 
+版本1.1提供了批量操作数据的方式，你可以通过SpBulkOperator这个Bean来批量保存或批量删除你想要操作的多个数据
 
+示例代码位置：`cn.wanfeng.sp.api.controller.TestController#testBulkStore`
 
+> *Version 1.1 provides a way to batch manipulate data, and you can use the SpBulkOperator bean to save or delete
+multiple data you want to manipulate in bulk*
+> *Example code location: `cn.wanfeng.sp.api.controller.TestController#testBulkStore`*
 
+```java
+Long userNumber = session.increaseLongByName(SimpleProtoConfig.appName + ":" + USER_NUMBER_INCREASE_NAME);
+String numberStr = NumberUtils.generateNumberFixLength(userNumber, 4);
+SpUser spUser1 = new SpUser(session, "user" + numberStr);
+SpUser spUser2 = new SpUser(session, "user" + numberStr + "-2");
+SpUser spUser3 = new SpUser(session, "user" + numberStr + "-3");
+spUser3.setName("第一次批量更新*****");
 
+List<SpUser> objectList = new ArrayList<>();
+objectList.add(spUser1);
+objectList.add(spUser2);
+objectList.add(spUser3);
+bulkOperator.bulkStore(objectList);
+```
 
 ### Examples Using the Project
 

@@ -58,7 +58,6 @@ public class TestController {
         String numberStr = NumberUtils.generateNumberFixLength(userNumber, 4);
         SpUser spUser1 = new SpUser(session, "user" + numberStr);
         SpUser spUser2 = new SpUser(session, "user" + numberStr + "-2");
-
         SpUser spUser3 = new SpUser(session, "user" + numberStr + "-3");
         spUser3.setName("第一次批量更新*****");
 
