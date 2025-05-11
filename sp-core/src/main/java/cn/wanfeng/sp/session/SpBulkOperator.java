@@ -59,6 +59,26 @@ public class SpBulkOperator {
         }
     }
 
+    public void bulkRemove(List<? extends ISpBaseObject> objectList){
+        List<Long> idList = new ArrayList<>();
+        for (ISpBaseObject object : objectList) {
+            assertObjectSupportBulkOperation(object);
+            if(object.isNewObject()){
+                continue;
+            }
+            idList.add(object.getId());
+        }
+
+        if(CollectionUtils.isNotEmpty(idList)){
+            // @luozh-code: 设置每批次最大200条执行，防止sql过长
+            try {
+                session.bulkRemoveObjectToStorage(idList);
+            } catch (IOException e) {
+                LogUtil.error("批量新建数据保存失败，事务已回滚", e);
+            }
+        }
+    }
+
     private void bulkCreateObject(List<? extends ISpBaseObject> baseObjectList){
         List<SpDataObjectDO> objectDOList = new ArrayList<>();
         List<Map<String, Object>> documentList = new ArrayList<>();
@@ -103,12 +123,6 @@ public class SpBulkOperator {
         for (ISpBaseObject baseObject : baseObjectList) {
             baseObject.afterStoreOperations();
         }
-    }
-
-
-    public void bulkRemove(List<? extends ISpBaseObject> baseObjectList){
-        List<Long> longIdList = new ArrayList<>();
-
     }
 
     private void assertObjectSupportBulkOperation(ISpBaseObject object){

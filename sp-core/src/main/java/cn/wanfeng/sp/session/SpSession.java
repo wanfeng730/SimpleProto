@@ -113,4 +113,10 @@ public class SpSession {
         searchStorageClient.bulkUpdateObject(SimpleProtoConfig.dataTable, documentList);
     }
 
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public void bulkRemoveObjectToStorage(List<Long> idList) throws IOException {
+        databaseStorageMapper.batchRemoveObject(SimpleProtoConfig.dataTable, idList);
+        searchStorageClient.bulkRemoveObject(SimpleProtoConfig.dataTable, idList);
+    }
+
 }

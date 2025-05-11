@@ -59,7 +59,7 @@ public class TestController {
         SpUser spUser1 = new SpUser(session, "user" + numberStr);
         SpUser spUser2 = new SpUser(session, "user" + numberStr + "-2");
 
-        SpUser spUser3 = new SpUser(session, 172L);
+        SpUser spUser3 = new SpUser(session, "user" + numberStr + "-3");
         spUser3.setName("第一次批量更新*****");
 
         List<SpUser> objectList = new ArrayList<>();
@@ -76,5 +76,7 @@ public class TestController {
         spUser2.setPassword("批量更新测试2*****");
         spUser3.setPassword("批量更新测试2*****");
         bulkOperator.bulkStore(objectList);
+
+        bulkOperator.bulkRemove(objectList);
     }
 }

@@ -49,12 +49,20 @@ public interface DatabaseStorageMapper {
     int batchUpdateObject(@Param("tableName") String tableName, @Param("dataObjectDOList") List<SpDataObjectDO> dataObjectDOList);
 
     /**
-     * 根据对象id删除
-     * @param tableName 对象数据表名
+     * 删除对象
+     * @param tableName 表名
      * @param id 对象id
      * @return 删除行数
      */
     int removeObject(@Param("tableName") String tableName, @Param("id") Long id);
+
+    /**
+     * 批量删除对象
+     * @param tableName 表名
+     * @param idList 对象id集合
+     * @return 删除行数
+     */
+    int batchRemoveObject(@Param("tableName") String tableName, @Param("idList") List<Long> idList);
 
     /**
      * 根据对象id查询
