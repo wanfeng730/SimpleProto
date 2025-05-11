@@ -20,7 +20,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableDiscoveryClient
 public class SimpleprotoApplication {
 
-    private static final String VERSION = "1.1";
+    private static final String VERSION = "1.2(develop)";
 
     public static void main(String[] args) {
         SpringApplication.run(SimpleprotoApplication.class, args);
