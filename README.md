@@ -44,11 +44,10 @@ automatically store these data in the database, and provide an id constructor to
      the enumeration class to declare the value of the field when it is saved, and the `@ProtoEnumConstructor`
      annotation tag to obtain which enumeration class object the value of the field corresponds to when the object is
      obtained.*
-> 3. *Call the parent class constructor in the derived class constructor*
-     >
-- *`public SpBaseObject(SpSession session, String type)` is used to create a new object and specify the type of the
-  object*
->     - *`public SpBaseObject(SpSession session, Long id)` is used to retrieve an object from storage based on id*
+> 3. *Call the parent class constructor in the derived class
+     constructor`public SpBaseObject(SpSession session, String type)` is used to create a new object and specify the
+     type of the
+     object`public SpBaseObject(SpSession session, Long id)` is used to retrieve an object from storage based on id*
 > 4. *Calling the `store()` method will store these data in the database and OpenSearch (including database fields and
      OpenSearch Mapping)*
 > 5. *Call the parent class's id constructor `public SpBaseObject(SpSession session, Long id)` to retrieve all property
