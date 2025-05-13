@@ -1,5 +1,6 @@
 package cn.wanfeng.sp.util;
 
+import cn.hutool.http.HttpUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
@@ -87,4 +88,16 @@ public class InputStreamUtils {
         return null;
     }
 
+    /**
+     * 从url链接获取ByteArrayInputStream
+     * @param url 链接
+     * @return ByteArrayInputStream
+     */
+    public static ByteArrayInputStream getByteArrayInputStreamFromHttp(String url){
+        if(StringUtils.isBlank(url)){
+            return null;
+        }
+        byte[] bytes = HttpUtil.downloadBytes(url);
+        return new ByteArrayInputStream(bytes);
+    }
 }
