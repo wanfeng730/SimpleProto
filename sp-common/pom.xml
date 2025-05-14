@@ -8,5 +8,6 @@
     </parent>
 
     <artifactId>sp-common</artifactId>
+    <version>${parent.version}</version>
 
 </project>
