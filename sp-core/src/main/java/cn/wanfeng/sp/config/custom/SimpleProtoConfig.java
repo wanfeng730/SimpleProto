@@ -125,7 +125,7 @@ public class SimpleProtoConfig {
         swaggerDescription = environment.getProperty("simpleproto.swaggerDescription");
         swaggerVersion = environment.getProperty("simpleproto.swaggerVersion");
 
-        System.out.println("【初始化】simpleproto配置完成");
+        System.out.println(" [SimpleProto初始化] simpleproto配置完成");
     }
 
 }

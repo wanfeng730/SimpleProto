@@ -34,7 +34,7 @@ public class RedisConfiguration {
         template.setHashValueSerializer(redisSerializer);
 
         template.afterPropertiesSet();
-        LogUtil.info("【初始化】RedisTemplate完成");
+        LogUtil.info(" [SimpleProto初始化] RedisTemplate完成");
         return template;
     }
 

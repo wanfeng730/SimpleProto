@@ -27,6 +27,6 @@ public class SimpleApplicationContext implements ApplicationContextAware {
     @Override
     public void setApplicationContext(@NotNull ApplicationContext applicationContext) throws BeansException {
         context = applicationContext;
-        LogUtil.info("【初始化】SimpleApplicationContext 容器上下文初始化");
+        LogUtil.info(" [SimpleProto初始化] SimpleApplicationContext 容器上下文初始化");
     }
 }

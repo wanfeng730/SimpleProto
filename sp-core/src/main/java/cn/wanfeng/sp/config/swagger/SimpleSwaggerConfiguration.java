@@ -44,7 +44,7 @@ public class SimpleSwaggerConfiguration {
                 .packagesToScan(scanPackages)
                 .build();
         swaggerBrowseUrl = String.format("http://localhost:%s%s/doc.html", SimpleProtoConfig.appPort, SimpleProtoConfig.appContextPath);
-        LogUtil.info("Swagger文档初始化成功，扫描包路径：\n{}", PrettyLogUtil.prettyJson(scanPackages));
+        LogUtil.info("Swagger文档初始化成功，扫描包路径：{}", PrettyLogUtil.prettyJson(scanPackages));
         return openApi;
     }
 

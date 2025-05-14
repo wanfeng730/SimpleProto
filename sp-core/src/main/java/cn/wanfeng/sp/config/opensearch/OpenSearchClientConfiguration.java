@@ -41,7 +41,7 @@ public class OpenSearchClientConfiguration {
 
         final OpenSearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
         OpenSearchClient openSearchClient = new OpenSearchClient(transport);
-        LogUtil.info("【初始化】OpenSearch客户端完成");
+        LogUtil.info(" [SimpleProto初始化] OpenSearch客户端完成");
         return openSearchClient;
     }
 }
