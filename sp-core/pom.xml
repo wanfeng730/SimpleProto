@@ -13,7 +13,7 @@
         <dependency>
             <groupId>cn.wanfeng</groupId>
             <artifactId>proto</artifactId>
-            <version>${project.version}</version>
+            <version>${parent.version}</version>
         </dependency>
     </dependencies>
 
