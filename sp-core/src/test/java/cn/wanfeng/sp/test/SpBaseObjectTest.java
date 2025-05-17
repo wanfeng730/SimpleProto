@@ -196,7 +196,7 @@ public class SpBaseObjectTest extends SimpleprotoApplicationTest {
                 for (BorrowFormDO borrowFormDO : formDOList) {
                     try {
                         BorrowForm borrowForm = new BorrowForm(spSession, borrowFormDO.getId());
-                        borrowForm.setFormNo(DateUtils.currentDateTime() + "多线程异步测试");
+                        borrowForm.setFormNo(DateUtils.currentDateTimeNoSpace() + "多线程异步测试");
                         borrowForm.store();
                         success++;
                     } catch (Exception e) {

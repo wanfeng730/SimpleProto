@@ -26,7 +26,7 @@ public class MinIOTest extends SimpleprotoApplicationTest {
     public void test() throws IOException {
         File file = new File("D:\\WanfengHome\\fileSpace\\就业\\公租房补贴申请\\家庭经济状况告知书.pdf");
         File file1 = new File("/Users/wanfeng/Desktop/XY\uD83D\uDC95/以高水平环境保护推动乡村高...展——以湖州市安吉余村为例_延予.pdf");
-        String storageKey = "test/" + DateUtils.currentDateTime() + "/" +file1.getName();
+        String storageKey = "test/" + DateUtils.currentDateTimeNoSpace() + "/" + file1.getName();
         fileStorageClient.setObject(storageKey, file1);
 
         InputStream inputStream = fileStorageClient.getObjectStream(storageKey);

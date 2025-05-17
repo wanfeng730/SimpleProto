@@ -1,6 +1,8 @@
 package cn.wanfeng.sp.web.aspect;
 
 
+import cn.wanfeng.sp.util.DateUtils;
+import cn.wanfeng.sp.util.PrintColorUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
@@ -48,7 +50,7 @@ public class RequestInvokeLogAspect {
         if (StringUtils.isNotBlank(queryString)) {
             message += "?" + queryString;
         }
-        System.out.printf("[Request Invoke]: %s\n", message);
+        System.out.printf("%s %s: %s\n", DateUtils.currentDateTimeMillis(), PrintColorUtil.cyan("[Request Invoke]"), message);
     }
 
     private static HttpServletRequest getCurrentRequest() {

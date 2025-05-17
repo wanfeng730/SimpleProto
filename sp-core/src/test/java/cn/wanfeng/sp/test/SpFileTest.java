@@ -39,7 +39,7 @@ public class SpFileTest extends SimpleprotoApplicationTest {
         testFolder.store();
 
         File file = new File("D:\\WanfengHome\\fileSpace\\就业\\公租房补贴申请\\家庭经济状况告知书.pdf");
-        SpFile spFile = new SpFile(session, "test_file", file.getName() + DateUtils.currentDateTime(), InputStreamUtils.getByteArrayInputStreamFromFile(file));
+        SpFile spFile = new SpFile(session, "test_file", file.getName() + DateUtils.currentDateTimeNoSpace(), InputStreamUtils.getByteArrayInputStreamFromFile(file));
         spFile.setFileTag(FileTag.TEXT);
         spFile.move(testFolder);
         spFile.store();
