@@ -13,7 +13,7 @@ import java.util.*;
  * @description: 类型转换工具类
  * @since: 1.0
  */
-public class ObjectConvertUtils {
+public class ObjectConvertUtil {
 
     /**
      * 源对象属性缓存

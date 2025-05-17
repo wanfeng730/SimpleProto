@@ -1,10 +1,9 @@
-package cn.wanfeng.sp.config.mybatisplus;
+package cn.wanfeng.sp.interceptor;
 
 
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
-import jakarta.annotation.Resource;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -21,10 +20,7 @@ import java.sql.SQLException;
  * @since: 1.0
  */
 @Component
-public class DataTableNameInnerInterceptor implements InnerInterceptor {
-
-    @Resource
-    private SimpleProtoConfig simpleProtoConfig;
+public class MybatisPlusTableNameInnerInterceptor implements InnerInterceptor {
 
     private static final String DATA_TABLE_NAME_PLACEHOLDER = "{data_table}";
 

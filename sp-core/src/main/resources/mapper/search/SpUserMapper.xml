@@ -26,6 +26,13 @@
         where type = 'user'
     </select>
 
+    <select id="findByWrapper" resultMap="userResultMap">
+        select
+        <include refid="all_field"/>
+        from {data_table}
+        ${ew.customSqlSegment}
+    </select>
+
     <select id="findById" resultMap="userResultMap">
         select <include refid="all_field"/>
         from {data_table}

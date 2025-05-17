@@ -119,6 +119,10 @@ logging:
     path: ./logs
   level:
     root: info
+    org.springframework: error
+    com.alibaba.nacos: error
+    org.apache.dubbo: error
+    org.apache.coyote: error
     # 开启sql查询语句debug打印，打印指定包下的mybatis sql
     cn.wanfeng.sp.base.mapper.search: debug
     cn.wanfeng.sp.api.mapper.search.SpFileMapper: debug

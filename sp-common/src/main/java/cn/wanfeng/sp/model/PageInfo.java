@@ -13,13 +13,13 @@ import lombok.Data;
 @Data
 public class PageInfo {
 
-    @Schema(name = "当前页")
+    @Schema(description = "当前页")
     private Integer currentPage;
 
-    @Schema(name = "每页数量")
+    @Schema(description = "每页数量")
     private Integer pageSize;
 
-    @Schema(name = "总数")
+    @Schema(description = "总数")
     private Long totalCount;
 
     public PageInfo() {
@@ -29,5 +29,13 @@ public class PageInfo {
         this.currentPage = currentPage;
         this.pageSize = pageSize;
         this.totalCount = 0L;
+    }
+
+    public void setDefaultCurrentPage() {
+        this.currentPage = 1;
+    }
+
+    public void setDefaultPageSize() {
+        this.pageSize = 200;
     }
 }

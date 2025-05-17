@@ -15,22 +15,22 @@ import lombok.Data;
 @Data
 public class FilterColumn {
 
-    @Schema(name = "字段名")
+    @Schema(description = "字段名")
     private String fieldName;
 
     /**
      * @see cn.wanfeng.sp.enums.QueryFieldType
      */
-    @Schema(name = "字段类型")
+    @Schema(description = "字段类型")
     private String fieldType;
 
     /**
      * @see cn.wanfeng.sp.enums.QueryOperator
      */
-    @Schema(name = "查询操作")
+    @Schema(description = "查询操作")
     private Integer operate;
 
-    @Schema(name = "查询值")
+    @Schema(description = "查询值")
     private String value;
 
     public FilterColumn() {

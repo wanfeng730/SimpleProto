@@ -3,13 +3,12 @@ package cn.wanfeng.sp.api.controller;
 
 import cn.wanfeng.sp.api.dataobject.SpUserDTO;
 import cn.wanfeng.sp.api.service.SpUserService;
+import cn.wanfeng.sp.model.QueryModel;
+import cn.wanfeng.sp.model.QueryResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @date: 2025-01-11 16:21
@@ -29,5 +28,11 @@ public class SpUserController {
     @GetMapping("/detail_user")
     public SpUserDTO detailUser(@RequestParam String userId){
         return spUserService.detail(Long.parseLong(userId));
+    }
+
+    @Operation(summary = "获取用户列表")
+    @PostMapping("list_user")
+    public QueryResult<SpUserDTO> listUser(@RequestBody QueryModel queryModel) {
+        return spUserService.listUser(queryModel);
     }
 }

@@ -8,6 +8,8 @@ import cn.wanfeng.sp.exception.SimpleExceptionCode;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.util.LogUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -27,13 +29,13 @@ import java.util.function.Function;
 @Data
 public class QueryModel {
 
-    @Schema(name = "过滤字段列表")
+    @Schema(description = "过滤字段列表")
     private List<FilterColumn> filterList;
 
-    @Schema(name = "分页信息")
+    @Schema(description = "分页信息")
     private PageInfo pageInfo;
 
-    @Schema(name = "排序字段列表")
+    @Schema(description = "排序字段列表")
     private List<SortColumn> sortList;
 
     public QueryModel() {
@@ -87,6 +89,11 @@ public class QueryModel {
         resolveFilterList(queryWrapper);
         resolveSortList(queryWrapper);
         return queryWrapper;
+    }
+
+    public <M> IPage<M> toPage() {
+        assertPageInfoHasValue(pageInfo);
+        return new Page<>(pageInfo.getCurrentPage(), pageInfo.getPageSize());
     }
 
     private <M> void resolveFilterList(QueryWrapper<M> queryWrapper) {
@@ -212,6 +219,15 @@ public class QueryModel {
         }
         if (Objects.isNull(QuerySortType.toEnumByValueIgnoreCase(column.getSortType()))) {
             throw new SpException(SimpleExceptionCode.QUERY_MODEL_TO_WRAPPER_SORT_TYPE_ERROR, column.getFieldName());
+        }
+    }
+
+    private static void assertPageInfoHasValue(PageInfo pageInfo) {
+        if (Objects.isNull(pageInfo.getCurrentPage())) {
+            pageInfo.setDefaultCurrentPage();
+        }
+        if (Objects.isNull(pageInfo.getPageSize())) {
+            pageInfo.setDefaultPageSize();
         }
     }
 

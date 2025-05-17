@@ -2,10 +2,13 @@ package cn.wanfeng.sp.config.mybatisplus;
 
 
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
+import cn.wanfeng.sp.interceptor.MybatisPlusTableNameInnerInterceptor;
 import cn.wanfeng.sp.util.LogUtil;
 import com.amazon.opendistroforelasticsearch.jdbc.ElasticsearchDataSource;
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import jakarta.annotation.Resource;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -59,15 +62,11 @@ public class MybatisPlusSearchDataSourceConfiguration {
 
         //拦截器
         MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
-        //动态表名
-        //DynamicTableNameInnerInterceptor dynamicTableNameInnerInterceptor = new DynamicTableNameInnerInterceptor();
-        //可以传多个表名参数，指定哪些表使用MonthTableNameHandler处理表名称
-        //dynamicTableNameInnerInterceptor.setTableNameHandler(new MonthTableNameHandler("t_table_name"));
         //以拦截器的方式处理表名称
         //可以传递多个拦截器，即：可以传递多个表名处理器TableNameHandler
-        mybatisPlusInterceptor.addInnerInterceptor(new DataTableNameInnerInterceptor());
+        mybatisPlusInterceptor.addInnerInterceptor(new MybatisPlusTableNameInnerInterceptor());
         //分页插件
-        // mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+        mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
 
         factoryBean.setDataSource(datasource);
         // 设置mybatis的xml所在位置

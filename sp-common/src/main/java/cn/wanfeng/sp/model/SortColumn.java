@@ -14,10 +14,10 @@ import lombok.Data;
 @Data
 public class SortColumn {
 
-    @Schema(name = "字段名")
+    @Schema(description = "字段名")
     private String fieldName;
 
-    @Schema(name = "排序方式")
+    @Schema(description = "排序方式")
     private String sortType;
 
     public SortColumn() {
