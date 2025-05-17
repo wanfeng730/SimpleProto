@@ -16,4 +16,6 @@ public interface SpUserService {
      */
     SpUserDTO detail(Long id);
 
+    SpUserDTO listUser()
+
 }

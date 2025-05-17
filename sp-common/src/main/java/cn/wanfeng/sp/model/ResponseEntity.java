@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.object;
+package cn.wanfeng.sp.model;
 
 
 import cn.wanfeng.sp.util.DateUtils;
