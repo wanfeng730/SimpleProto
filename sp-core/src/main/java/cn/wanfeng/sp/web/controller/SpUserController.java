@@ -1,11 +1,11 @@
-package cn.wanfeng.sp.api.controller;
+package cn.wanfeng.sp.web.controller;
 
 
 import cn.wanfeng.sp.api.dataobject.SpUserDTO;
-import cn.wanfeng.sp.api.service.SpUserService;
 import cn.wanfeng.sp.model.FilterColumn;
 import cn.wanfeng.sp.model.QueryModel;
 import cn.wanfeng.sp.model.QueryResult;
+import cn.wanfeng.sp.web.service.SpUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * @description: 用户模块
  * @since: 1.1
  */
-@Tag(name = "【SimpleProto】用户模块")
+@Tag(name = "[SimpleProto]用户模块")
 @RestController
 @RequestMapping("/user")
 public class SpUserController {

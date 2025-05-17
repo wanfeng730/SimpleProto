@@ -35,3 +35,5 @@ build/
 /sp-core/logs/
 /.flattened-pom.xml
 /sp-core/.flattened-pom.xml
+/proto/.flattened-pom.xml
+/sp-common/.flattened-pom.xml

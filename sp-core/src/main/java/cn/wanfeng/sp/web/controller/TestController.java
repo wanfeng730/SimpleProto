@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.api.controller;
+package cn.wanfeng.sp.web.controller;
 
 
 import cn.wanfeng.sp.api.domain.SpUser;

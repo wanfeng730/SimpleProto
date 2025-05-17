@@ -28,9 +28,11 @@ import java.util.List;
 @EnableKnife4j
 public class SimpleSwaggerConfiguration {
 
-    private static final String DEFAULT_SCAN_PACKAGE = "cn.wanfeng.sp.api.controller";
+    private static final String DEFAULT_SCAN_PACKAGE = "cn.wanfeng.sp.web.controller";
 
     public static String swaggerBrowseUrl = "Not Init";
+
+    private static final String packageSeparator = ",";
 
     @Resource
     private SimpleProtoConfig simpleProtoConfig;
@@ -54,8 +56,6 @@ public class SimpleSwaggerConfiguration {
         return new OpenAPI().info(defaultSwaggerInfo());
     }
 
-    private static final String packageSeparator = ",";
-
     private static Info defaultSwaggerInfo(){
         return new Info()
                 .title(SimpleProtoConfig.swaggerTitle)
@@ -75,7 +75,7 @@ public class SimpleSwaggerConfiguration {
      */
     private static String[] handleScanPackagesConfig(String scanPackages){
         if(StringUtils.isBlank(scanPackages)){
-            return new String[0];
+            return new String[]{DEFAULT_SCAN_PACKAGE};
         }
         if(!scanPackages.contains(packageSeparator)){
             return new String[]{scanPackages};

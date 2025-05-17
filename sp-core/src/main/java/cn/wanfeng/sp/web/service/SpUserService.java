@@ -1,4 +1,4 @@
-package cn.wanfeng.sp.api.service;
+package cn.wanfeng.sp.web.service;
 
 import cn.wanfeng.sp.api.dataobject.SpUserDTO;
 import cn.wanfeng.sp.model.QueryModel;

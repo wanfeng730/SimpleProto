@@ -189,11 +189,11 @@ public interface BorrowFormMapper extends BaseMapper<BorrowFormDO> {
 
 版本1.1提供了批量操作数据的方式，你可以通过SpBulkOperator这个Bean来批量保存或批量删除你想要操作的多个数据
 
-示例代码位置：`cn.wanfeng.sp.api.controller.TestController#testBulkStore`
+示例代码位置：`cn.wanfeng.sp.web.controller.TestController#testBulkStore`
 
 > *Version 1.1 provides a way to batch manipulate data, and you can use the SpBulkOperator bean to save or delete
 multiple data you want to manipulate in bulk*
-> *Example code location: `cn.wanfeng.sp.api.controller.TestController#testBulkStore`*
+> *Example code location: `cn.wanfeng.sp.web.controller.TestController#testBulkStore`*
 
 ```java
 Long userNumber = session.increaseLongByName(SimpleProtoConfig.appName + ":" + USER_NUMBER_INCREASE_NAME);
