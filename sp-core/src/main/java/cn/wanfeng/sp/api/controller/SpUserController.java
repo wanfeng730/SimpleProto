@@ -3,6 +3,7 @@ package cn.wanfeng.sp.api.controller;
 
 import cn.wanfeng.sp.api.dataobject.SpUserDTO;
 import cn.wanfeng.sp.api.service.SpUserService;
+import cn.wanfeng.sp.model.FilterColumn;
 import cn.wanfeng.sp.model.QueryModel;
 import cn.wanfeng.sp.model.QueryResult;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,4 +36,13 @@ public class SpUserController {
     public QueryResult<SpUserDTO> listUser(@RequestBody QueryModel queryModel) {
         return spUserService.listUser(queryModel);
     }
+
+    @Operation(summary = "简单获取用户列表")
+    @PostMapping("simple_list_user")
+    public QueryResult<SpUserDTO> simpleListUser(@RequestBody FilterColumn filterColumn) {
+        QueryModel queryModel = new QueryModel();
+        queryModel.addFilterColumn(filterColumn);
+        return spUserService.listUser(queryModel);
+    }
+
 }

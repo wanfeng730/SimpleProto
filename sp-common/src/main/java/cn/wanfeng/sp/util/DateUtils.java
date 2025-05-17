@@ -18,11 +18,17 @@ public class DateUtils extends DateUtil {
      */
     private static final String DISPLAY_CURRENT_FORMAT = "yyyy-MM-dd_HH:mm:ss";
 
+    private static final String DISPLAY_CURRENT_MILLIS_FORMAT = "yyyy-MM-dd_HH:mm:ss.SSS";
+
     /**
-     * 获取当前时间 yyyy-MM-dd HH:mm:ss
+     * 获取当前时间 yyyy-MM-dd_HH:mm:ss
      * @return 当前时间
      */
     public static String currentDateTime(){
         return format(new Date(), DISPLAY_CURRENT_FORMAT);
+    }
+
+    public static String currentDateTimeMillis() {
+        return format(new Date(), DISPLAY_CURRENT_MILLIS_FORMAT);
     }
 }

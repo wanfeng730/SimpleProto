@@ -41,6 +41,9 @@ simpleproto:
   swaggerAuthorEmail: 2580330397@qq.com
   swaggerDescription: SimpleProto-API 接口文档
   swaggerVersion: 1.1
+  # 全局响应封装结果生效包名
+  globalResponseBasePackages:
+    - cn.wanfeng.sp.api.controller
 
 
 spStock:

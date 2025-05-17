@@ -92,6 +92,7 @@ public class QueryModel {
     }
 
     public <M> IPage<M> toPage() {
+        assertPageInfoNotNull();
         assertPageInfoHasValue(pageInfo);
         return new Page<>(pageInfo.getCurrentPage(), pageInfo.getPageSize());
     }

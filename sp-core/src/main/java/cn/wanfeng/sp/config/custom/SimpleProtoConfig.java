@@ -73,8 +73,6 @@ public class SimpleProtoConfig {
     public static String swaggerDescription;
     public static String swaggerVersion;
 
-
-
     @Resource
     private ConfigurableEnvironment environment;
 

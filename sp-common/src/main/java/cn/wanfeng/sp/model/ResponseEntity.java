@@ -19,13 +19,14 @@ public class ResponseEntity {
      */
     private String message;
     /**
-     * 响应数据
-     */
-    private Object data;
-    /**
      * 响应时间
      */
     private String time;
+    /**
+     * 响应数据
+     */
+    private Object data;
+
 
     public ResponseEntity() {
     }
@@ -40,7 +41,7 @@ public class ResponseEntity {
         responseEntity.setCode("200");
         responseEntity.setMessage("成功");
         responseEntity.setData(data);
-        responseEntity.setTime(DateUtils.currentDateTime());
+        responseEntity.setTime(DateUtils.currentDateTimeMillis());
         return responseEntity;
     }
 
@@ -55,7 +56,7 @@ public class ResponseEntity {
         responseEntity.setCode(code);
         responseEntity.setMessage(message);
         responseEntity.setData(null);
-        responseEntity.setTime(DateUtils.currentDateTime());
+        responseEntity.setTime(DateUtils.currentDateTimeMillis());
         return responseEntity;
     }
 
