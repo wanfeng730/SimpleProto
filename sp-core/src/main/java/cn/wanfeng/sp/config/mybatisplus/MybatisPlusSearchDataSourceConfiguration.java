@@ -2,7 +2,7 @@ package cn.wanfeng.sp.config.mybatisplus;
 
 
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
-import cn.wanfeng.sp.interceptor.MybatisPlusTableNameInnerInterceptor;
+import cn.wanfeng.sp.interceptor.MybatisPlusCustomInnerInterceptor;
 import cn.wanfeng.sp.util.LogUtil;
 import com.amazon.opendistroforelasticsearch.jdbc.ElasticsearchDataSource;
 import com.baomidou.mybatisplus.annotation.DbType;
@@ -60,11 +60,10 @@ public class MybatisPlusSearchDataSourceConfiguration {
         // 添加自定义SQL注入
         factoryBean.setConfiguration(configuration);
 
-        //拦截器
+        // 拦截器,可以传递多个拦截器，即：可以传递多个表名处理器TableNameHandler
         MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
-        //以拦截器的方式处理表名称
-        //可以传递多个拦截器，即：可以传递多个表名处理器TableNameHandler
-        mybatisPlusInterceptor.addInnerInterceptor(new MybatisPlusTableNameInnerInterceptor());
+        // 以拦截器的方式处理表名称等
+        mybatisPlusInterceptor.addInnerInterceptor(new MybatisPlusCustomInnerInterceptor());
         //分页插件
         mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
 
