@@ -7,7 +7,7 @@ package cn.wanfeng.sp.util;
  * @description: 线程工具类
  * @since: 1.0
  */
-public class ThreadUtils {
+public class ThreadUtil {
 
     public static void sleepQuietly(long millis){
         try {

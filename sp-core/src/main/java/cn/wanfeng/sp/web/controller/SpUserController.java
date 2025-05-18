@@ -5,6 +5,7 @@ import cn.wanfeng.sp.api.dataobject.SpUserDTO;
 import cn.wanfeng.sp.model.FilterColumn;
 import cn.wanfeng.sp.model.QueryModel;
 import cn.wanfeng.sp.model.QueryResult;
+import cn.wanfeng.sp.util.ThreadUtil;
 import cn.wanfeng.sp.web.service.SpUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,6 +41,7 @@ public class SpUserController {
     @Operation(summary = "简单获取用户列表")
     @PostMapping("simple_list_user")
     public QueryResult<SpUserDTO> simpleListUser(@RequestBody FilterColumn filterColumn) {
+        ThreadUtil.sleepQuietly(1000);
         QueryModel queryModel = new QueryModel();
         queryModel.addFilterColumn(filterColumn);
         return spUserService.listUser(queryModel);

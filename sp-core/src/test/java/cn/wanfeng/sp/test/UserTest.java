@@ -9,7 +9,7 @@ import cn.wanfeng.sp.base.DefaultUser;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.NumberUtils;
-import cn.wanfeng.sp.util.ThreadUtils;
+import cn.wanfeng.sp.util.ThreadUtil;
 import jakarta.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Assertions;
@@ -40,7 +40,7 @@ public class UserTest extends SimpleprotoApplicationTest {
         SpUser spUser = new SpUser(session, "user" + numberStr);
         spUser.store();
 
-        ThreadUtils.sleepQuietly(3000);
+        ThreadUtil.sleepQuietly(3000);
 
         List<SpUserDO> userDOList = spUserMapper.findAll();
         Assertions.assertTrue(CollectionUtils.isNotEmpty(userDOList));
