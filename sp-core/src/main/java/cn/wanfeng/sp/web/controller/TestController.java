@@ -63,7 +63,9 @@ public class TestController {
 
         List<SpUser> objectList = new ArrayList<>();
         objectList.add(spUser1);
+        LogUtil.info("testPrettyLogUtil1: {}", PrettyLogUtil.prettyJsonIgnoreSuperClass(spUser1));
         objectList.add(spUser2);
+        LogUtil.info("testPrettyLogUtil2: {}", PrettyLogUtil.toJsonIgnoreSuperClass(spUser1));
         objectList.add(spUser3);
         bulkOperator.bulkStore(objectList);
 

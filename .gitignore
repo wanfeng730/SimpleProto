@@ -38,3 +38,4 @@ build/
 /proto/.flattened-pom.xml
 /sp-common/.flattened-pom.xml
 /LOG_HOME_IS_UNDEFINED/
+/sp-core/LOG_HOME_IS_UNDEFINED/simpleproto.log
