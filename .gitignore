@@ -37,3 +37,4 @@ build/
 /sp-core/.flattened-pom.xml
 /proto/.flattened-pom.xml
 /sp-common/.flattened-pom.xml
+/LOG_HOME_IS_UNDEFINED/

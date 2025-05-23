@@ -1,36 +1,37 @@
-# 修改此配置后，需同步更新SimpleProtoConfig的初始化方法
+# SimpleProto启动配置模版
+
 simpleproto:
   # 数据库连接配置(PostgreSQL）
   dataSourceDriver: org.postgresql.Driver
-  dataSourceUrl: jdbc:postgresql://42.192.108.249:5432/${spring.application.name}?currentSchema=${spring.profiles.active}&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
-  dataSourceUsername: postgres
-  dataSourcePassword: Wanfeng730
+  dataSourceUrl: jdbc:postgresql://...
+  dataSourceUsername:
+  dataSourcePassword:
   # 数据库名称取spring应用名称
   currentScheme: ${spring.profiles.active}
   # OpenSearch 连接配置
   opensearchHostScheme: http
-  opensearchHost: 42.192.108.249
-  opensearchPort: 9200
-  opensearchUsername: admin
-  opensearchPassword: Wanfeng730
+  opensearchHost:
+  opensearchPort:
+  opensearchUsername:
+  opensearchPassword:
   # OpenSearch jdbc配置
   opensearchJdbcDriver: com.amazon.opendistroforelasticsearch.jdbc.Driver
-  opensearchJdbcUrl: jdbc:elasticsearch://http://42.192.108.249:9200
+  opensearchJdbcUrl: jdbc:elasticsearch://http://...
   opensearchJdbcUseSSL: false
   # 业务数据表名
   dataTable: sp_object_table
   # 业务设置表名
   settingsTable: sp_settings
   # Redis连接配置
-  redisHost: 42.192.108.249
-  redisPort: 6379
-  redisPassword: Wanfeng730
+  redisHost:
+  redisPort:
+  redisPassword:
   redisDatabase: 0
   # 文件对象存储连接配置
   fileStorageType: MinIO
-  fileStorageEndPoint: http://42.192.108.249:9000
-  fileStorageAccessKey: minio
-  fileStorageSecretKey: Wanfeng730
+  fileStorageEndPoint: http://...
+  fileStorageAccessKey:
+  fileStorageSecretKey:
   fileStorageBucket: simpleproto
   # Swagger UI配置
   # swaggerScanPackages扫描包路径，多个路径用","分隔（SimpleProto提供一些默认接口，扫描包名为cn.wanfeng.sp.api.controller）
@@ -41,11 +42,6 @@ simpleproto:
   swaggerAuthorEmail: 2580330397@qq.com
   swaggerDescription: SimpleProto-API 接口文档
   swaggerVersion: 1.1
-
-
-spStock:
-  apiSource: tsanghi
-  apiToken: 284bff0a447f408d869468aca8f86338
 
 ######################################################
 server:
