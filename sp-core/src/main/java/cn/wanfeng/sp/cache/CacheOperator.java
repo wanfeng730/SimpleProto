@@ -267,7 +267,7 @@ public class CacheOperator {
     }
 
     private static String generateThisAppLockValue(String lockName){
-        return String.format("The Lock[%s] has been Used", lockName);
+        return String.format("[%s] is locked!", lockName);
     }
 
     /**
