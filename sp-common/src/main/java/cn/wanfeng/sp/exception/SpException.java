@@ -22,8 +22,8 @@ public class SpException extends RuntimeException {
     }
 
     public SpException(String message, Object... args){
-        super(message);
-        this.message = message;
+        super(String.format(message, args));
+        this.message = String.format(message, args);
         this.args = args;
     }
 
@@ -46,7 +46,7 @@ public class SpException extends RuntimeException {
 
     public SpException(String code, String message, Object[] args) {
         this.code = code;
-        this.message = message;
+        this.message = String.format(message, args);
         this.args = args;
     }
 
@@ -57,7 +57,7 @@ public class SpException extends RuntimeException {
 
     public SpException(ExceptionInfoGetter exceptionInfoGetter, Object... args) {
         this.code = exceptionInfoGetter.getCode();
-        this.message = exceptionInfoGetter.getMessage();
+        this.message = String.format(exceptionInfoGetter.getMessage(), args);
         this.args = args;
     }
 
