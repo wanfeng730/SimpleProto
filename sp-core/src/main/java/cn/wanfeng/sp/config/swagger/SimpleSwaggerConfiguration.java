@@ -13,8 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +26,7 @@ import java.util.List;
  */
 @Configuration
 @EnableKnife4j
-public class SimpleSwaggerConfiguration extends WebMvcConfigurationSupport {
+public class SimpleSwaggerConfiguration {
 
     private static final String DEFAULT_SCAN_PACKAGE = "cn.wanfeng.sp.web.controller";
 
@@ -38,16 +36,6 @@ public class SimpleSwaggerConfiguration extends WebMvcConfigurationSupport {
 
     @Resource
     private SimpleProtoConfig simpleProtoConfig;
-
-    /**
-     * 配置静态资源映射 加载swagger的前端资源
-     */
-    @Override
-    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**").addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-        super.addResourceHandlers(registry);
-    }
 
     // 此处为模块化配置，将API文档配置成几个模块，添加每个模块名，此次模块下所有API接口的统一前缀
     @Bean
