@@ -47,6 +47,14 @@ public interface FileStorageClient {
     String getObjectPreviewUrl(String storageKey, int expireSeconds);
 
     /**
+     * 获取文件预览链接（永久）
+     *
+     * @param storageKey 文件存储路径
+     * @return url
+     */
+    String getObjectPreviewUrl(String storageKey);
+
+    /**
      * 下载文件对象到本地
      * @param storageKey 文件存储路径
      * @param targetFilePath 下载到这个路径

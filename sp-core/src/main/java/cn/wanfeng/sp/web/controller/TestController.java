@@ -7,15 +7,14 @@ import cn.wanfeng.sp.exception.SimpleExceptionCode;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.session.SpBulkOperator;
 import cn.wanfeng.sp.session.SpSession;
+import cn.wanfeng.sp.storage.file.FileStorageClient;
 import cn.wanfeng.sp.util.LogUtil;
 import cn.wanfeng.sp.util.NumberUtils;
 import cn.wanfeng.sp.util.PrettyLogUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +35,9 @@ public class TestController {
 
     @Resource
     private SpBulkOperator bulkOperator;
+
+    @Resource
+    private FileStorageClient fileStorageClient;
 
     @Operation(summary = "测试i18n国际化异常信息处理")
     @GetMapping("/testI18n")
@@ -80,4 +82,11 @@ public class TestController {
 
         bulkOperator.bulkRemove(objectList);
     }
+
+    @Operation(summary = "测试获取minio永久预览链接")
+    @PostMapping("/testGetObjectPreviewUrl")
+    public String testGetObjectPreviewUrl(@RequestBody String storageKey) {
+        return fileStorageClient.getObjectPreviewUrl(storageKey);
+    }
+
 }

@@ -8,6 +8,7 @@ import cn.wanfeng.sp.util.LogUtil;
 import io.minio.*;
 import io.minio.http.Method;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -21,9 +22,15 @@ import java.io.InputStream;
  */
 public class MinIOFileStorage implements FileStorageClient {
 
-    private MinioClient client;
+    private String endPoint;
+
+    private String accessKey;
+
+    private String secretKey;
 
     private String bucketName;
+
+    private MinioClient client;
 
     public MinIOFileStorage(MinioClient client, String bucketName) {
         this.client = client;
@@ -32,8 +39,11 @@ public class MinIOFileStorage implements FileStorageClient {
     }
 
     public MinIOFileStorage(String endPoint, String accessKey, String secretKey, String bucketName){
-        this.client = MinioClient.builder().endpoint(endPoint).credentials(accessKey, secretKey).build();
+        this.endPoint = endPoint;
+        this.accessKey = accessKey;
+        this.secretKey = secretKey;
         this.bucketName = bucketName;
+        this.client = MinioClient.builder().endpoint(endPoint).credentials(accessKey, secretKey).build();
         assertBucketExists(bucketName);
     }
 
@@ -100,6 +110,17 @@ public class MinIOFileStorage implements FileStorageClient {
             LogUtil.error("从MinIO获取文件预览链接失败 [bucketName={}, storageKey={}]", bucketName, storageKey, e);
         }
         return null;
+    }
+
+    /**
+     * 获取文件预览链接（永久）
+     *
+     * @param storageKey 文件存储路径
+     * @return url
+     */
+    @Override
+    public String getObjectPreviewUrl(String storageKey) {
+        return endPoint + "/" + bucketName + "/" + StringUtils.removeStart(storageKey, '/');
     }
 
     @Override
