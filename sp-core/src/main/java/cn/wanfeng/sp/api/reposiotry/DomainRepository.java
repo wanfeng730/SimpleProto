@@ -30,4 +30,10 @@ public interface DomainRepository<DomainClass extends SpBaseObject> {
      * @param object 领域对象
      */
     void remove(@NotNull DomainClass object);
+
+    /**
+     * 断言对象的类型是否正确
+     * @param object 领域对象
+     */
+    void assertObjectType(@NotNull DomainClass object);
 }
