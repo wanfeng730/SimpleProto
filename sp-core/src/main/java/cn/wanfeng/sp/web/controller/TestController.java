@@ -8,6 +8,7 @@ import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.session.SpBulkOperator;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.storage.file.FileStorageClient;
+import cn.wanfeng.sp.storage.file.FileStorageDTO;
 import cn.wanfeng.sp.util.LogUtil;
 import cn.wanfeng.sp.util.NumberUtils;
 import cn.wanfeng.sp.util.PrettyLogUtil;
@@ -87,6 +88,13 @@ public class TestController {
     @PostMapping("/testGetObjectPreviewUrl")
     public String testGetObjectPreviewUrl(@RequestBody String storageKey) {
         return fileStorageClient.getObjectPreviewUrl(storageKey);
+    }
+
+    @Operation(summary = "测试获取minio文件列表")
+    @PostMapping("/testMinioListObject")
+    public void testMinioListObject(){
+        List<FileStorageDTO> fileStorageDTOList = fileStorageClient.listObject("test_file");
+        LogUtil.info("fileStorageDTOList:\n{}", PrettyLogUtil.prettyJson(fileStorageDTOList));
     }
 
 }

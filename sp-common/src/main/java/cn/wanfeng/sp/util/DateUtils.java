@@ -3,6 +3,9 @@ package cn.wanfeng.sp.util;
 
 import cn.hutool.core.date.DateUtil;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 /**
@@ -42,6 +45,18 @@ public class DateUtils extends DateUtil {
 
     public static String currentDateTimeMillis() {
         return format(new Date(), DEFAULT_CURRENT_MILLIS_FORMAT);
+    }
+
+    /**
+     * LocalDateTime 转 Date
+     * @param localDateTime LocalDateTime
+     * @return Date
+     */
+    public static Date toDate(LocalDateTime localDateTime){
+        // 获取系统默认时区
+        ZoneId zoneId = ZoneId.systemDefault();
+        ZonedDateTime zonedDateTime = localDateTime.atZone(zoneId);
+        return Date.from(zonedDateTime.toInstant());
     }
 
 

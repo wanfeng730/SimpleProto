@@ -1,18 +1,24 @@
 package cn.wanfeng.sp.storage.file;
 
 
+import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.exception.SpFileStorageException;
+import cn.wanfeng.sp.util.DateUtils;
 import cn.wanfeng.sp.util.FileUtils;
 import cn.wanfeng.sp.util.InputStreamUtils;
 import cn.wanfeng.sp.util.LogUtil;
 import io.minio.*;
 import io.minio.http.Method;
+import io.minio.messages.Item;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @date: 2024-12-16 00:04
@@ -59,7 +65,40 @@ public class MinIOFileStorage implements FileStorageClient {
         } catch (Exception e) {
             throw new SpFileStorageException(e, "判断桶[%s]是否存在 出现异常", bucketName);
         }
+    }
 
+    /**
+     * 获取存储文件列表
+     *
+     * @param prefix 路径前缀
+     * @return 文件列表
+     */
+    @Override
+    public List<FileStorageDTO> listObject(String prefix) {
+        List<FileStorageDTO> fileStorageDTOList = new ArrayList<>();
+        ListObjectsArgs listObjectsArgs = ListObjectsArgs.builder().bucket(bucketName)
+                .prefix(prefix)
+                .recursive(true)
+                .includeVersions(true)
+                .build();
+        try {
+            Iterable<Result<Item>> resultIterable = client.listObjects(listObjectsArgs);
+            for (Result<Item> result : resultIterable) {
+                String objectName = result.get().objectName();
+                long size = result.get().size();
+                LocalDateTime modifyDateLocal = result.get().lastModified().toLocalDateTime();
+
+                FileStorageDTO dto = new FileStorageDTO();
+                dto.setName(FileUtils.getName(objectName));
+                dto.setStorageKey(objectName);
+                dto.setSize(size);
+                dto.setModifyDate(DateUtils.toDate(modifyDateLocal));
+                fileStorageDTOList.add(dto);
+            }
+        } catch (Exception e){
+            throw new SpException(e, "获取文件存储列表失败 prefix: %s", prefix);
+        }
+        return fileStorageDTOList;
     }
 
     @Override

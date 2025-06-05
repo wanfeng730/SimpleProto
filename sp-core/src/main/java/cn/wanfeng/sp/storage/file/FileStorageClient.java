@@ -2,6 +2,7 @@ package cn.wanfeng.sp.storage.file;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * @date: 2024-12-15 23:42
@@ -16,6 +17,13 @@ public interface FileStorageClient {
      * @param bucketName 桶名
      */
     void assertBucketExists(String bucketName);
+
+    /**
+     * 获取存储文件列表
+     * @param prefix 路径前缀
+     * @return 文件列表
+     */
+    List<FileStorageDTO> listObject(String prefix);
 
     /**
      * 上传文件对象
