@@ -1,10 +1,13 @@
 package cn.wanfeng.sp.config.mybatisplus;
 
 
+import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.util.LogUtil;
+import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import jakarta.annotation.Resource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
@@ -29,12 +32,26 @@ import javax.sql.DataSource;
 @MapperScan(basePackages = "cn.wanfeng.**.mapper.postgres", sqlSessionFactoryRef = "postgresSqlSessionFactory")
 public class MybatisPlusPostgresDataSourceConfiguration {
 
+    @Resource
+    private SimpleProtoConfig simpleProtoConfig;
+
     private static final String POSTGRES_MAPPER_LOCATION = "classpath*:mapper/postgres/*.xml";
 
+    private static final long ONE_DAY_MILLIS = 1000 * 3600 * 24;
     @Bean("postgresDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.postgres")
     public DataSource getDataSource() {
-        return DruidDataSourceBuilder.create().build();
+        DruidDataSource dataSource = DruidDataSourceBuilder.create().build();
+        // 申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能
+        dataSource.setTestOnBorrow(false);
+        // 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能
+        dataSource.setTestOnReturn(false);
+        // 建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
+        dataSource.setTestWhileIdle(true);
+        dataSource.setTimeBetweenEvictionRunsMillis(ONE_DAY_MILLIS);
+        dataSource.setValidationQuery("SELECT id from " + SimpleProtoConfig.dataTable + " LIMIT 1");
+        dataSource.setKeepAlive(true);
+        return dataSource;
     }
 
     @Bean(name = "postgresSqlSessionFactory")
