@@ -43,6 +43,7 @@ public class MybatisPlusSearchDataSourceConfiguration {
         properties.setProperty("useSSL", SimpleProtoConfig.opensearchJdbcUseSSL);
         properties.setProperty("user", SimpleProtoConfig.opensearchUsername);
         properties.setProperty("password", SimpleProtoConfig.opensearchPassword);
+        properties.setProperty("loginTimeout", SimpleProtoConfig.opensearchLoginTimeout);
 
         ElasticsearchDataSource dataSource = new ElasticsearchDataSource();
         dataSource.setUrl(SimpleProtoConfig.opensearchJdbcUrl);
