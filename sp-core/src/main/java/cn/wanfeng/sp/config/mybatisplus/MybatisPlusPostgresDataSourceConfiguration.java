@@ -7,6 +7,8 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import jakarta.annotation.Resource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -57,6 +59,23 @@ public class MybatisPlusPostgresDataSourceConfiguration {
         // 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能
         dataSource.setTestOnReturn(false);
         return dataSource;
+    }
+
+    private static DataSource buildHikariDataSource() {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(SimpleProtoConfig.dataSourceUrl);
+        config.setUsername(SimpleProtoConfig.dataSourceUsername);
+        config.setPassword(SimpleProtoConfig.dataSourcePassword);
+
+        config.setConnectionTestQuery("SELECT 1");          // 连接验证查询
+        config.setConnectionTimeout(30000);                 // 连接获取超时30s
+        config.setIdleTimeout(240000);                      // 空闲超时4分钟 = 数据库5分钟 * 80%
+        config.setMaxLifetime(1800000);                     // 连接最大寿命30分钟
+        config.setKeepaliveTime(30000);                     // 每30秒保活检测
+        config.addDataSourceProperty("socketTimeout", "30"); // 网络超时30秒
+
+        config.setLeakDetectionThreshold(10000);
+        return new HikariDataSource(config);
     }
 
     @Bean(name = "postgresSqlSessionFactory")
