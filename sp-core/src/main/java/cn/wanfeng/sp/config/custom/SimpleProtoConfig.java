@@ -31,7 +31,9 @@ public class SimpleProtoConfig {
     public static Integer opensearchPort;
     public static String opensearchUsername;
     public static String opensearchPassword;
-    public static String opensearchLoginTimeout;
+    public static Integer opensearchConnectTimeout;
+    public static Integer opensearchSocketTimeout;
+
 
     public static String dataSourceDriver;
     public static String dataSourceUrl;
@@ -99,7 +101,8 @@ public class SimpleProtoConfig {
         opensearchPort = environment.getProperty("simpleproto.opensearchPort", Integer.class);
         opensearchUsername = environment.getProperty("simpleproto.opensearchUsername");
         opensearchPassword = environment.getProperty("simpleproto.opensearchPassword");
-        opensearchLoginTimeout = environment.getProperty("simpleproto.opensearchLoginTimeout");
+        opensearchConnectTimeout = environment.getProperty("simpleproto.opensearchConnectTimeout", Integer.class);
+        opensearchSocketTimeout = environment.getProperty("simpleproto.opensearchSocketTimeout", Integer.class);
 
         dataSourceDriver = environment.getProperty("simpleproto.dataSourceDriver");
         dataSourceUrl = environment.getProperty("simpleproto.dataSourceUrl");
