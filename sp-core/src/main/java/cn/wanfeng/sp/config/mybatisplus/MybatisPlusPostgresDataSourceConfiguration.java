@@ -37,20 +37,25 @@ public class MybatisPlusPostgresDataSourceConfiguration {
 
     private static final String POSTGRES_MAPPER_LOCATION = "classpath*:mapper/postgres/*.xml";
 
-    private static final long ONE_DAY_MILLIS = 1000 * 3600 * 24;
     @Bean("postgresDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.postgres")
     public DataSource getDataSource() {
         DruidDataSource dataSource = DruidDataSourceBuilder.create().build();
+
+        dataSource.setInitialSize(SimpleProtoConfig.dataSourceInitialSize);
+        dataSource.setMinIdle(SimpleProtoConfig.dataSourceMinIdle);
+        dataSource.setMaxActive(SimpleProtoConfig.dataSourceMaxActive);
+        // 建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
+        dataSource.setTestWhileIdle(true);
+        dataSource.setTimeBetweenEvictionRunsMillis(SimpleProtoConfig.dataSourceTimeBetweenEvictionRunsMillis);
+        // 连接池中的minIdle数量以内的连接，空闲时间超过minEvictableIdleTimeMillis，则会执行keepAlive操作。实际项目中建议配置成true
+        dataSource.setKeepAlive(true);
+
+        dataSource.setValidationQuery("SELECT 1");
         // 申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能
         dataSource.setTestOnBorrow(false);
         // 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能
         dataSource.setTestOnReturn(false);
-        // 建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
-        dataSource.setTestWhileIdle(true);
-        dataSource.setTimeBetweenEvictionRunsMillis(ONE_DAY_MILLIS);
-        dataSource.setValidationQuery("SELECT id from " + SimpleProtoConfig.dataTable + " LIMIT 1");
-        dataSource.setKeepAlive(true);
         return dataSource;
     }
 

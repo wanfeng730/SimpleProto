@@ -9,8 +9,6 @@ import lombok.Data;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 
-import java.util.Objects;
-
 /**
  * @date: 2024-10-27 13:40
  * @author: luozh.wanfeng
@@ -38,6 +36,11 @@ public class SimpleProtoConfig {
     public static String dataSourceUrl;
     public static String dataSourceUsername;
     public static String dataSourcePassword;
+    public static Integer dataSourceInitialSize;
+    public static Integer dataSourceMinIdle;
+    public static Integer dataSourceMaxActive;
+    public static Long dataSourceTimeBetweenEvictionRunsMillis;
+
 
     public static String opensearchJdbcDriver;
     public static String opensearchJdbcUrl;
@@ -92,7 +95,7 @@ public class SimpleProtoConfig {
 
         opensearchHostScheme = environment.getProperty("simpleproto.opensearchHostScheme");
         opensearchHost = environment.getProperty("simpleproto.opensearchHost");
-        opensearchPort = Integer.valueOf(Objects.requireNonNull(environment.getProperty("simpleproto.opensearchPort")));
+        opensearchPort = environment.getProperty("simpleproto.opensearchPort", Integer.class);
         opensearchUsername = environment.getProperty("simpleproto.opensearchUsername");
         opensearchPassword = environment.getProperty("simpleproto.opensearchPassword");
 
@@ -100,6 +103,10 @@ public class SimpleProtoConfig {
         dataSourceUrl = environment.getProperty("simpleproto.dataSourceUrl");
         dataSourceUsername = environment.getProperty("simpleproto.dataSourceUsername");
         dataSourcePassword = environment.getProperty("simpleproto.dataSourcePassword");
+        dataSourceInitialSize = environment.getProperty("simpleproto.dataSourceInitialSize", Integer.class);
+        dataSourceMinIdle = environment.getProperty("simpleproto.dataSourceMinIdle", Integer.class);
+        dataSourceMaxActive = environment.getProperty("simpleproto.dataSourceMaxActive", Integer.class);
+        dataSourceTimeBetweenEvictionRunsMillis = environment.getProperty("simpleproto.dataSourceTimeBetweenEvictionRunsMillis", Long.class);
 
         opensearchJdbcDriver = environment.getProperty("simpleproto.opensearchJdbcDriver");
         opensearchJdbcUrl = environment.getProperty("simpleproto.opensearchJdbcUrl");
