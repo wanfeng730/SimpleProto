@@ -38,7 +38,7 @@ public enum SimpleExceptionCode implements ExceptionInfoGetter {
     /**
      * 未知异常，请根据日志排查原因
      */
-    UNKNOWN_EXCEPTION("99999", "UNKNOWN_EXCEPTION");
+    UNKNOWN_EXCEPTION("99999", "未知异常，请联系系统管理员");
 
     private final String code;
 

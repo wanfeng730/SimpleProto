@@ -9,6 +9,7 @@ import cn.wanfeng.sp.anno.Type;
 import cn.wanfeng.sp.api.dataobject.SpDataObjectDO;
 import cn.wanfeng.sp.api.dataobject.SpSettingsDO;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
+import cn.wanfeng.sp.exception.SimpleExceptionCode;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.exception.SpObjectNotFoundException;
 import cn.wanfeng.sp.exception.SpObjectStoreException;
@@ -360,6 +361,7 @@ public class SpBaseObject implements ISpBaseObject{
             session.createObjectToStorage(dataObjectDO, propertyValueContainer);
         } catch (Exception e) {
             LogUtil.error("对象创建失败，数据已回滚，失败原因", e);
+            throw new SpException(SimpleExceptionCode.UNKNOWN_EXCEPTION);
         }
     }
 
@@ -370,6 +372,7 @@ public class SpBaseObject implements ISpBaseObject{
             session.updateObjectToStorage(dataObjectDO, propertyValueContainer);
         } catch (Exception e) {
             LogUtil.error("对象更新失败，数据已回滚，失败原因", e);
+            throw new SpException(SimpleExceptionCode.UNKNOWN_EXCEPTION);
         }
     }
 
