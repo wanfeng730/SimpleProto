@@ -6,18 +6,32 @@ simpleproto:
   dataSourceUrl: jdbc:postgresql://...
   dataSourceUsername:
   dataSourcePassword:
-  # 数据库名称取spring应用名称
-  currentScheme: ${spring.profiles.active}
+  # 最大连接数
+  dataSourceMaximumPoolSize: 10
+  # 最小空闲连接数（与最大连接数设置为相等，可以使数据库不进行扩容，减少）
+  dataSourceMinimumIdle: 10
+  # 等待连接池分配连接的最大时长(一般业务请求大于5秒算很慢了
+  dataSourceConnectionTimeout: 5000
+  # 一个空闲连接的最大时长，超时则被释放
+  dataSourceIdleTimeout: 0
+  # 一个连接的生命时长，超时并且没有被使用则释放
+  dataSourceMaxLifetime: 1800000
+
   # OpenSearch 连接配置
   opensearchHostScheme: http
   opensearchHost:
   opensearchPort:
   opensearchUsername:
   opensearchPassword:
+  opensearchConnectTimeout: 5000    # 连接建立超时（毫秒）
+  opensearchSocketTimeout: 1800000  # 数据传输超时（毫秒）
   # OpenSearch jdbc配置
   opensearchJdbcDriver: com.amazon.opendistroforelasticsearch.jdbc.Driver
   opensearchJdbcUrl: jdbc:elasticsearch://http://...
   opensearchJdbcUseSSL: false
+
+  # 数据库名称取spring应用名称
+  currentScheme: ${spring.profiles.active}
   # 业务数据表名
   dataTable: sp_object_table
   # 业务设置表名

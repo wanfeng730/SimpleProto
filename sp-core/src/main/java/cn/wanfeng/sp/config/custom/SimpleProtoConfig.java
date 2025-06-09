@@ -34,15 +34,15 @@ public class SimpleProtoConfig {
     public static Integer opensearchConnectTimeout;
     public static Integer opensearchSocketTimeout;
 
-
     public static String dataSourceDriver;
     public static String dataSourceUrl;
     public static String dataSourceUsername;
     public static String dataSourcePassword;
-    public static Integer dataSourceInitialSize;
-    public static Integer dataSourceMinIdle;
-    public static Integer dataSourceMaxActive;
-    public static Long dataSourceTimeBetweenEvictionRunsMillis;
+    public static Integer dataSourceMaximumPoolSize;
+    public static Integer dataSourceMinimumIdle;
+    public static Long dataSourceConnectionTimeout;
+    public static Long dataSourceIdleTimeout;
+    public static Long dataSourceMaxLifetime;
 
 
     public static String opensearchJdbcDriver;
@@ -108,10 +108,11 @@ public class SimpleProtoConfig {
         dataSourceUrl = environment.getProperty("simpleproto.dataSourceUrl");
         dataSourceUsername = environment.getProperty("simpleproto.dataSourceUsername");
         dataSourcePassword = environment.getProperty("simpleproto.dataSourcePassword");
-        dataSourceInitialSize = environment.getProperty("simpleproto.dataSourceInitialSize", Integer.class);
-        dataSourceMinIdle = environment.getProperty("simpleproto.dataSourceMinIdle", Integer.class);
-        dataSourceMaxActive = environment.getProperty("simpleproto.dataSourceMaxActive", Integer.class);
-        dataSourceTimeBetweenEvictionRunsMillis = environment.getProperty("simpleproto.dataSourceTimeBetweenEvictionRunsMillis", Long.class);
+        dataSourceMaximumPoolSize = environment.getProperty("simpleproto.dataSourceMaximumPoolSize", Integer.class);
+        dataSourceMinimumIdle = environment.getProperty("simpleproto.dataSourceMinimumIdle", Integer.class);
+        dataSourceConnectionTimeout = environment.getProperty("simpleproto.dataSourceConnectionTimeout", Long.class);
+        dataSourceIdleTimeout = environment.getProperty("simpleproto.dataSourceIdleTimeout", Long.class);
+        dataSourceMaxLifetime = environment.getProperty("simpleproto.dataSourceMaxLifetime", Long.class);
 
         opensearchJdbcDriver = environment.getProperty("simpleproto.opensearchJdbcDriver");
         opensearchJdbcUrl = environment.getProperty("simpleproto.opensearchJdbcUrl");

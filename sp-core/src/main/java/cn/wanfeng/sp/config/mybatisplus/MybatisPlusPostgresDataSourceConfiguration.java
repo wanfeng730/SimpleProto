@@ -3,8 +3,6 @@ package cn.wanfeng.sp.config.mybatisplus;
 
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.util.LogUtil;
-import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.zaxxer.hikari.HikariConfig;
@@ -14,7 +12,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -40,41 +37,18 @@ public class MybatisPlusPostgresDataSourceConfiguration {
     private static final String POSTGRES_MAPPER_LOCATION = "classpath*:mapper/postgres/*.xml";
 
     @Bean("postgresDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.postgres")
     public DataSource getDataSource() {
-        DruidDataSource dataSource = DruidDataSourceBuilder.create().build();
-
-        dataSource.setInitialSize(SimpleProtoConfig.dataSourceInitialSize);
-        dataSource.setMinIdle(SimpleProtoConfig.dataSourceMinIdle);
-        dataSource.setMaxActive(SimpleProtoConfig.dataSourceMaxActive);
-        // 建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
-        dataSource.setTestWhileIdle(true);
-        dataSource.setTimeBetweenEvictionRunsMillis(SimpleProtoConfig.dataSourceTimeBetweenEvictionRunsMillis);
-        // 连接池中的minIdle数量以内的连接，空闲时间超过minEvictableIdleTimeMillis，则会执行keepAlive操作。实际项目中建议配置成true
-        dataSource.setKeepAlive(true);
-
-        dataSource.setValidationQuery("SELECT 1");
-        // 申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能
-        dataSource.setTestOnBorrow(false);
-        // 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能
-        dataSource.setTestOnReturn(false);
-        return dataSource;
-    }
-
-    private static DataSource buildHikariDataSource() {
         HikariConfig config = new HikariConfig();
+        config.setDriverClassName(SimpleProtoConfig.dataSourceDriver);
         config.setJdbcUrl(SimpleProtoConfig.dataSourceUrl);
         config.setUsername(SimpleProtoConfig.dataSourceUsername);
         config.setPassword(SimpleProtoConfig.dataSourcePassword);
 
-        config.setConnectionTestQuery("SELECT 1");          // 连接验证查询
-        config.setConnectionTimeout(30000);                 // 连接获取超时30s
-        config.setIdleTimeout(240000);                      // 空闲超时4分钟 = 数据库5分钟 * 80%
-        config.setMaxLifetime(1800000);                     // 连接最大寿命30分钟
-        config.setKeepaliveTime(30000);                     // 每30秒保活检测
-        config.addDataSourceProperty("socketTimeout", "30"); // 网络超时30秒
-
-        config.setLeakDetectionThreshold(10000);
+        config.setMaximumPoolSize(SimpleProtoConfig.dataSourceMaximumPoolSize);
+        config.setMinimumIdle(SimpleProtoConfig.dataSourceMinimumIdle);
+        config.setConnectionTimeout(SimpleProtoConfig.dataSourceConnectionTimeout);
+        config.setIdleTimeout(SimpleProtoConfig.dataSourceIdleTimeout);
+        config.setMaxLifetime(SimpleProtoConfig.dataSourceMaxLifetime);
         return new HikariDataSource(config);
     }
 
