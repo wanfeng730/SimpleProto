@@ -37,8 +37,9 @@ public class SimpleWebMvcConfiguration extends WebMvcConfigurationSupport {
                 .allowedOrigins("*") // 允许的跨域源，可以通过逗号隔开，也可以用 * 表示允许所有源；
                 .allowedMethods("*") // 允许的请求方法，可以指定具体的，如："GET"、"POST"、"PUT"、"DELETE"
                 .allowedHeaders("*") // 允许的请求头类型，可以指定具体的，如："Content-Type", "Authorization
+                .allowCredentials(true) // 允许凭证
                 .maxAge(MAX_AGE);    // 设置请求最大有效时长，在这个时长内，重复的请求就不会发送预检请求
-        LogUtil.info("[SimpleProto] WebMvc解决跨域问题");
+        LogUtil.info("[SimpleProto WebMvc] 解决跨域问题");
     }
 
     /**
@@ -48,7 +49,7 @@ public class SimpleWebMvcConfiguration extends WebMvcConfigurationSupport {
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-        LogUtil.info("[SimpleProto] WebMvc加载Swagger前端资源");
+        LogUtil.info("[SimpleProto WebMvc] 加载Swagger前端资源");
         super.addResourceHandlers(registry);
     }
 
