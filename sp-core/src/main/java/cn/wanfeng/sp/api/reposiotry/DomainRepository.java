@@ -1,8 +1,13 @@
 package cn.wanfeng.sp.api.reposiotry;
 
+import cn.wanfeng.proto.constants.SpExceptionMessage;
+import cn.wanfeng.sp.anno.Type;
 import cn.wanfeng.sp.api.domain.SpBaseObject;
+import cn.wanfeng.sp.exception.SpException;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
  * @date: 2024-12-15 15:03
@@ -35,5 +40,14 @@ public interface DomainRepository<DomainClass extends SpBaseObject> {
      * 断言对象的类型是否正确
      * @param object 领域对象
      */
-    void assertObjectType(@NotNull DomainClass object);
+    default void assertObjectType(@NotNull DomainClass object) {
+        Type typeAnnotation = object.getClass().getAnnotation(Type.class);
+        if (Objects.isNull(typeAnnotation)) {
+            return;
+        }
+        String defineObjectType = typeAnnotation.value();
+        if (!StringUtils.equals(defineObjectType, object.getType())) {
+            throw new SpException(SpExceptionMessage.objectTypeNotEqualsDefine(object.getId(), defineObjectType));
+        }
+    }
 }

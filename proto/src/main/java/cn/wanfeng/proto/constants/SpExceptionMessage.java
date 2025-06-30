@@ -16,6 +16,7 @@ public class SpExceptionMessage {
 
     private static final String PROTO_FIELD_NAME_DUPLICATE = "@ProtoField[index=%d, name=%s] Verify Failed! Because Duplicate with name, please confirm index and name all not duplicate！";
 
+    private static final String OBJECT_TYPE_NOT_EQUALS_DEFINE = "The type of Object[%s] is not equals defined type: %s";
 
     public static String stringValueLengthTooLong(int valueLen) {
         return String.format(STRING_VALUE_LENGTH_TOO_LONG, valueLen);
@@ -27,6 +28,10 @@ public class SpExceptionMessage {
 
     public static String protoFieldNameDuplicate(int addIndex, String addName) {
         return String.format(PROTO_FIELD_NAME_DUPLICATE, addIndex, addName);
+    }
+
+    public static String objectTypeNotEqualsDefine(Long id, String defineType) {
+        return String.format(OBJECT_TYPE_NOT_EQUALS_DEFINE, id, defineType);
     }
 
 
