@@ -14,6 +14,13 @@ import java.util.List;
  */
 public class SimpleCollectionUtils {
 
+    /**
+     * 列表分组
+     *
+     * @param list     列表
+     * @param itemSize 每组数量
+     * @return 分组列表
+     */
     public static <T> List<List<T>> partitionByItemSize(@NotNull List<T> list, @Min(1) int itemSize){
         List<List<T>> partitionList = new ArrayList<>();
         // partition cursor
@@ -35,6 +42,12 @@ public class SimpleCollectionUtils {
     }
 
 
+    /**
+     * 列表分组
+     * @param list 列表
+     * @param itemCount 组的数量
+     * @return 分组列表
+     */
     public static <T> List<List<T>> partitionByItemCount(List<T> list, int itemCount){
         List<List<T>> partitionList = new ArrayList<>();
         for (int i = 0; i < itemCount; i++) {

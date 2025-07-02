@@ -20,19 +20,6 @@ public class AESUtil {
      * 填充类型
      */
     private static final String AES_TYPE = "AES/ECB/PKCS5Padding";
-    /**
-     * 秘钥
-     */
-    private static final String DEFAULT_AES_KEY = "wanfeng_730_SimpleProto";
-
-    /**
-     * 加密字符，使用默认密钥
-     * @param text 待加密字符
-     * @return 加密后的字符
-     */
-    public static String encrypt(String text){
-        return encrypt(text, DEFAULT_AES_KEY);
-    }
 
     /**
      * 加密字符
@@ -58,15 +45,6 @@ public class AESUtil {
             LogUtil.error("AES加密失败 text:{}", text, e);
             return text;
         }
-    }
-
-    /**
-     * 解密（使用默认密钥）
-     * @param encrypted 待解密字符
-     * @return 解密后的字符
-     */
-    public static String decrypt(String encrypted){
-        return decrypt(encrypted, DEFAULT_AES_KEY);
     }
 
     /**
