@@ -47,7 +47,8 @@ public class SimpleWebMvcConfiguration extends WebMvcConfigurationSupport {
      */
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("favicon.ico").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
         LogUtil.info("[SimpleProto WebMvc] 加载Swagger前端资源");
         super.addResourceHandlers(registry);
