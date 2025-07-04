@@ -1,6 +1,7 @@
 package cn.wanfeng.sp.bootexecute;
 
 
+import cn.wanfeng.sp.api.constant.OpenSearchPropertyType;
 import cn.wanfeng.sp.api.domain.ISpBaseObject;
 import cn.wanfeng.sp.api.domain.ISpFile;
 import cn.wanfeng.sp.api.domain.ISpSysObject;
@@ -9,14 +10,19 @@ import cn.wanfeng.sp.exception.SpSearchStorageException;
 import cn.wanfeng.sp.localcache.OpenSearchMappingCache;
 import cn.wanfeng.sp.storage.search.SearchStorageClient;
 import cn.wanfeng.sp.util.LogUtil;
+import cn.wanfeng.sp.util.ResourceFileUtils;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch.indices.PutMappingRequest;
 import org.opensearch.client.transport.endpoints.BooleanResponse;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * @date: 2024-11-07 21:20
@@ -30,6 +36,8 @@ public class OpenSearchInitExecutor {
     @Resource
     private OpenSearchClient openSearchClient;
 
+    public static final String CUSTOM_MAPPING_RESOURCE = "opensearch/custom_mapping.json";
+
     @PostConstruct
     public void initIndex() {
         //若索引不存在则创建
@@ -40,12 +48,15 @@ public class OpenSearchInitExecutor {
         OpenSearchMappingCache.syncFieldMappingFromOpenSearch(openSearchClient, SimpleProtoConfig.dataTable);
 
         //初始化基础对象字段的mapping
-        boolean acknowledged = putDefaultMappingsIfMissing();
-        if(acknowledged){
-            //再次刷新mapping缓存
-            OpenSearchMappingCache.syncFieldMappingFromOpenSearch(openSearchClient, SimpleProtoConfig.dataTable);
-            LogUtil.info("刷新OpenSearchMapping缓存");
-        }
+        putDefaultMappingsIfMissing();
+
+        // 初始化自定义字段的mapping
+        putCustomMappingResource();
+
+        // mapping缓存
+        OpenSearchMappingCache.syncFieldMappingFromOpenSearch(openSearchClient, SimpleProtoConfig.dataTable);
+        LogUtil.info("刷新OpenSearchMapping缓存");
+
         LogUtil.info(" [SimpleProto初始化] OpenSearchMapping缓存完成");
     }
 
@@ -145,5 +156,49 @@ public class OpenSearchInitExecutor {
             }
         }
         return acknowledged;
+    }
+
+    /**
+     * 执行put自定义OpenSearch Mapping配置
+     */
+    private void putCustomMappingResource() {
+        String customMappingJson = ResourceFileUtils.readFileContent(CUSTOM_MAPPING_RESOURCE);
+        if (StringUtils.isBlank(customMappingJson)) {
+            LogUtil.warn("未找到自定义OpenSearch的Mapping配置[resources/{}]，不执行初始化", CUSTOM_MAPPING_RESOURCE);
+            return;
+        }
+        JSONObject jsonObject = JSON.parseObject(customMappingJson);
+        for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
+            String fieldName = entry.getKey();
+            if (!(entry.getValue() instanceof JSONObject)) {
+                LogUtil.error("字段[{}]的mapping配置不是Object格式", fieldName);
+                continue;
+            }
+            JSONObject fieldConfig = (JSONObject) entry.getValue();
+            String fieldType = fieldConfig.getString("type");
+            if (StringUtils.isBlank(fieldType)) {
+                LogUtil.error("字段[{}的mapping配置没有定义type", fieldName);
+                continue;
+            }
+
+            if (OpenSearchPropertyType.type_keyword.equals(fieldType)) {
+
+            }
+            if (OpenSearchPropertyType.type_integer.equals(fieldType)) {
+
+            }
+            if (OpenSearchPropertyType.type_long.equals(fieldType)) {
+
+            }
+            if (OpenSearchPropertyType.type_boolean.equals(fieldType)) {
+
+            }
+            if (OpenSearchPropertyType.type_date.equals(fieldType)) {
+
+            }
+
+
+            LogUtil.debug("读取OpenSearch自定义Mapping配置：{} -> {}", fieldName);
+        }
     }
 }
