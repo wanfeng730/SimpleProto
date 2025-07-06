@@ -5,6 +5,7 @@ import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.LogUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,18 +25,20 @@ public class DatabaseInitExecutor {
     @Resource
     private SpSession spSession;
 
+    private static final Logger log = LogUtil.getSimpleProtoLogger();
+
     @PostConstruct
     public void initDatabaseAndTables() {
         List<String> tableNameList = spSession.databaseStorage().listAllTable(SimpleProtoConfig.currentScheme);
         if(!tableNameList.contains(SimpleProtoConfig.dataTable)){
             spSession.databaseStorage().createDataTable(SimpleProtoConfig.dataTable);
-            LogUtil.info(" [SimpleProto初始化] 创建对象数据表[{}]", SimpleProtoConfig.dataTable);
+            log.info("初始化 创建对象数据表[{}]", SimpleProtoConfig.dataTable);
         }
         if(!tableNameList.contains(SimpleProtoConfig.settingsTable)){
             spSession.databaseStorage().createSettingsTable(SimpleProtoConfig.settingsTable);
             spSession.databaseStorage().initSettingsTableData(SimpleProtoConfig.settingsTable);
-            LogUtil.info(" [SimpleProto初始化] 创建设置表[{}]", SimpleProtoConfig.settingsTable);
+            log.info("初始化 创建设置表[{}]", SimpleProtoConfig.settingsTable);
         }
-        LogUtil.info(" [SimpleProto初始化] 数据库存储表完成");
+        log.info("初始化 数据库存储表完成");
     }
 }

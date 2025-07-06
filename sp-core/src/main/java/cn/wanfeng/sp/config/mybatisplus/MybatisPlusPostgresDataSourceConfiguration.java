@@ -11,6 +11,7 @@ import jakarta.annotation.Resource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,6 +34,8 @@ public class MybatisPlusPostgresDataSourceConfiguration {
 
     @Resource
     private SimpleProtoConfig simpleProtoConfig;
+
+    private static final Logger log = LogUtil.getSimpleProtoLogger();
 
     private static final String POSTGRES_MAPPER_LOCATION = "classpath*:mapper/postgres/*.xml";
 
@@ -82,7 +85,7 @@ public class MybatisPlusPostgresDataSourceConfiguration {
         factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(POSTGRES_MAPPER_LOCATION));
         factoryBean.setPlugins(mybatisPlusInterceptor);
         SqlSessionFactory sqlSessionFactory = factoryBean.getObject();
-        LogUtil.info(" [SimpleProto初始化] Postgres数据源完成");
+        log.info("初始化 Postgres数据源完成");
         return sqlSessionFactory;
     }
 

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,8 @@ import java.util.List;
 @Configuration
 @EnableKnife4j
 public class SimpleSwaggerConfiguration {
+
+    private static final Logger log = LogUtil.getSimpleProtoLogger();
 
     private static final String DEFAULT_SCAN_PACKAGE = "cn.wanfeng.sp.web.controller";
 
@@ -46,7 +49,7 @@ public class SimpleSwaggerConfiguration {
                 .packagesToScan(scanPackages)
                 .build();
         swaggerBrowseUrl = String.format("http://localhost:%s%s/doc.html", SimpleProtoConfig.appPort, SimpleProtoConfig.appContextPath);
-        LogUtil.info("Swagger文档初始化成功，扫描包路径：{}", PrettyLogUtil.prettyJson(scanPackages));
+        log.info("初始化 Swagger文档完成 扫描包路径：{}", PrettyLogUtil.prettyJson(scanPackages));
         return openApi;
     }
 

@@ -6,6 +6,7 @@ import cn.wanfeng.sp.storage.file.FileStorageClient;
 import cn.wanfeng.sp.storage.file.MinIOFileStorage;
 import cn.wanfeng.sp.util.LogUtil;
 import jakarta.annotation.Resource;
+import org.slf4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,8 @@ public class FileStorageClientConfiguration {
     @Resource
     private SimpleProtoConfig simpleProtoConfig;
 
+    private static final Logger log = LogUtil.getSimpleProtoLogger();
+
     @Bean
     @Conditional(MinIOFileStorageCondition.class)
     public FileStorageClient minioFileStorageClient(){
@@ -31,7 +34,7 @@ public class FileStorageClientConfiguration {
                 SimpleProtoConfig.fileStorageSecretKey,
                 SimpleProtoConfig.fileStorageBucket
         );
-        LogUtil.info(" [SimpleProto初始化] 文件存储客户端完成[type=MinIO, bucket={}]", SimpleProtoConfig.fileStorageBucket);
+        log.info("初始化 文件存储客户端完成[type=MinIO, bucket={}]", SimpleProtoConfig.fileStorageBucket);
         return fileStorage;
     }
 

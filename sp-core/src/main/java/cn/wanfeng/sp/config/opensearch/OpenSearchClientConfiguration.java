@@ -16,6 +16,7 @@ import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.transport.OpenSearchTransport;
 import org.opensearch.client.transport.rest_client.RestClientTransport;
+import org.slf4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,6 +34,8 @@ public class OpenSearchClientConfiguration {
     @Resource
     private SimpleProtoConfig simpleProtoConfig;
 
+    private static final Logger log = LogUtil.getSimpleProtoLogger();
+
     @Bean
     public OpenSearchClient openSearchClient() {
         final HttpHost host = new HttpHost(SimpleProtoConfig.opensearchHost, SimpleProtoConfig.opensearchPort, SimpleProtoConfig.opensearchHostScheme);
@@ -47,7 +50,7 @@ public class OpenSearchClientConfiguration {
 
         final OpenSearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
         OpenSearchClient openSearchClient = new OpenSearchClient(transport);
-        LogUtil.info(" [SimpleProto初始化] OpenSearch客户端完成");
+        log.info("初始化 OpenSearch客户端完成");
         return openSearchClient;
     }
 

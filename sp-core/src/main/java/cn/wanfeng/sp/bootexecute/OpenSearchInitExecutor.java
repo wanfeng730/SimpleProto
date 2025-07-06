@@ -23,6 +23,7 @@ import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.mapping.Property;
 import org.opensearch.client.opensearch.indices.PutMappingRequest;
 import org.opensearch.client.transport.endpoints.BooleanResponse;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -42,28 +43,30 @@ public class OpenSearchInitExecutor {
     @Resource
     private OpenSearchClient openSearchClient;
 
+    private static final Logger log = LogUtil.getSimpleProtoLogger();
+
     public static final String DOMAIN_MAPPINGS_RESOURCE_FOLDER = "domain_mappings";
 
     @PostConstruct
     public void initIndex() {
         //若索引不存在则创建
         createIndexIfNotExist();
-        LogUtil.info(" [SimpleProto初始化] OpenSearch索引完成");
+        log.info("初始化 OpenSearch索引校验完成");
 
         //获取已有的mapping
         OpenSearchMappingCache.syncFieldMappingFromOpenSearch(openSearchClient, SimpleProtoConfig.dataTable);
 
         //初始化基础对象字段的mapping
         putDefaultMappingsIfMissing();
+        log.info("初始化 加载基础对象mapping完成");
 
         // 初始化自定义字段的mapping
         putCustomMappingResource();
+        log.info("初始化 加载自定义mapping完成");
 
-        // mapping缓存
+        // 再次刷新mapping缓存
         OpenSearchMappingCache.syncFieldMappingFromOpenSearch(openSearchClient, SimpleProtoConfig.dataTable);
-        LogUtil.info("刷新OpenSearchMapping缓存");
-
-        LogUtil.info(" [SimpleProto初始化] OpenSearchMapping缓存完成");
+        log.info("初始化 OpenSearchMapping缓存完成");
     }
 
     /**
@@ -76,7 +79,7 @@ public class OpenSearchInitExecutor {
             if (!response.value()) {
                 // 创建索引
                 openSearchClient.indices().create(c -> c.index(SimpleProtoConfig.dataTable));
-                LogUtil.info("初始化创建OpenSearch索引[{}]", SimpleProtoConfig.dataTable);
+                log.info("初始化创建OpenSearch索引[{}]", SimpleProtoConfig.dataTable);
             }
         } catch (IOException e) {
             throw new SpSearchStorageException(e, "初始化OpenSearch索引[index=%s]失败", SimpleProtoConfig.dataTable);
@@ -156,7 +159,7 @@ public class OpenSearchInitExecutor {
         if(needPutMapping){
             try {
                 acknowledged = openSearchClient.indices().putMapping(builder.build()).acknowledged();
-                LogUtil.info("已在OpenSearch中补充缺少的默认mapping");
+                log.info("已在OpenSearch中补充缺少的默认mapping");
             } catch (IOException e) {
                 throw new SpSearchStorageException(e, "在OpenSearch中补充默认mapping失败");
             }
@@ -170,7 +173,7 @@ public class OpenSearchInitExecutor {
     private void putCustomMappingResource() {
         List<File> mappingFileList = ResourceFileUtils.listChildFile(DOMAIN_MAPPINGS_RESOURCE_FOLDER);
         if (CollectionUtils.isEmpty(mappingFileList)) {
-            LogUtil.warn("未找到自定义OpenSearch的Mapping配置[resources/{}]，不执行初始化", DOMAIN_MAPPINGS_RESOURCE_FOLDER);
+            log.warn("未找到自定义OpenSearch的Mapping配置[resources/{}]，不执行初始化", DOMAIN_MAPPINGS_RESOURCE_FOLDER);
             return;
         }
 
@@ -183,41 +186,42 @@ public class OpenSearchInitExecutor {
             for (Map.Entry<String, Object> entry : properties.entrySet()) {
                 String fieldName = entry.getKey();
                 if (!(entry.getValue() instanceof JSONObject fieldConfig)) {
-                    LogUtil.error("字段[{}]的mapping配置不是Object格式", fieldName);
+                    log.error("字段[{}]的mapping配置不是Object格式", fieldName);
                     continue;
                 }
                 String fieldType = fieldConfig.getString("type");
                 if (StringUtils.isBlank(fieldType)) {
-                    LogUtil.error("字段[{}]的mapping配置没有定义type", fieldName);
+                    log.error("字段[{}]的mapping配置没有定义type", fieldName);
                     continue;
                 }
 
                 if (OpenSearchPropertyType.type_keyword.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Keyword)) {
                     builder.properties(fieldName, ob -> ob.keyword(t -> t));
-                    LogUtil.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", mappingFile.getName(), fieldName, fieldType);
+                    log.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", mappingFile.getName(), fieldName, fieldType);
                 }
                 if (OpenSearchPropertyType.type_integer.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Integer)) {
                     builder.properties(fieldName, ob -> ob.integer(t -> t));
-                    LogUtil.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", mappingFile.getName(), fieldName, fieldType);
+                    log.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", mappingFile.getName(), fieldName, fieldType);
                 }
                 if (OpenSearchPropertyType.type_long.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Long)) {
                     builder.properties(fieldName, ob -> ob.long_(t -> t));
-                    LogUtil.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", mappingFile.getName(), fieldName, fieldType);
+                    log.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", mappingFile.getName(), fieldName, fieldType);
                 }
                 if (OpenSearchPropertyType.type_boolean.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Boolean)) {
                     builder.properties(fieldName, ob -> ob.boolean_(t -> t));
-                    LogUtil.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", mappingFile.getName(), fieldName, fieldType);
+                    log.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", mappingFile.getName(), fieldName, fieldType);
                 }
                 if (OpenSearchPropertyType.type_date.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Date)) {
                     builder.properties(fieldName, ob -> ob.date(t -> t.format(SearchStorageClient.DEFAULT_DATE_FORMAT)));
-                    LogUtil.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", mappingFile.getName(), fieldName, fieldType);
+                    log.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", mappingFile.getName(), fieldName, fieldType);
                 }
             }
 
             try {
                 boolean acknowledged = openSearchClient.indices().putMapping(builder.build()).acknowledged();
+                log.info("初始化 已加载自定义mapping文件[{}]", mappingFile.getName());
             } catch (Exception e) {
-                throw new SpException(e, "在OpenSearch中加载自定义配置失败");
+                throw new SpException(e, "加载自定义mapping文件失败");
             }
         }
     }

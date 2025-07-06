@@ -3,6 +3,7 @@ package cn.wanfeng.sp.config.redis;
 
 import cn.wanfeng.sp.config.custom.SimpleProtoRedisSerializer;
 import cn.wanfeng.sp.util.LogUtil;
+import org.slf4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -17,6 +18,8 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  */
 @Configuration
 public class RedisConfiguration {
+
+    private static final Logger log = LogUtil.getSimpleProtoLogger();
 
     @Bean
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
@@ -34,7 +37,7 @@ public class RedisConfiguration {
         template.setHashValueSerializer(redisSerializer);
 
         template.afterPropertiesSet();
-        LogUtil.info(" [SimpleProto初始化] RedisTemplate完成");
+        log.info("初始化 RedisTemplate完成");
         return template;
     }
 

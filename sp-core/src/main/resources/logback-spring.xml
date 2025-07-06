@@ -40,10 +40,11 @@
         </rollingPolicy>
     </appender>
 
-    <!-- Mybatis Sql 打印调试日志 -->
-    <appender name="SimpleMybatisPlusSqlAppender" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- SimpleProto 日志 -->
+    <appender name="SimpleProtoAppender" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %green([%thread]) %simpleLogColor(%-5level) %magenta(SimpleMybatisSqlLogger): %msg%n
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %green([%thread]) %simpleLogColor(%-5level) %boldMagenta(SimpleProto):
+                %msg%n
             </pattern>
             <charset>${ENCODING}</charset>
         </encoder>
@@ -55,12 +56,10 @@
         <appender-ref ref="spLogFileAppender"/>
     </root>
 
-    <logger name="spLogger" level="debug">
+    <!-- SimpleProto日志 （additivity="false"表示只在当前logger执行appender，不调用所有父级、root的appender） -->
+    <logger name="SimpleProtoLogger" level="info" additivity="false">
+        <appender-ref ref="SimpleProtoAppender"/>
         <appender-ref ref="spLogFileAppender"/>
-    </logger>
-
-    <logger name="SimpleMybatisPlusSqlLogger" level="debug">
-        <appender-ref ref="SimpleMybatisPlusSqlAppender"/>
     </logger>
 
 </configuration>

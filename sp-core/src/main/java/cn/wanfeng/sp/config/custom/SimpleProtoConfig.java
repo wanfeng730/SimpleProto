@@ -6,6 +6,7 @@ import cn.wanfeng.sp.util.LogUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.Data;
+import org.slf4j.Logger;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 
@@ -85,6 +86,8 @@ public class SimpleProtoConfig {
     @Resource
     private ConfigurableEnvironment environment;
 
+    private static final Logger log = LogUtil.getSimpleProtoLogger();
+
     public SimpleProtoConfig() {
     }
 
@@ -139,7 +142,7 @@ public class SimpleProtoConfig {
         swaggerDescription = environment.getProperty("simpleproto.swaggerDescription");
         swaggerVersion = environment.getProperty("simpleproto.swaggerVersion");
 
-        LogUtil.info("[SimpleProto初始化] simpleproto配置完成");
+        log.info("初始化 SimpleProtoConfig配置完成");
     }
 
 }

@@ -15,15 +15,26 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class LogUtil {
 
-    private static final Map<String, Logger> LOGGER_CACHE = new ConcurrentHashMap<>(128);
+    private static final Map<String, Logger> LOGGER_CACHE = new ConcurrentHashMap<>(512);
+
+    private static final String SimpleProtoLogger = "SimpleProtoLogger";
+
 
     public static Logger getCurrentThreadClassLogger() {
         //从当前堆栈的第4个可以获取到调用日志工具方法的当前类名称
         String className = Thread.currentThread().getStackTrace()[3].getClassName();
-        if (!LOGGER_CACHE.containsKey(className)) {
-            LOGGER_CACHE.put(className, LoggerFactory.getLogger(className));
+        return getOrInitLoggerCache(className);
+    }
+
+    public static Logger getSimpleProtoLogger() {
+        return getOrInitLoggerCache(SimpleProtoLogger);
+    }
+
+    private static Logger getOrInitLoggerCache(String loggerName) {
+        if (!LOGGER_CACHE.containsKey(loggerName)) {
+            LOGGER_CACHE.put(loggerName, LoggerFactory.getLogger(loggerName));
         }
-        return LOGGER_CACHE.get(className);
+        return LOGGER_CACHE.get(loggerName);
     }
 
     public static void trace(String message){

@@ -1,7 +1,6 @@
 package cn.wanfeng.sp.test;
 
 import cn.wanfeng.sp.SimpleprotoApplicationTest;
-import cn.wanfeng.sp.context.SimpleApplicationContext;
 import cn.wanfeng.sp.storage.file.FileStorageClient;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

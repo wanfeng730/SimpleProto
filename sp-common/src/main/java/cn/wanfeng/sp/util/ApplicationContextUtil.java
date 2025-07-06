@@ -13,6 +13,10 @@ import javax.annotation.Nonnull;
  *
  * @date: 2025-07-02 21:54
  * @author: luozh.wanfeng
+ *
+ * 实现spring的ApplicationContextAware。
+ * spring实例化所有bean后会将容器上下文ApplicationContext传递给ApplicationContextAware接口的实现类中
+ * 实现ApplicationContextAware接口的bean可以通过接口方法获取到容器上下文
  */
 @Component
 public class ApplicationContextUtil implements ApplicationContextAware {

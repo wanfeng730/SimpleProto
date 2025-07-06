@@ -14,6 +14,7 @@ import jakarta.annotation.Resource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,8 @@ import java.util.Properties;
 @Configuration
 @MapperScan(basePackages = "cn.wanfeng.**.mapper.search", sqlSessionFactoryRef = "searchSqlSessionFactory")
 public class MybatisPlusSearchDataSourceConfiguration {
+
+    private static final Logger log = LogUtil.getSimpleProtoLogger();
 
     private static final String SEARCH_MAPPER_LOCATION = "classpath*:mapper/search/*.xml";
 
@@ -72,7 +75,7 @@ public class MybatisPlusSearchDataSourceConfiguration {
         factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(SEARCH_MAPPER_LOCATION));
         factoryBean.setPlugins(mybatisPlusInterceptor);
         SqlSessionFactory sqlSessionFactory = factoryBean.getObject();
-        LogUtil.info(" [SimpleProto初始化] OpenSearch数据源完成");
+        log.info("初始化OpenSearch数据源完成");
         return sqlSessionFactory;
     }
 
