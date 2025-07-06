@@ -4,6 +4,7 @@ package cn.wanfeng.sp.util;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 
@@ -13,6 +14,7 @@ import javax.annotation.Nonnull;
  * @date: 2025-07-02 21:54
  * @author: luozh.wanfeng
  */
+@Component
 public class ApplicationContextUtil implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
