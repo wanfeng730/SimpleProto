@@ -99,7 +99,7 @@ public class TestController {
     @Operation(summary = "测试ResourceFileUtil")
     @PostMapping("/testResourceFileUtil")
     public void testResourceFileUtil() {
-        List<File> fileList = ResourceFileUtils.listResourceFolder("opensearch");
+        List<File> fileList = ResourceFileUtils.listChildFile("domain_mappings");
         LogUtil.info("fileList: {}", fileList.size());
 
         for (File file : fileList) {

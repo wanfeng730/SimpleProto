@@ -2,6 +2,9 @@
   "field_a": {
     "type": "keyword"
   },
+  "field_c": {
+    "type": "keyword"
+  },
   "field_b": {
     "type": "integer"
   }

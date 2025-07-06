@@ -26,7 +26,7 @@ public class ResourceFileUtils {
      * @param resourceFolderPath 资源文件夹路径
      * @return 文件列表
      */
-    public static List<File> listResourceFolder(String resourceFolderPath) {
+    public static List<File> listChildFile(String resourceFolderPath) {
         DefaultResourceLoader defaultResourceLoader = new DefaultResourceLoader();
         try {
             File folder = defaultResourceLoader.getResource(resourceFolderPath).getFile();

@@ -22,7 +22,11 @@ public class OpenSearchMappingCache {
 
     private static final Map<String, Property.Kind> propertyKindCache = new ConcurrentHashMap<>(32);
 
-    public static boolean checkFieldExistInCache(String fieldName){
+    public static boolean checkFieldExistInCache(String fieldName, Property.Kind kind) {
+        return propertyKindCache.containsKey(fieldName) && propertyKindCache.get(fieldName) == kind;
+    }
+
+    public static boolean checkFieldExistInCache(String fieldName) {
         return propertyKindCache.containsKey(fieldName);
     }
 
