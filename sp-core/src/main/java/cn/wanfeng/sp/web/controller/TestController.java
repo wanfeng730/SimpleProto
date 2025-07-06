@@ -9,14 +9,13 @@ import cn.wanfeng.sp.session.SpBulkOperator;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.storage.file.FileStorageClient;
 import cn.wanfeng.sp.storage.file.FileStorageDTO;
-import cn.wanfeng.sp.util.LogUtil;
-import cn.wanfeng.sp.util.NumberUtils;
-import cn.wanfeng.sp.util.PrettyLogUtil;
+import cn.wanfeng.sp.util.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,6 +94,18 @@ public class TestController {
     public void testMinioListObject(){
         List<FileStorageDTO> fileStorageDTOList = fileStorageClient.listObject("test_file");
         LogUtil.info("fileStorageDTOList:\n{}", PrettyLogUtil.prettyJson(fileStorageDTOList));
+    }
+
+    @Operation(summary = "测试ResourceFileUtil")
+    @PostMapping("/testResourceFileUtil")
+    public void testResourceFileUtil() {
+        List<File> fileList = ResourceFileUtils.listResourceFolder("opensearch");
+        LogUtil.info("fileList: {}", fileList.size());
+
+        for (File file : fileList) {
+            String content = FileUtils.readFileContent(file);
+            LogUtil.info("{} length: {}", file.getName(), content.length());
+        }
     }
 
 }

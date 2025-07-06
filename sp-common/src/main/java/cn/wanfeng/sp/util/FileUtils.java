@@ -4,8 +4,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.wanfeng.sp.exception.SpException;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -63,5 +62,20 @@ public class FileUtils extends FileUtil {
             LogUtil.error("创建临时文件{}异常", fileName, e);
         }
         return null;
+    }
+
+    public static String readFileContent(File file) {
+        StringBuilder content = new StringBuilder();
+        try {
+            InputStream inputStream = InputStreamUtils.getByteArrayInputStreamFromFile(file);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line);
+            }
+        } catch (Exception e) {
+            LogUtil.error("打印启动显示图失败", e);
+        }
+        return content.toString();
     }
 }
