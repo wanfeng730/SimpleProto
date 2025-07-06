@@ -33,6 +33,8 @@ public class SimpleProtoConfig {
     public static String opensearchPassword;
     public static Integer opensearchConnectTimeout;
     public static Integer opensearchSocketTimeout;
+    public static String opensearchDomainClassBasePackage;
+    public static String[] opensearchDomainClassBasePackages;
 
     public static String dataSourceDriver;
     public static String dataSourceUrl;

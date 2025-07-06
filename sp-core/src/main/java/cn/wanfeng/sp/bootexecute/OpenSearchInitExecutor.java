@@ -6,6 +6,7 @@ import cn.wanfeng.sp.api.domain.ISpBaseObject;
 import cn.wanfeng.sp.api.domain.ISpFile;
 import cn.wanfeng.sp.api.domain.ISpSysObject;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
+import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.exception.SpSearchStorageException;
 import cn.wanfeng.sp.localcache.OpenSearchMappingCache;
 import cn.wanfeng.sp.storage.search.SearchStorageClient;
@@ -167,38 +168,52 @@ public class OpenSearchInitExecutor {
             LogUtil.warn("未找到自定义OpenSearch的Mapping配置[resources/{}]，不执行初始化", CUSTOM_MAPPING_RESOURCE);
             return;
         }
-        JSONObject jsonObject = JSON.parseObject(customMappingJson);
-        for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
+
+        PutMappingRequest.Builder builder = new PutMappingRequest.Builder();
+        builder.index(SimpleProtoConfig.dataTable);
+
+        JSONObject properties = JSON.parseObject(customMappingJson);
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
             String fieldName = entry.getKey();
-            if (!(entry.getValue() instanceof JSONObject)) {
+            if (!(entry.getValue() instanceof JSONObject fieldConfig)) {
                 LogUtil.error("字段[{}]的mapping配置不是Object格式", fieldName);
                 continue;
             }
-            JSONObject fieldConfig = (JSONObject) entry.getValue();
             String fieldType = fieldConfig.getString("type");
             if (StringUtils.isBlank(fieldType)) {
-                LogUtil.error("字段[{}的mapping配置没有定义type", fieldName);
+                LogUtil.error("字段[{}]的mapping配置没有定义type", fieldName);
                 continue;
             }
 
             if (OpenSearchPropertyType.type_keyword.equals(fieldType)) {
-
+                builder.properties(fieldName, ob -> ob.keyword(t -> t));
+                LogUtil.debug("读取OpenSearch自定义Mapping配置：{} -> {}", fieldName, fieldType);
             }
             if (OpenSearchPropertyType.type_integer.equals(fieldType)) {
-
+                builder.properties(fieldName, ob -> ob.integer(t -> t));
+                LogUtil.debug("读取OpenSearch自定义Mapping配置：{} -> {}", fieldName, fieldType);
             }
             if (OpenSearchPropertyType.type_long.equals(fieldType)) {
-
+                builder.properties(fieldName, ob -> ob.long_(t -> t));
+                LogUtil.debug("读取OpenSearch自定义Mapping配置：{} -> {}", fieldName, fieldType);
             }
             if (OpenSearchPropertyType.type_boolean.equals(fieldType)) {
-
+                builder.properties(fieldName, ob -> ob.boolean_(t -> t));
+                LogUtil.debug("读取OpenSearch自定义Mapping配置：{} -> {}", fieldName, fieldType);
             }
             if (OpenSearchPropertyType.type_date.equals(fieldType)) {
-
+                builder.properties(fieldName, ob -> ob.date(t -> t.format(SearchStorageClient.DEFAULT_DATE_FORMAT)));
+                LogUtil.debug("读取OpenSearch自定义Mapping配置：{} -> {}", fieldName, fieldType);
             }
 
 
-            LogUtil.debug("读取OpenSearch自定义Mapping配置：{} -> {}", fieldName);
         }
+
+        try {
+            boolean acknowledged = openSearchClient.indices().putMapping(builder.build()).acknowledged();
+        } catch (Exception e) {
+            throw new SpException(e, "在OpenSearch中加载自定义配置失败");
+        }
+        LogUtil.info("加载OpenSearch自定义配置完成，共计{}个Property", properties.size());
     }
 }
