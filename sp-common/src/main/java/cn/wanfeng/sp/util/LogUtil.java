@@ -30,7 +30,7 @@ public class LogUtil {
         return getOrInitLoggerCache(SimpleProtoLogger);
     }
 
-    private static Logger getOrInitLoggerCache(String loggerName) {
+    protected static Logger getOrInitLoggerCache(String loggerName) {
         if (!LOGGER_CACHE.containsKey(loggerName)) {
             LOGGER_CACHE.put(loggerName, LoggerFactory.getLogger(loggerName));
         }
