@@ -37,20 +37,6 @@ public class LogUtil {
         return LOGGER_CACHE.get(loggerName);
     }
 
-    public static void trace(String message){
-        Logger logger = getCurrentThreadClassLogger();
-        if(logger.isTraceEnabled()){
-            logger.trace(message);
-        }
-    }
-
-    public static void trace(String message, Object... vars) {
-        Logger logger = getCurrentThreadClassLogger();
-        if (logger.isTraceEnabled()) {
-            logger.trace(message, vars);
-        }
-    }
-
     public static void debug(String message) {
         Logger logger = getCurrentThreadClassLogger();
         if (logger.isDebugEnabled()) {

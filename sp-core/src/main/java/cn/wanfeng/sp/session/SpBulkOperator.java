@@ -6,6 +6,7 @@ import cn.wanfeng.sp.api.domain.ISpFile;
 import cn.wanfeng.sp.exception.SimpleExceptionCode;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.util.LogUtil;
+import cn.wanfeng.sp.util.ThreadUtil;
 import jakarta.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
@@ -57,6 +58,8 @@ public class SpBulkOperator {
         if(CollectionUtils.isNotEmpty(updateList)){
             bulkUpdateObject(updateList);
         }
+
+        waitOpenSearchCompleteBulkRequest();
     }
 
     public void bulkRemove(List<? extends ISpBaseObject> objectList){
@@ -77,6 +80,8 @@ public class SpBulkOperator {
                 LogUtil.error("批量新建数据保存失败，事务已回滚", e);
             }
         }
+
+        waitOpenSearchCompleteBulkRequest();
     }
 
     private void bulkCreateObject(List<? extends ISpBaseObject> baseObjectList){
@@ -129,6 +134,14 @@ public class SpBulkOperator {
         if(object instanceof ISpFile){
             throw new SpException(SimpleExceptionCode.BULK_STORE_NOT_SUPPORT_FILE_OBJECT);
         }
+    }
+
+    /**
+     * OpenSearch批量操作可能会有延迟，导致后续业务没法获取到更新后的数据，使用该方法在批量操作执行完成后等待一会儿
+     * 默认等待 0.5s
+     */
+    private static void waitOpenSearchCompleteBulkRequest() {
+        ThreadUtil.sleepQuietly(500);
     }
 
 
