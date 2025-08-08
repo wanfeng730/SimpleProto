@@ -18,10 +18,10 @@ public class SimpleCollectionUtils {
      * 列表分组
      *
      * @param list     列表
-     * @param itemSize 每组数量
+     * @param subListSize 每组数量
      * @return 分组列表
      */
-    public static <T> List<List<T>> partitionByItemSize(@NotNull List<T> list, @Min(1) int itemSize){
+    public static <T> List<List<T>> partitionByItemSize(@NotNull List<T> list, @Min(1) int subListSize){
         List<List<T>> partitionList = new ArrayList<>();
         // partition cursor
         int pc = 0;
@@ -34,7 +34,7 @@ public class SimpleCollectionUtils {
             List<T> partition = partitionList.get(pc);
             partition.add(t);
             //若该partition已满，指针+1，到下一个列表中添加
-            if(partition.size() == itemSize){
+            if(partition.size() == subListSize){
                 pc++;
             }
         }
@@ -45,18 +45,18 @@ public class SimpleCollectionUtils {
     /**
      * 列表分组
      * @param list 列表
-     * @param itemCount 组的数量
+     * @param subListCount 组的数量
      * @return 分组列表
      */
-    public static <T> List<List<T>> partitionByItemCount(List<T> list, int itemCount){
+    public static <T> List<List<T>> partitionByItemCount(List<T> list, int subListCount){
         List<List<T>> partitionList = new ArrayList<>();
-        for (int i = 0; i < itemCount; i++) {
+        for (int i = 0; i < subListCount; i++) {
             partitionList.add(new ArrayList<>());
         }
         int pc = 0;
         for (T t : list) {
             partitionList.get(pc).add(t);
-            pc = (pc + 1) % itemCount;
+            pc = (pc + 1) % subListCount;
         }
         return partitionList;
     }
