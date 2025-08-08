@@ -58,6 +58,8 @@
         <swagger-bootstrap.version>1.9.1</swagger-bootstrap.version>
         <dubbo.version>3.2.7</dubbo.version>
         <nacos-stater.version>2023.0.1.2</nacos-stater.version>
+        <thumbnailator.version>0.4.8</thumbnailator.version>
+        <ofdrw-full.version>2.3.7</ofdrw-full.version>
     </properties>
 
     <dependencies>
@@ -311,13 +313,20 @@
             <version>${nacos-stater.version}</version>
         </dependency>
 
+        <!-- ofd文件操作 -->
+        <dependency>
+            <groupId>org.ofdrw</groupId>
+            <artifactId>ofdrw-full</artifactId>
+            <version>${ofdrw-full.version}</version>
+        </dependency>
+
         <!-- 缩略图 -->
         <dependency>
             <groupId>net.coobird</groupId>
             <artifactId>thumbnailator</artifactId>
             <version>0.4.8</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/e-iceblue/spire.doc.free -->
+
         <dependency>
             <groupId>e-iceblue</groupId>
             <artifactId>spire.doc.free</artifactId>
@@ -328,6 +337,7 @@
             <artifactId>spire.pdf.free</artifactId>
             <version>5.1.0</version>
         </dependency>
+
 
     </dependencies>
 
