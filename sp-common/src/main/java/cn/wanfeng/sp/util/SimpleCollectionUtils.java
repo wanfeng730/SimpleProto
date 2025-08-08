@@ -9,8 +9,7 @@ import java.util.List;
 /**
  * @date: 2024-12-22 12:24
  * @author: luozh.wanfeng
- * @description: 
- * @since: 
+ * @description: 简单的集合工具类，提供列表分组功能
  */
 public class SimpleCollectionUtils {
 
@@ -18,7 +17,7 @@ public class SimpleCollectionUtils {
      * 列表分组
      *
      * @param list     列表
-     * @param subListSize 每组数量
+     * @param subListSize 每组元素的数量
      * @return 分组列表
      */
     public static <T> List<List<T>> partitionByItemSize(@NotNull List<T> list, @Min(1) int subListSize){
