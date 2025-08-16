@@ -33,8 +33,6 @@ public enum SimpleExceptionCode implements ExceptionInfoGetter {
     QUERY_MODEL_TO_WRAPPER_SORT_TYPE_ERROR("00010", "查询参数中查询字段[%s]的排序方式不为可选项，请检查"),
 
 
-
-
     /**
      * 未知异常，请根据日志排查原因
      */
