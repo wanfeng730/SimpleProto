@@ -4,7 +4,7 @@
     <parent>
         <groupId>cn.wanfeng</groupId>
         <artifactId>simpleproto</artifactId>
-        <version>${revision}</version>
+        <version>1.27</version>
     </parent>
 
     <artifactId>proto</artifactId>
@@ -13,7 +13,7 @@
         <dependency>
             <groupId>cn.wanfeng</groupId>
             <artifactId>sp-common</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 
