@@ -3,7 +3,9 @@ package cn.wanfeng.sp.config.mybatisplus;
 
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.util.LogUtil;
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -77,8 +79,8 @@ public class MybatisPlusPostgresDataSourceConfiguration {
         //以拦截器的方式处理表名称
         //可以传递多个拦截器，即：可以传递多个表名处理器TableNameHandler
         // mybatisPlusInterceptor.addInnerInterceptor(new MybatisPlusTableNameInterceptor());
-        //分页插件
-        // mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+        // 分页插件
+        mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.POSTGRE_SQL));
 
         factoryBean.setDataSource(datasource);
         // 设置mybatis的xml所在位置

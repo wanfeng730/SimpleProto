@@ -67,7 +67,7 @@ public class MybatisPlusSearchDataSourceConfiguration {
         MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
         // 以拦截器的方式处理表名称等
         mybatisPlusInterceptor.addInnerInterceptor(new MybatisPlusCustomInnerInterceptor());
-        //分页插件
+        // 分页插件
         mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
 
         factoryBean.setDataSource(datasource);
