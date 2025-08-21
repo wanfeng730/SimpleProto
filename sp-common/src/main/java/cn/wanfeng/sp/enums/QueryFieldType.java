@@ -18,6 +18,8 @@ public enum QueryFieldType {
 
     INT("int", "整型"),
 
+    LONG("long", "长整型"),
+
     STRING("string", "字符串"),
 
     BOOL("bool", "布尔值"),
@@ -47,6 +49,7 @@ public enum QueryFieldType {
 
     static {
         convertFuncMap.put(INT, value -> Integer.parseInt(value));
+        convertFuncMap.put(LONG, value -> Long.parseLong(value));
         convertFuncMap.put(STRING, value -> value);
         convertFuncMap.put(BOOL, value -> Boolean.parseBoolean(value));
         convertFuncMap.put(DATE, value -> DateUtil.parse(value));
