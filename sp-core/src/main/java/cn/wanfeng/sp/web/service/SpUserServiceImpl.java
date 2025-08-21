@@ -4,8 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.wanfeng.sp.api.dataobject.SpUserDO;
 import cn.wanfeng.sp.api.dataobject.SpUserDTO;
 import cn.wanfeng.sp.api.mapper.search.SpUserMapper;
-import cn.wanfeng.sp.model.QueryModel;
-import cn.wanfeng.sp.model.QueryResult;
+import cn.wanfeng.sp.model.QueryParameter;
+import cn.wanfeng.sp.model.ListResult;
 import cn.wanfeng.sp.util.ObjectConvertUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -40,16 +40,16 @@ public class SpUserServiceImpl implements SpUserService{
     /**
      * 查询用户列表
      *
-     * @param queryModel 查询参数
+     * @param queryParameter 查询参数
      * @return 返回结果
      */
     @Override
-    public QueryResult<SpUserDTO> listUser(QueryModel queryModel) {
-        QueryWrapper<SpUserDO> queryWrapper = queryModel.toQueryWrapper();
-        IPage<SpUserDO> iPage = queryModel.toPage();
+    public ListResult<SpUserDTO> listUser(QueryParameter queryParameter) {
+        QueryWrapper<SpUserDO> queryWrapper = queryParameter.toQueryWrapper();
+        IPage<SpUserDO> iPage = queryParameter.toPage();
 
         IPage<SpUserDO> page = spUserMapper.findByWrapper(queryWrapper, iPage);
         List<SpUserDTO> spUserDTOList = ObjectConvertUtil.convertList(page.getRecords(), SpUserDTO.class);
-        return QueryResult.build(spUserDTOList, queryModel.getPageInfo(), page.getTotal());
+        return ListResult.build(spUserDTOList, queryParameter.getPageInfo(), page.getTotal());
     }
 }

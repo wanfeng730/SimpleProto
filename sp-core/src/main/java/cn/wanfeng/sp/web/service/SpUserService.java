@@ -1,8 +1,8 @@
 package cn.wanfeng.sp.web.service;
 
 import cn.wanfeng.sp.api.dataobject.SpUserDTO;
-import cn.wanfeng.sp.model.QueryModel;
-import cn.wanfeng.sp.model.QueryResult;
+import cn.wanfeng.sp.model.QueryParameter;
+import cn.wanfeng.sp.model.ListResult;
 
 /**
  * @date: 2025-01-11 16:24
@@ -21,9 +21,9 @@ public interface SpUserService {
     /**
      * 查询用户列表
      *
-     * @param queryModel 查询参数
+     * @param queryParameter 查询参数
      * @return 返回结果
      */
-    QueryResult<SpUserDTO> listUser(QueryModel queryModel);
+    ListResult<SpUserDTO> listUser(QueryParameter queryParameter);
 
 }

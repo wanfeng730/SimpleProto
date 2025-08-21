@@ -3,8 +3,8 @@ package cn.wanfeng.sp.web.controller;
 
 import cn.wanfeng.sp.api.dataobject.SpUserDTO;
 import cn.wanfeng.sp.model.FilterColumn;
-import cn.wanfeng.sp.model.QueryModel;
-import cn.wanfeng.sp.model.QueryResult;
+import cn.wanfeng.sp.model.QueryParameter;
+import cn.wanfeng.sp.model.ListResult;
 import cn.wanfeng.sp.util.ThreadUtil;
 import cn.wanfeng.sp.web.service.SpUserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,17 +34,17 @@ public class SpUserController {
 
     @Operation(summary = "获取用户列表")
     @PostMapping("list_user")
-    public QueryResult<SpUserDTO> listUser(@RequestBody QueryModel queryModel) {
-        return spUserService.listUser(queryModel);
+    public ListResult<SpUserDTO> listUser(@RequestBody QueryParameter queryParameter) {
+        return spUserService.listUser(queryParameter);
     }
 
     @Operation(summary = "简单获取用户列表")
     @PostMapping("simple_list_user")
-    public QueryResult<SpUserDTO> simpleListUser(@RequestBody FilterColumn filterColumn) {
+    public ListResult<SpUserDTO> simpleListUser(@RequestBody FilterColumn filterColumn) {
         ThreadUtil.sleepQuietly(1000);
-        QueryModel queryModel = new QueryModel();
-        queryModel.addFilterColumn(filterColumn);
-        return spUserService.listUser(queryModel);
+        QueryParameter queryParameter = new QueryParameter();
+        queryParameter.addFilterColumn(filterColumn);
+        return spUserService.listUser(queryParameter);
     }
 
 }

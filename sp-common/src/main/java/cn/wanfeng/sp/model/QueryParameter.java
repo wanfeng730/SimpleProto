@@ -27,7 +27,7 @@ import java.util.function.Function;
  * @author: luozh.wanfeng
  */
 @Data
-public class QueryModel {
+public class QueryParameter {
 
     @Schema(description = "过滤字段列表")
     private List<FilterColumn> filterList;
@@ -38,10 +38,10 @@ public class QueryModel {
     @Schema(description = "排序字段列表")
     private List<SortColumn> sortList;
 
-    public QueryModel() {
+    public QueryParameter() {
     }
 
-    public QueryModel(List<FilterColumn> filterList, PageInfo pageInfo, List<SortColumn> sortList) {
+    public QueryParameter(List<FilterColumn> filterList, PageInfo pageInfo, List<SortColumn> sortList) {
         this.filterList = filterList;
         this.pageInfo = pageInfo;
         this.sortList = sortList;
