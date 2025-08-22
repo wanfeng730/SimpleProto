@@ -33,8 +33,8 @@ public class ListResult<T> {
      * @param <T>        数据模型
      * @return 查询结果
      */
-    public static <T> ListResult<T> build(List<T> dataList, PageInfo pageInfo, Long totalCount) {
-        pageInfo.setTotalCount(totalCount);
+    public static <T> ListResult<T> build(List<T> dataList, PageInfo pageInfo, long totalCount) {
+        pageInfo.setTotalCount((int) totalCount);
 
         ListResult<T> result = new ListResult<>();
         result.setDataList(dataList);

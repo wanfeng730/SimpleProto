@@ -17,7 +17,7 @@ public class SortColumn {
     @Schema(description = "字段名")
     private String fieldName;
 
-    @Schema(description = "排序方式")
+    @Schema(description = "排序方式（desc、asc）")
     private String sortType;
 
     public SortColumn() {

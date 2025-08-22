@@ -58,7 +58,7 @@ public class QueryParameter {
         pageInfo.setPageSize(pageSize);
     }
 
-    public void updateTotalCount(Long totalCount) {
+    public void updateTotalCount(Integer totalCount) {
         assertPageInfoNotNull();
         pageInfo.setTotalCount(totalCount);
     }

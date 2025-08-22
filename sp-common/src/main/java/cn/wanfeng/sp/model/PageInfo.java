@@ -20,7 +20,7 @@ public class PageInfo {
     private Integer pageSize;
 
     @Schema(description = "总数")
-    private Long totalCount;
+    private Integer totalCount;
 
     public PageInfo() {
     }
@@ -28,7 +28,7 @@ public class PageInfo {
     public PageInfo(Integer currentPage, Integer pageSize) {
         this.currentPage = currentPage;
         this.pageSize = pageSize;
-        this.totalCount = 0L;
+        this.totalCount = 0;
     }
 
     public void setDefaultCurrentPage() {
