@@ -3,10 +3,7 @@ package cn.wanfeng.sp.util;
 
 import org.springframework.core.io.DefaultResourceLoader;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +16,21 @@ import java.util.Objects;
  * @since: 1.0
  */
 public class ResourceFileUtils {
+
+    /**
+     * 获取资源文件的文件流
+     * @param resourceFilePath 资源文件路径
+     * @return 文件流
+     */
+    public static InputStream getInputStream(String resourceFilePath){
+        DefaultResourceLoader defaultResourceLoader = new DefaultResourceLoader();
+        try {
+            return defaultResourceLoader.getResource(resourceFilePath).getInputStream();
+        } catch (IOException e) {
+            LogUtil.error("获取资源文件流失败 路径：{}", resourceFilePath);
+            return null;
+        }
+    }
 
     /**
      * 获取资源文件夹下的文件
