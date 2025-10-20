@@ -4,6 +4,7 @@ import cn.hutool.http.HttpUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
@@ -40,6 +41,26 @@ public class InputStreamUtils {
             inputStream.close();
         } catch (IOException e) {
             LogUtil.error("InputStream.close 失败", e);
+        }
+    }
+
+    /**
+     * 流转换为字符串 UTF-8
+     * @param inputStream 流
+     * @return 字符串内容
+     */
+    public static String getStringContent(InputStream inputStream){
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append('\n'); // 添加换行符以保持原样（如果有的话）
+            }
+            reader.close();
+            return sb.toString();
+        } catch (IOException e) {
+            return null;
         }
     }
 

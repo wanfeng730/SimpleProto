@@ -3,11 +3,10 @@ package cn.wanfeng.sp.util;
 
 import org.springframework.core.io.DefaultResourceLoader;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * @date: 2024-11-26 23:21
@@ -30,26 +29,6 @@ public class ResourceFileUtils {
             LogUtil.error("获取资源文件流失败 路径：{}", resourceFilePath);
             return null;
         }
-    }
-
-    /**
-     * 获取资源文件夹下的文件
-     *
-     * @param resourceFolderPath 资源文件夹路径
-     * @return 文件列表
-     */
-    public static List<File> listChildFile(String resourceFolderPath) {
-        DefaultResourceLoader defaultResourceLoader = new DefaultResourceLoader();
-        try {
-            File folder = defaultResourceLoader.getResource(resourceFolderPath).getFile();
-            if (folder.isFile()) {
-                return new ArrayList<>();
-            }
-            return Arrays.asList(Objects.requireNonNull(folder.listFiles()));
-        } catch (Exception e) {
-            LogUtil.error("获取资源文件夹[{}]的文件列表失败", resourceFolderPath, e);
-        }
-        return new ArrayList<>();
     }
 
     /**

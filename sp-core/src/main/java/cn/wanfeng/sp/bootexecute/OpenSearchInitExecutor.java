@@ -10,14 +10,13 @@ import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.exception.SpSearchStorageException;
 import cn.wanfeng.sp.localcache.OpenSearchMappingCache;
 import cn.wanfeng.sp.storage.search.SearchStorageClient;
-import cn.wanfeng.sp.util.FileUtils;
+import cn.wanfeng.sp.util.InputStreamUtils;
 import cn.wanfeng.sp.util.LogUtil;
 import cn.wanfeng.sp.util.ResourceFileUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.mapping.Property;
@@ -26,10 +25,10 @@ import org.opensearch.client.transport.endpoints.BooleanResponse;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.io.InputStream;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @date: 2024-11-07 21:20
@@ -45,7 +44,7 @@ public class OpenSearchInitExecutor {
 
     private static final Logger log = LogUtil.getSimpleProtoLogger();
 
-    public static final String DOMAIN_MAPPINGS_RESOURCE_FOLDER = "domain_mappings";
+    public static final String CUSTOM_MAPPINGS_RESOURCE_FILE_PATH = "domain_mappings/custom_mappings.json";
 
     @PostConstruct
     public void initIndex() {
@@ -171,58 +170,56 @@ public class OpenSearchInitExecutor {
      * 执行put自定义OpenSearch Mapping配置
      */
     private void putCustomMappingResource() {
-        List<File> mappingFileList = ResourceFileUtils.listChildFile(DOMAIN_MAPPINGS_RESOURCE_FOLDER);
-        if (CollectionUtils.isEmpty(mappingFileList)) {
-            log.warn("未找到自定义OpenSearch的Mapping配置[resources/{}]，不执行初始化", DOMAIN_MAPPINGS_RESOURCE_FOLDER);
+        InputStream inputStream = ResourceFileUtils.getInputStream(CUSTOM_MAPPINGS_RESOURCE_FILE_PATH);
+        if (Objects.isNull(inputStream)) {
+            log.warn("未找到自定义OpenSearch的Mapping配置文件[{}]，不执行初始化", CUSTOM_MAPPINGS_RESOURCE_FILE_PATH);
             return;
         }
 
         PutMappingRequest.Builder builder = new PutMappingRequest.Builder();
         builder.index(SimpleProtoConfig.dataTable);
 
-        for (File mappingFile : mappingFileList) {
-            String mappingJson = FileUtils.readFileContent(mappingFile);
-            JSONObject properties = JSON.parseObject(mappingJson);
-            for (Map.Entry<String, Object> entry : properties.entrySet()) {
-                String fieldName = entry.getKey();
-                if (!(entry.getValue() instanceof JSONObject fieldConfig)) {
-                    log.error("字段[{}]的mapping配置不是Object格式", fieldName);
-                    continue;
-                }
-                String fieldType = fieldConfig.getString("type");
-                if (StringUtils.isBlank(fieldType)) {
-                    log.error("字段[{}]的mapping配置没有定义type", fieldName);
-                    continue;
-                }
-
-                if (OpenSearchPropertyType.type_keyword.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Keyword)) {
-                    builder.properties(fieldName, ob -> ob.keyword(t -> t));
-                    log.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", mappingFile.getName(), fieldName, fieldType);
-                }
-                if (OpenSearchPropertyType.type_integer.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Integer)) {
-                    builder.properties(fieldName, ob -> ob.integer(t -> t));
-                    log.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", mappingFile.getName(), fieldName, fieldType);
-                }
-                if (OpenSearchPropertyType.type_long.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Long)) {
-                    builder.properties(fieldName, ob -> ob.long_(t -> t));
-                    log.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", mappingFile.getName(), fieldName, fieldType);
-                }
-                if (OpenSearchPropertyType.type_boolean.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Boolean)) {
-                    builder.properties(fieldName, ob -> ob.boolean_(t -> t));
-                    log.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", mappingFile.getName(), fieldName, fieldType);
-                }
-                if (OpenSearchPropertyType.type_date.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Date)) {
-                    builder.properties(fieldName, ob -> ob.date(t -> t.format(SearchStorageClient.DEFAULT_DATE_FORMAT)));
-                    log.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", mappingFile.getName(), fieldName, fieldType);
-                }
+        String mappingJson = InputStreamUtils.getStringContent(inputStream);
+        JSONObject properties = JSON.parseObject(mappingJson);
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            String fieldName = entry.getKey();
+            if (!(entry.getValue() instanceof JSONObject fieldConfig)) {
+                log.error("字段[{}]的mapping配置不是Object格式", fieldName);
+                continue;
+            }
+            String fieldType = fieldConfig.getString("type");
+            if (StringUtils.isBlank(fieldType)) {
+                log.error("字段[{}]的mapping配置没有定义type", fieldName);
+                continue;
             }
 
-            try {
-                boolean acknowledged = openSearchClient.indices().putMapping(builder.build()).acknowledged();
-                log.info("初始化 已加载自定义mapping文件[{}]", mappingFile.getName());
-            } catch (Exception e) {
-                throw new SpException(e, "加载自定义mapping文件失败");
+            if (OpenSearchPropertyType.type_keyword.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Keyword)) {
+                builder.properties(fieldName, ob -> ob.keyword(t -> t));
+                log.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", CUSTOM_MAPPINGS_RESOURCE_FILE_PATH, fieldName, fieldType);
             }
+            if (OpenSearchPropertyType.type_integer.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Integer)) {
+                builder.properties(fieldName, ob -> ob.integer(t -> t));
+                log.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", CUSTOM_MAPPINGS_RESOURCE_FILE_PATH, fieldName, fieldType);
+            }
+            if (OpenSearchPropertyType.type_long.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Long)) {
+                builder.properties(fieldName, ob -> ob.long_(t -> t));
+                log.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", CUSTOM_MAPPINGS_RESOURCE_FILE_PATH, fieldName, fieldType);
+            }
+            if (OpenSearchPropertyType.type_boolean.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Boolean)) {
+                builder.properties(fieldName, ob -> ob.boolean_(t -> t));
+                log.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", CUSTOM_MAPPINGS_RESOURCE_FILE_PATH, fieldName, fieldType);
+            }
+            if (OpenSearchPropertyType.type_date.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Date)) {
+                builder.properties(fieldName, ob -> ob.date(t -> t.format(SearchStorageClient.DEFAULT_DATE_FORMAT)));
+                log.info("初始化OpenSearch自定义Mapping配置[{}]：{} -> {}", CUSTOM_MAPPINGS_RESOURCE_FILE_PATH, fieldName, fieldType);
+            }
+        }
+
+        try {
+            boolean acknowledged = openSearchClient.indices().putMapping(builder.build()).acknowledged();
+            log.info("初始化 已加载自定义mapping文件[{}]", CUSTOM_MAPPINGS_RESOURCE_FILE_PATH);
+        } catch (Exception e) {
+            throw new SpException(e, "加载自定义mapping文件失败");
         }
     }
 }

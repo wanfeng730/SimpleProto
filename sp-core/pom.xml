@@ -28,6 +28,18 @@
                 </configuration>
             </plugin>
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>application.yml</exclude>
+                    <exclude>application-template.yml</exclude>
+                    <exclude>bootstrap.yml</exclude>
+                </excludes>
+            </resource>
+        </resources>
     </build>
 
 
