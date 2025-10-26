@@ -72,9 +72,27 @@ public class SpFile extends SpSysObject implements ISpFile {
         setSuffixByName(name);
     }
 
+    /**
+     * 根据id构造文件对象，默认不获取文件流
+     * @param session session
+     * @param id id
+     */
     public SpFile(SpSession session, Long id) {
         super(session, id);
         if(StringUtils.isNotBlank(fileStorageKey)){
+            setStorage(fileStorageKey);
+        }
+    }
+
+    /**
+     * 根据id构造文件对象
+     * @param session session
+     * @param id id
+     * @param isGetStream 是否获取流
+     */
+    public SpFile(SpSession session, Long id, boolean isGetStream){
+        super(session, id);
+        if(isGetStream && StringUtils.isNotBlank(fileStorageKey)){
             setStorage(fileStorageKey);
         }
     }
