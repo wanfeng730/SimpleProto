@@ -98,8 +98,10 @@ public class SpFile extends SpSysObject implements ISpFile {
     @Override
     protected void beforeCreateStoreAssertAndHandle() {
         super.beforeCreateStoreAssertAndHandle();
-        //fileTag是否合法
+
+        assertNameIsFile();
         assertFileTagIsSupported();
+        assertParentObjectIsFolder();
     }
 
     /**
@@ -108,13 +110,16 @@ public class SpFile extends SpSysObject implements ISpFile {
     @Override
     protected void afterGenerateIdAssertAndHandle() {
         super.afterGenerateIdAssertAndHandle();
-        assertNameIsFile();
         uploadInputStreamIfChanged();
     }
 
     @Override
     protected void beforeUpdateStoreAssertAndHandle() {
         super.beforeUpdateStoreAssertAndHandle();
+
+        assertNameIsFile();
+        assertFileTagIsSupported();
+        assertParentObjectIsFolder();
 
         uploadInputStreamIfChanged();
     }
@@ -196,6 +201,12 @@ public class SpFile extends SpSysObject implements ISpFile {
         FileTag fileTagEnum = FileTag.toEnum(this.fileTag);
         if(FileTag.NONE.equals(fileTagEnum)){
             throw new SpException("Property[fileTag] is not Supported, Please use Method setFileTag() to change [fileTag]");
+        }
+    }
+
+    private void assertParentObjectIsFolder(){
+        if(Objects.nonNull(parentSysObject) && SystemTag.FILE.getValue().equals(parentSysObject.getSystemTag())){
+            throw new SpException("SpFile的父对象不能是SpFile类型");
         }
     }
 

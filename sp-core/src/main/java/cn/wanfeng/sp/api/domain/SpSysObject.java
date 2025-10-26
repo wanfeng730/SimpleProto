@@ -38,7 +38,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
     /**
      * 父级系统对象
      */
-    private ISpSysObject parentSysObject;
+    protected ISpSysObject parentSysObject;
 
     public SpSysObject(SpSession session, String type, String name) {
         super(session, type, name);
@@ -46,14 +46,14 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
 
     public SpSysObject(SpSession session, String type, String name, ISpSysObject parentSysObject, SystemTag systemTag){
         super(session, type, name);
-        updateByParentSysObject(parentSysObject);
+        setPathAndParentInfo(parentSysObject);
         setSystemTag(systemTag);
     }
 
     public SpSysObject(SpSession session, String type, String name, Long parentId, SystemTag systemTag){
         super(session, type, name);
         SpSysObject parentSysObject = new SpSysObject(session, parentId);
-        updateByParentSysObject(parentSysObject);
+        setPathAndParentInfo(parentSysObject);
         setSystemTag(systemTag);
     }
 
@@ -178,11 +178,13 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
 
     @Override
     public void move(ISpSysObject parentSysObject) {
-        updateByParentSysObject(parentSysObject);
+        setPathAndParentInfo(parentSysObject);
     }
 
-    private void updateByParentSysObject(ISpSysObject parentSysObject) {
+    private void setPathAndParentInfo(ISpSysObject parentSysObject) {
         if (Objects.nonNull(parentSysObject)) {
+            //父对象必须是已保存到数据库
+            assertParentObjectStored(parentSysObject);
             this.parentSysObject = parentSysObject;
             this.parentId = parentSysObject.getId();
             this.parentPath = parentSysObject.getPath();
@@ -233,6 +235,19 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
         }
     }
 
+    private void assertPathUnique(){
+        SpDataObjectDO existPathObject = session.databaseStorage().findObjectByPath(SimpleProtoConfig.dataTable, this.path);
+        if(Objects.nonNull(existPathObject)){
+            throw new SpException("路径已存在[%s]，保存到数据表[%s]失败", path, SimpleProtoConfig.dataTable);
+        }
+    }
+
+    protected static void assertParentObjectStored(ISpSysObject parentSysObject){
+        if(parentSysObject.isNewObject()){
+            throw new SpException("父对象未保存，保存当前对象前先对父对象调用store()方法保存");
+        }
+    }
+
     private void linkRootFolderIfNoParent(){
         if(StringUtils.isBlank(this.parentPath)){
             this.parentId = SimpleProtoConfig.rootSysObjectId;
@@ -241,12 +256,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
         }
     }
 
-    private void assertPathUnique(){
-        SpDataObjectDO existPathObject = session.databaseStorage().findObjectByPath(SimpleProtoConfig.dataTable, this.path);
-        if(Objects.nonNull(existPathObject)){
-            throw new SpException("路径已存在[%s]，保存到数据表[%s]失败", path, SimpleProtoConfig.dataTable);
-        }
-    }
+
 
     @Override
     protected void createObjectToStorage() {
