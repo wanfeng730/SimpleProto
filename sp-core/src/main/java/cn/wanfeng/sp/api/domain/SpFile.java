@@ -287,6 +287,10 @@ public class SpFile extends SpSysObject implements ISpFile {
      */
     @Override
     public InputStream getInputStream() {
+        //若该对象没有获取流，先从存储中获取
+        if(Objects.isNull(inputStream) && StringUtils.isNotBlank(fileStorageKey)){
+            setStorage(fileStorageKey);
+        }
         return this.inputStream;
     }
 
