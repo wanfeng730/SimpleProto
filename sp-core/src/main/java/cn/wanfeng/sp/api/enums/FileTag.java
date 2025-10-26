@@ -15,6 +15,10 @@ public enum FileTag {
     AUDIO("audio", "音频文件", new String[]{"mp3"}),
     VIDEO("video", "视频文件", new String[]{"mp4"}),
 
+    PDF("pdf", "PDF文件", new String[]{"pdf"}),
+    DOC("doc", "doc文件", new String[]{"doc"}),
+    DOCX("docx", "docx文件", new String[]{"docx"}),
+
     NONE("The fileTag is Not Supported", "不支持的文件类型", new String[]{});
 
     private String value;
