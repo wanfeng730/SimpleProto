@@ -79,9 +79,6 @@ public class SpFile extends SpSysObject implements ISpFile {
      */
     public SpFile(SpSession session, Long id) {
         super(session, id);
-        if(StringUtils.isNotBlank(fileStorageKey)){
-            setStorage(fileStorageKey);
-        }
     }
 
     /**
