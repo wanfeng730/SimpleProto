@@ -2,6 +2,8 @@ package cn.wanfeng.sp.api.enums;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
+
 /**
  * @date: 2024-12-22 16:38
  * @author: luozh.wanfeng
@@ -19,7 +21,7 @@ public enum FileTag {
     DOC("doc", "doc文件", new String[]{"doc"}),
     DOCX("docx", "docx文件", new String[]{"docx"}),
 
-    NONE("The fileTag is Not Supported", "不支持的文件类型", new String[]{});
+    NONE("Not Supported", "不支持的文件类型", new String[]{});
 
     private String value;
 
@@ -41,6 +43,11 @@ public enum FileTag {
         return valueCN;
     }
 
+    /**
+     * 根据tag值匹配
+     * @param value tag值
+     * @return FileTag
+     */
     public static FileTag toEnum(String value){
         for (FileTag tag : values()) {
             if(StringUtils.equals(tag.getValue(), value)){
@@ -50,4 +57,17 @@ public enum FileTag {
         return NONE;
     }
 
+    /**
+     * 根据文件后缀匹配
+     * @param suffix 后缀
+     * @return FileTag
+     */
+    public static FileTag toEnumBySuffix(String suffix){
+        for (FileTag fileTag : values()) {
+            if(Arrays.asList(fileTag.suffixes).contains(suffix)){
+                return fileTag;
+            }
+        }
+        return NONE;
+    }
 }
