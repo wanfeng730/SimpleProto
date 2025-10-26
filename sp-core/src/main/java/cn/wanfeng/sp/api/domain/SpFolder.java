@@ -18,6 +18,10 @@ public class SpFolder extends SpSysObject implements ISpFolder {
         super(session, type, name, parentSysObject, SystemTag.FOLDER);
     }
 
+    public SpFolder(SpSession session, String type, String name, Long parentId) {
+        super(session, type, name, parentId, SystemTag.FOLDER);
+    }
+
     public SpFolder(SpSession session, String type, String name) {
         super(session, type, name);
         setSystemTag(SystemTag.FOLDER);

@@ -50,6 +50,13 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
         setSystemTag(systemTag);
     }
 
+    public SpSysObject(SpSession session, String type, String name, Long parentId, SystemTag systemTag){
+        super(session, type, name);
+        SpSysObject parentSysObject = new SpSysObject(session, parentId);
+        updateByParentSysObject(parentSysObject);
+        setSystemTag(systemTag);
+    }
+
     public SpSysObject(SpSession session, Long id) {
         super(session, session.databaseStorage().findObjectById(SimpleProtoConfig.dataTable, id));
     }

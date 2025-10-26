@@ -37,7 +37,13 @@ public class SpFile extends SpSysObject implements ISpFile {
 
     public SpFile(SpSession session, String type, String name, ISpSysObject parentSysObject, FileTag fileTag, InputStream inputStream) {
         super(session, type, name, parentSysObject, SystemTag.FILE);
+        setSuffixByName(name);
+        setFileTag(fileTag);
+        setStorage(inputStream);
+    }
 
+    public SpFile(SpSession session, String type, String name, Long parentId, FileTag fileTag, InputStream inputStream) {
+        super(session, type, name, parentId, SystemTag.FILE);
         setSuffixByName(name);
         setFileTag(fileTag);
         setStorage(inputStream);
