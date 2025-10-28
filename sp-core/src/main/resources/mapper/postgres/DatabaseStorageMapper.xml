@@ -110,6 +110,7 @@
         SELECT <include refid="data_object_field"/>
         FROM ${tableName}
         WHERE path LIKE #{path}
+        limit #{limit}
     </select>
 
     <select id="countObjectByLikePathAndTag" resultType="java.lang.Integer">

@@ -85,7 +85,7 @@ public interface DatabaseStorageMapper {
      * @param path 路径
      * @return 对象列表
      */
-    List<SpDataObjectDO> findObjectByLikePath(@Param("tableName") String tableName, @Param("path") String path);
+    List<SpDataObjectDO> findObjectByLikePath(@Param("tableName") String tableName, @Param("path") String path, @Param("limit") int limit);
 
     /**
      * 根据路径模糊查询指定类型子对象

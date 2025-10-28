@@ -15,6 +15,7 @@ import cn.wanfeng.sp.util.SpObjectConvertUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -98,16 +99,21 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
      */
     @Override
     protected void removeObjectFromStorage() {
-        //级联查询出下级所有的sysObject的id
-        List<SpDataObjectDO> childObjectDOList = findAllChildSysObject();
+        // 查询出下级所有的sysObject的id（级联）
+        // 若为文件则一定没有下级，减少查询消耗
+        List<SpDataObjectDO> childObjectDOList = SystemTag.FILE.getValue().equals(systemTag) ? new ArrayList<>() : findAllChildSysObject();
         if(CollectionUtils.isNotEmpty(childObjectDOList)){
             for (SpDataObjectDO spDataObjectDO : childObjectDOList) {
                 if(SystemTag.FILE.getValue().equals(spDataObjectDO.getTag())){
+                    //若为文件，执行SpFile类的删除方法
                     SpFile spFile = new SpFile(session, spDataObjectDO.getId());
                     spFile.remove();
                 }else {
-                    SpFolder spFolder = new SpFolder(session, spDataObjectDO.getId());
-                    spFolder.remove();
+                    //若为文件夹，直接构造SpBaseObject删除（如果使用SpFolder的删除方法，会重复查询子对象，增加消耗）
+                    SpBaseObject folder = new SpBaseObject(session, spDataObjectDO.getId());
+                    folder.remove();
+                    // SpFolder spFolder = new SpFolder(session, spDataObjectDO.getId());
+                    // spFolder.remove();
                 }
             }
         }
@@ -283,7 +289,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
     }
 
     private List<SpDataObjectDO> findAllChildSysObject(){
-        return session.databaseStorage().findObjectByLikePath(SimpleProtoConfig.dataTable, this.path + "/%");
+        return session.databaseStorage().findObjectByLikePath(SimpleProtoConfig.dataTable, this.path + "/%", 20000);
     }
 
     protected void removeObjectById(Long id){
