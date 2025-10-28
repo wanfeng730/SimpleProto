@@ -14,6 +14,7 @@ import cn.wanfeng.sp.util.LogUtil;
 import cn.wanfeng.sp.util.SpObjectConvertUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since: 1.0
  */
 public class SpSysObject extends SpBaseObject implements ISpSysObject{
+
+    private static Logger logger = LogUtil.getSimpleProtoLogger();
 
     protected String systemTag;
 
@@ -59,7 +62,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
     }
 
     public SpSysObject(SpSession session, Long id) {
-        super(session, session.databaseStorage().findObjectById(SimpleProtoConfig.dataTable, id));
+        super(session, findObjectDOByIdAssertExist(session, id));
     }
 
     protected SpSysObject(SpSession session, SpDataObjectDO sysObjectDO){
@@ -184,6 +187,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
 
     @Override
     public void move(ISpSysObject parentSysObject) {
+        // @luozh-code: 移动需要递归修改下级所有对象的路径
         setPathAndParentInfo(parentSysObject);
     }
 
@@ -254,11 +258,20 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
         }
     }
 
+    protected static SpDataObjectDO findObjectDOByIdAssertExist(SpSession session, Long id){
+        SpDataObjectDO objectDO = session.databaseStorage().findObjectById(SimpleProtoConfig.dataTable, id);
+        if(Objects.isNull(objectDO)){
+            throw new SpException("id(%s)不存在，请确认对象是否已被删除", id);
+        }
+        return objectDO;
+    }
+
     private void linkRootFolderIfNoParent(){
         if(StringUtils.isBlank(this.parentPath)){
             this.parentId = SimpleProtoConfig.rootSysObjectId;
             this.parentPath = SimpleProtoConfig.rootSysObjectPath;
             this.path = this.parentPath + this.name;
+            logger.warn("系统对象[name = {}]未指定父对象，将挂接在根路径下，最终路径为[{}]", name, path);
         }
     }
 
