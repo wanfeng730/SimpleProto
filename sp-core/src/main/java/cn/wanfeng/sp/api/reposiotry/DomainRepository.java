@@ -45,9 +45,10 @@ public interface DomainRepository<DomainClass extends SpBaseObject> {
         if (Objects.isNull(typeAnnotation)) {
             return;
         }
+        String actualType = object.getType();
         String defineObjectType = typeAnnotation.value();
-        if (!StringUtils.equals(defineObjectType, object.getType())) {
-            throw new SpException(SpExceptionMessage.objectTypeNotEqualsDefine(object.getId(), defineObjectType));
+        if (!StringUtils.equals(defineObjectType, actualType)) {
+            throw new SpException(SpExceptionMessage.objectTypeNotEqualsDefine(object.getId(), actualType, defineObjectType));
         }
     }
 }
