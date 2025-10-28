@@ -18,8 +18,8 @@ public enum FileTag {
     VIDEO("video", "视频文件", new String[]{"mp4"}),
 
     PDF("pdf", "PDF文件", new String[]{"pdf"}),
-    DOC("doc", "doc文件", new String[]{"doc"}),
-    DOCX("docx", "docx文件", new String[]{"docx"}),
+    WORD("word", "doc文件", new String[]{"doc", "docx"}),
+    EXCEL("excel", "excel文件", new String[]{"xls", "xlsx"}),
 
     NONE("Not Supported", "不支持的文件类型", new String[]{});
 
