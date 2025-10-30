@@ -3,6 +3,7 @@ package cn.wanfeng.sp.util;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * @date: 2024-06-21 12:21
@@ -73,7 +74,10 @@ public class ByteFormatUtils {
      * @param byteCount 字节数
      * @return 转换单位后的显示,默认保留两位小数
      */
-    public static String byteCountToDisplayString(long byteCount){
+    public static String byteCountToDisplayString(Long byteCount){
+        if(Objects.isNull(byteCount)){
+            return null;
+        }
         if (byteCount < 1024) {
             return byteCount + " B";
         }
