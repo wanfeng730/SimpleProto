@@ -19,6 +19,7 @@ public class SpException extends RuntimeException {
 
     public SpException(String message) {
         super(message);
+        this.message = message;
     }
 
     public SpException(String message, Object... args){

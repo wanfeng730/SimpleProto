@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Date;
 
 /**
  * @date: 2024-12-21 16:40
@@ -78,4 +79,35 @@ public class FileUtils extends FileUtil {
         }
         return content.toString();
     }
+
+    /**
+     * 文件名添加当前时间后缀
+     * @param filename 文件名
+     * @param dateTimeFormat 时间格式
+     * @return 文件名
+     */
+    public static String filenameAppendTimeSuffix(String filename, String dateTimeFormat){
+        if(StringUtils.isBlank(filename) || StringUtils.isBlank(dateTimeFormat)){
+            return filename;
+        }
+        String time = DateUtils.format(new Date(), dateTimeFormat);
+        if(!filename.contains(".")){
+            return filename + "_" + time;
+        }
+        int index = filename.lastIndexOf(".");
+        String name = filename.substring(0, index);
+        String suffix = filename.substring(index);
+        return name + "_" + time + suffix;
+    }
+
+    /**
+     * 文件名添加当前时间后缀 yyyyMMdd_HHmmss
+     * @param filename 文件名
+     * @return 文件名
+     */
+    public static String filenameAppendTimeSuffix(String filename){
+        return filenameAppendTimeSuffix(filename, "yyyyMMdd_HHmmss");
+    }
+
+
 }

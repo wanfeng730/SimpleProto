@@ -18,8 +18,18 @@ public enum FileTag {
     VIDEO("video", "视频文件", new String[]{"mp4"}),
 
     PDF("pdf", "PDF文件", new String[]{"pdf"}),
+    OFD("ofd", "OFD文件", new String[]{"ofd"}),
+
     WORD("word", "doc文件", new String[]{"doc", "docx"}),
     EXCEL("excel", "excel文件", new String[]{"xls", "xlsx"}),
+    PPT("ppt", "PPT文件", new String[]{"ppt", "pptx"}),
+
+    ZIP("zip", "ZIP压缩包", new String[]{"zip"}),
+    _7Z("7z", "7Z压缩包", new String[]{"7z"}),
+
+    JAR("jar", "JAVA执行文件", new String[]{"jar"}),
+
+
 
     NONE("Not Supported", "不支持的文件类型", new String[]{});
 

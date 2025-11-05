@@ -196,11 +196,11 @@ public class SpFile extends SpSysObject implements ISpFile {
 
     private void assertFileTagIsSupported(){
         if(StringUtils.isBlank(this.fileTag)){
-            throw new SpException("Property[fileTag] must be not null, Please use Method setFileTag() to update [fileTag]");
+            throw new SpException("SpFile保存文件未指定文件tag类型");
         }
         FileTag fileTagEnum = FileTag.toEnum(this.fileTag);
         if(FileTag.NONE.equals(fileTagEnum)){
-            throw new SpException("Property[fileTag] is not Supported, Please use Method setFileTag() to change [fileTag]");
+            throw new SpException("SpFile保存文件类型不支持");
         }
     }
 

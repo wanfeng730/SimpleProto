@@ -22,5 +22,9 @@ public class PrintColorUtil {
         return CYAN + message + END;
     }
 
+    public static String green(String message){
+        return GREEN + message + END;
+    }
+
 
 }
