@@ -6,6 +6,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @date: 2024-12-01 15:46
@@ -16,11 +17,6 @@ import java.util.*;
 public class ObjectConvertUtil {
 
     /**
-     * 源对象属性缓存
-     */
-    private static Map<String, Field> SOURCE_FIELD_NAME_MAP;
-
-    /**
      * 转换对象类型，属性注入（类型和属性名一样才能转换）
      * @param object 源对象
      * @param targetClass 转换类型
@@ -28,42 +24,8 @@ public class ObjectConvertUtil {
      * @param <TargetType> 转换类型
      */
     public static <TargetType> TargetType convertObject(Object object, Class<TargetType> targetClass) {
-        resetSourceFieldNameMap();
-        try {
-            Constructor<TargetType> constructor = targetClass.getConstructor();
-            if(Objects.isNull(object)){
-                return null;
-            }
-            TargetType targetObject = constructor.newInstance();
-
-            Class<?> objectClass = object.getClass();
-            List<Field> sourceFields = SimpleReflectUtils.getFieldsWithSuperClass(objectClass);
-            addFieldsToSourceFieldNameMap(sourceFields);
-
-            List<Field> targetFields = SimpleReflectUtils.getFieldsWithSuperClass(targetClass);
-            if(CollectionUtils.isEmpty(targetFields)){
-                return targetObject;
-            }
-            for (Field targetField : targetFields) {
-                String targetFieldName = targetField.getName();
-                if(!SOURCE_FIELD_NAME_MAP.containsKey(targetFieldName)){
-                    continue;
-                }
-                Field sourceField = SOURCE_FIELD_NAME_MAP.get(targetFieldName);
-                if(sourceField.getType() != targetField.getType()){
-                    continue;
-                }
-                sourceField.setAccessible(true);
-                targetField.setAccessible(true);
-
-                Object value = sourceField.get(object);
-                targetField.set(targetObject, value);
-                LogUtil.debug("SourceField[Class={}, name={}, value={}] has Converted into ResultObject", sourceField.getType().getName(), sourceField.getName(), value);
-            }
-            return targetObject;
-        } catch (Exception e) {
-            throw new SimpleConvertObjectException(e);
-        }
+        Map<String, Field> sourceFieldNameMap = getObjectFieldNameMap(object);
+        return convertObjectFastly(object, targetClass, sourceFieldNameMap);
     }
 
     /**
@@ -74,29 +36,34 @@ public class ObjectConvertUtil {
      * @param <TargetType> 目标类型
      */
     public static <TargetType> List<TargetType> convertList(List<?> objectList, Class<TargetType> targetClass){
-        if(Objects.isNull(objectList)){
+        if(CollectionUtils.isEmpty(objectList)){
             return null;
         }
         List<?> validObjectList = objectList.stream().filter(Objects::nonNull).toList();
         if(CollectionUtils.isEmpty(validObjectList)){
-            LogUtil.warn("objectList is Empty after Filter Null Elements，convertList() will Return Empty List");
+            LogUtil.error("objectList is Empty after Filter Null Elements，convertList() will Return Empty List");
             return new ArrayList<>();
         }
-        resetSourceFieldNameMap();
-        List<Field> sourceFieldList = SimpleReflectUtils.getFieldsWithSuperClass(validObjectList.getFirst().getClass());
-        addFieldsToSourceFieldNameMap(sourceFieldList);
+        // 获取列表元素Class的属性map
+        Map<String, Field> sourceFieldNameMap = getObjectFieldNameMap(validObjectList.getFirst());
 
         List<TargetType> targetObjectList = new ArrayList<>();
         for (Object sourceObject : objectList) {
-            TargetType targetObject = convertObjectNotSetMap(sourceObject, targetClass);
+            TargetType targetObject = convertObjectFastly(sourceObject, targetClass, sourceFieldNameMap);
             targetObjectList.add(targetObject);
         }
         return targetObjectList;
     }
 
-
-
-    private static <TargetType> TargetType convertObjectNotSetMap(Object object, Class<TargetType> targetClass) {
+    /**
+     * 转换对象类型，属性注入（使用提前定义好的字段映射进行转换，在进行集合转换时提高效率
+     * @param object 源对象
+     * @param targetClass 转换类型
+     * @param sourceFieldNameMap 提前定义的源对象类中的属性映射  属性名称 -> 反射Field对象
+     * @return 转换对象
+     * @param <TargetType> 转换类型
+     */
+    public static <TargetType> TargetType convertObjectFastly(Object object, Class<TargetType> targetClass, Map<String, Field> sourceFieldNameMap) {
         try {
             Constructor<TargetType> constructor = targetClass.getConstructor();
             if(Objects.isNull(object)){
@@ -110,10 +77,10 @@ public class ObjectConvertUtil {
             }
             for (Field targetField : targetFields) {
                 String targetFieldName = targetField.getName();
-                if(!SOURCE_FIELD_NAME_MAP.containsKey(targetFieldName)){
+                if(!sourceFieldNameMap.containsKey(targetFieldName)){
                     continue;
                 }
-                Field sourceField = SOURCE_FIELD_NAME_MAP.get(targetFieldName);
+                Field sourceField = sourceFieldNameMap.get(targetFieldName);
                 if(sourceField.getType() != targetField.getType()){
                     continue;
                 }
@@ -122,7 +89,6 @@ public class ObjectConvertUtil {
 
                 Object value = sourceField.get(object);
                 targetField.set(targetObject, value);
-                LogUtil.debug("属性[Class={}, name={}]已转换到结果中", targetField.getType().getName(), targetField.getName());
             }
             return targetObject;
         } catch (Exception e) {
@@ -130,11 +96,17 @@ public class ObjectConvertUtil {
         }
     }
 
-    private static void resetSourceFieldNameMap(){
-        SOURCE_FIELD_NAME_MAP = new HashMap<>(8);
-    }
-
-    private static void addFieldsToSourceFieldNameMap(List<Field> fields){
-        fields.forEach(field -> SOURCE_FIELD_NAME_MAP.put(field.getName(), field));
+    /**
+     * 将一个对象的属性生成属性名的map
+     * @param object 对象
+     * @return map
+     */
+    private static Map<String, Field> getObjectFieldNameMap(Object object){
+        Class<?> objectClass = object.getClass();
+        List<Field> sourceFields = SimpleReflectUtils.getFieldsWithSuperClass(objectClass);
+        if(CollectionUtils.isEmpty(sourceFields)){
+            return new HashMap<>(2);
+        }
+        return sourceFields.stream().collect(Collectors.toMap(Field::getName, field -> field));
     }
 }
