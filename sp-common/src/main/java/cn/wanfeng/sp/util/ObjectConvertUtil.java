@@ -63,7 +63,7 @@ public class ObjectConvertUtil {
      * @return 转换对象
      * @param <TargetType> 转换类型
      */
-    public static <TargetType> TargetType convertObjectFastly(Object object, Class<TargetType> targetClass, Map<String, Field> sourceFieldNameMap) {
+    private static <TargetType> TargetType convertObjectFastly(Object object, Class<TargetType> targetClass, Map<String, Field> sourceFieldNameMap) {
         try {
             Constructor<TargetType> constructor = targetClass.getConstructor();
             if(Objects.isNull(object)){

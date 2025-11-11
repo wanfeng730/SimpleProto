@@ -1,10 +1,13 @@
 package cn.wanfeng.sp.model;
 
 
+import cn.wanfeng.sp.exception.SpException;
+import cn.wanfeng.sp.util.LogUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * QueryResult: desc.
@@ -40,5 +43,23 @@ public class ListResult<T> {
         result.setDataList(dataList);
         result.setPageInfo(pageInfo);
         return result;
+    }
+
+    /**
+     * 构建查询结果
+     * @param dataList 结果列表
+     * @param queryParameter 查询参数
+     * @param totalCount 总数
+     * @return ListResult
+     * @param <T> 数据模型
+     */
+    public static <T> ListResult<T> build(List<T> dataList, QueryParameter queryParameter, long totalCount){
+        if(Objects.isNull(queryParameter)){
+            throw new SpException("构造ListResult失败，查询参数queryParameter为空");
+        }
+        if(Objects.isNull(queryParameter.getPageInfo())){
+            LogUtil.warn("构造ListResult时的queryParameter分页信息为空");
+        }
+        return build(dataList, queryParameter.getPageInfo(), totalCount);
     }
 }
