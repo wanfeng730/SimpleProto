@@ -37,7 +37,7 @@ public class ObjectConvertUtil {
      */
     public static <TargetType> List<TargetType> convertList(List<?> objectList, Class<TargetType> targetClass){
         if(CollectionUtils.isEmpty(objectList)){
-            return null;
+            return new ArrayList<>();
         }
         List<?> validObjectList = objectList.stream().filter(Objects::nonNull).toList();
         if(CollectionUtils.isEmpty(validObjectList)){
