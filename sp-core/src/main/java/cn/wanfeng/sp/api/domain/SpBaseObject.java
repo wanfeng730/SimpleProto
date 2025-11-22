@@ -14,10 +14,7 @@ import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.exception.SpObjectNotFoundException;
 import cn.wanfeng.sp.exception.SpObjectStoreException;
 import cn.wanfeng.sp.session.SpSession;
-import cn.wanfeng.sp.util.LogUtil;
-import cn.wanfeng.sp.util.SimpleReflectUtils;
-import cn.wanfeng.sp.util.SpObjectConvertUtils;
-import cn.wanfeng.sp.util.UlidUtil;
+import cn.wanfeng.sp.util.*;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotNull;
@@ -229,7 +226,8 @@ public class SpBaseObject implements ISpBaseObject{
             //校验处理
             beforeCreateStoreAssertAndHandle();
             // 生成主键id
-            generateIncreaseId();
+            // generateIncreaseId();
+            generateFireworksId();
             // 生成id后校验处理
             afterGenerateIdAssertAndHandle();
         } else {
@@ -401,6 +399,16 @@ public class SpBaseObject implements ISpBaseObject{
                 session.cacheOperator().unLock(OBJECT_ID_INCREASE_NAME);
             }
         }
+    }
+
+    private void generateFireworksId(){
+        Type typeAnnotation = this.getClass().getAnnotation(Type.class);
+        if(Objects.isNull(typeAnnotation)){
+            throw new SpException("对象生成烟花id失败，未指定@Type注解");
+        }
+        int type = typeAnnotation.number();
+        this.id = FireworksIDGenerator.generate_1(type);
+        LogUtil.debug("已生成烟花id: {} (type = {})", this.id, type);
     }
 
 

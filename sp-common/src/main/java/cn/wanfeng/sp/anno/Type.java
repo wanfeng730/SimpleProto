@@ -15,4 +15,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Type {
     String value();
+
+    int number();
 }

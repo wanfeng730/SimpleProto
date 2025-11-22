@@ -16,7 +16,7 @@ import java.util.Date;
  * @since: 1.0
  */
 @Getter
-@Type(SpObjectTypeConstants.USER)
+@Type(value = SpObjectTypeConstants.USER, number = 100)
 public class SpUser extends SpBaseObject {
 
     /**
