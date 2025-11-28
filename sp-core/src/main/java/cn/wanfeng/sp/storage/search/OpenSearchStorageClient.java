@@ -3,6 +3,7 @@ package cn.wanfeng.sp.storage.search;
 
 import cn.wanfeng.proto.constants.SpExceptionMessage;
 import cn.wanfeng.sp.elastic.ElasticDateTimePattern;
+import cn.wanfeng.sp.exception.SimpleExceptionCode;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.localcache.OpenSearchMappingCache;
 import jakarta.annotation.Resource;
@@ -180,7 +181,10 @@ public class OpenSearchStorageClient implements SearchStorageClient{
         if(valueClass == Date.class || valueClass == LocalDate.class || valueClass == LocalDateTime.class){
             return builder.date(t -> t.format(DEFAULT_DATE_FORMAT));
         }
-        return null;
+        if(valueClass == Double.class){
+            return builder.double_(t -> t);
+        }
+        throw new SpException(SimpleExceptionCode.AUTO_ADAPT_CREATE_MAPPING_NO_MATCH_CLASS, valueClass.getName());
     }
 
     /**

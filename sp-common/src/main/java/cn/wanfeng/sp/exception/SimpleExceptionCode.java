@@ -34,6 +34,8 @@ public enum SimpleExceptionCode implements ExceptionInfoGetter {
 
     FIREWORKS_ID_GENERATE_FAILED("00011", "烟花算法ID生成失败 %s"),
 
+    AUTO_ADAPT_CREATE_MAPPING_NO_MATCH_CLASS("00012", "自动添加OpenSearch mapping失败，未找到适配的Class类型：%s"),
+
 
     /**
      * 未知异常，请根据日志排查原因
