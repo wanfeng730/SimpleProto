@@ -1,6 +1,7 @@
 package cn.wanfeng.sp.storage.search;
 
 import cn.wanfeng.sp.api.domain.ISpBaseObject;
+import cn.wanfeng.sp.api.model.SpPropertyValue;
 import cn.wanfeng.sp.elastic.ElasticDateTimePattern;
 
 import java.io.IOException;
@@ -24,14 +25,14 @@ public interface SearchStorageClient {
      * @param tableName 对象数据表名、索引
      * @param objectData 对象数据
      */
-    void insertObject(String tableName, Map<String, Object> objectData) throws Exception;
+    void insertObject(String tableName, Map<String, SpPropertyValue> objectData) throws Exception;
 
     /**
      * 更新对象数据
      * @param tableName 对象数据表名、索引
      * @param objectData 对象数据
      */
-    void updateObject(String tableName, Map<String, Object> objectData) throws Exception;
+    void updateObject(String tableName, Map<String, SpPropertyValue> objectData) throws Exception;
 
     /**
      * 删除对象数据
@@ -43,16 +44,16 @@ public interface SearchStorageClient {
     /**
      * 批量新建对象数据
      * @param tableName 对象数据表名、索引
-     * @param objectDataList 对象数据列表
+     * @param propertyValueContainerList 对象数据列表
      */
-    void bulkInsertObject(String tableName, List<Map<String, Object>> objectDataList) throws IOException;
+    void bulkInsertObject(String tableName, List<Map<String, SpPropertyValue>> propertyValueContainerList) throws IOException;
 
     /**
      * 批量更新对象数据
      * @param tableName 对象数据表名、索引
-     * @param objectDataList 对象数据列表
+     * @param propertyValueContainerList 对象数据列表
      */
-    void bulkUpdateObject(String tableName, List<Map<String, Object>> objectDataList) throws IOException;
+    void bulkUpdateObject(String tableName, List<Map<String, SpPropertyValue>> propertyValueContainerList) throws IOException;
 
     /**
      * 批量删除对象数据

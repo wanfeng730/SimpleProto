@@ -8,6 +8,7 @@ import cn.wanfeng.sp.anno.ProtoField;
 import cn.wanfeng.sp.anno.Type;
 import cn.wanfeng.sp.api.dataobject.SpDataObjectDO;
 import cn.wanfeng.sp.api.dataobject.SpSettingsDO;
+import cn.wanfeng.sp.api.model.SpPropertyValue;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.exception.SimpleExceptionCode;
 import cn.wanfeng.sp.exception.SpException;
@@ -49,7 +50,7 @@ public class SpBaseObject implements ISpBaseObject{
 
     protected HashMap<String, Integer> propertyIndexNoContainer;
 
-    protected LinkedHashMap<String, Object> propertyValueContainer;
+    protected LinkedHashMap<String, SpPropertyValue> propertyValueContainer;
 
     /**
      * 该对象是否为新建的对象（该id未在数据库中存在）
@@ -202,7 +203,6 @@ public class SpBaseObject implements ISpBaseObject{
 
     @Override
     public void store() {
-        // @luozh-code: 测试批量保存
         // 保存前的一些操作
         beforeStoreOperations();
         // 若为新数据则新建，否则更新
@@ -314,12 +314,12 @@ public class SpBaseObject implements ISpBaseObject{
         recordContainer.putRecord(isDeleteRecord);
 
         //放入propertyValueContainer，生成高级搜索保存的数据
-        propertyValueContainer.put(ID_FIELD, this.id);
-        propertyValueContainer.put(TYPE_FIELD, this.type);
-        propertyValueContainer.put(NAME_FIELD, this.name);
-        propertyValueContainer.put(CREATE_DATE_FIELD, this.createDate);
-        propertyValueContainer.put(MODIFY_DATE_FIELD, this.modifyDate);
-        propertyValueContainer.put(IS_DELETE_FIELD, this.isDelete);
+        propertyValueContainer.put(ID_FIELD, SpPropertyValue.build(Long.class, this.id));
+        propertyValueContainer.put(TYPE_FIELD, SpPropertyValue.build(String.class, this.type));
+        propertyValueContainer.put(NAME_FIELD, SpPropertyValue.build(String.class, this.name));
+        propertyValueContainer.put(CREATE_DATE_FIELD, SpPropertyValue.build(Date.class, this.createDate));
+        propertyValueContainer.put(MODIFY_DATE_FIELD, SpPropertyValue.build(Date.class, this.modifyDate));
+        propertyValueContainer.put(IS_DELETE_FIELD, SpPropertyValue.build(Boolean.class, this.isDelete));
     }
 
     protected void putDeclaredPropertyToContainerAndValueMap(){
@@ -343,7 +343,8 @@ public class SpBaseObject implements ISpBaseObject{
                 ProtoRecord record = ProtoRecordFactory.buildProtoRecordByIndexAndValue(indexNo, fieldClass, value);
                 recordContainer.putRecord(record);
                 //放入propertyValueContainer
-                propertyValueContainer.put(fieldName, value);
+                SpPropertyValue spPropertyValue = SpPropertyValue.build(fieldClass, value);
+                propertyValueContainer.put(fieldName, spPropertyValue);
             } catch (Exception e) {
                 LogUtil.error("Get Property[index={}, name={}] Unknown Exception", indexNo, fieldName, e);
                 throw new SpException(e);
@@ -492,7 +493,7 @@ public class SpBaseObject implements ISpBaseObject{
      * 获取高级搜索存储数据
      */
     @Override
-    public Map<String, Object> getDocument() {
+    public Map<String, SpPropertyValue> getDocument() {
         return this.propertyValueContainer;
     }
 

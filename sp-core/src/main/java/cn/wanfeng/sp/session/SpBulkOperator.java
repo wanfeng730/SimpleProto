@@ -3,6 +3,7 @@ package cn.wanfeng.sp.session;
 import cn.wanfeng.sp.api.dataobject.SpDataObjectDO;
 import cn.wanfeng.sp.api.domain.ISpBaseObject;
 import cn.wanfeng.sp.api.domain.ISpFile;
+import cn.wanfeng.sp.api.model.SpPropertyValue;
 import cn.wanfeng.sp.exception.SimpleExceptionCode;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.util.LogUtil;
@@ -86,18 +87,18 @@ public class SpBulkOperator {
 
     private void bulkCreateObject(List<? extends ISpBaseObject> baseObjectList){
         List<SpDataObjectDO> objectDOList = new ArrayList<>();
-        List<Map<String, Object>> documentList = new ArrayList<>();
+        List<Map<String, SpPropertyValue>> propertyValueContainerList = new ArrayList<>();
         for (ISpBaseObject baseObject : baseObjectList) {
             // 保存对象前执行前置操作，生成数据
             baseObject.beforeStoreOperations();
             // 获取保存数据库存储数据
             objectDOList.add(baseObject.generateDataObjectDO());
             // 获取高级搜索存储数据
-            documentList.add(baseObject.getDocument());
+            propertyValueContainerList.add(baseObject.getDocument());
         }
         // @luozh-code: 设置每批次最大200条执行，防止sql过长
         try {
-            session.bulkCreateObjectToStorage(objectDOList, documentList);
+            session.bulkCreateObjectToStorage(objectDOList, propertyValueContainerList);
         } catch (IOException e) {
             LogUtil.error("批量新建数据保存失败，事务已回滚", e);
         }
@@ -109,18 +110,18 @@ public class SpBulkOperator {
 
     private void bulkUpdateObject(List<? extends ISpBaseObject> baseObjectList){
         List<SpDataObjectDO> objectDOList = new ArrayList<>();
-        List<Map<String, Object>> documentList = new ArrayList<>();
+        List<Map<String, SpPropertyValue>> propertyValueContainerList = new ArrayList<>();
         for (ISpBaseObject baseObject : baseObjectList) {
             // 保存对象前执行前置操作，生成数据
             baseObject.beforeStoreOperations();
             // 获取保存数据库存储数据
             objectDOList.add(baseObject.generateDataObjectDO());
             // 获取高级搜索存储数据
-            documentList.add(baseObject.getDocument());
+            propertyValueContainerList.add(baseObject.getDocument());
         }
         // @luozh-code: 设置每批次最大200条执行，防止sql过长
         try {
-            session.bulkUpdateObjectToStorage(objectDOList, documentList);
+            session.bulkUpdateObjectToStorage(objectDOList, propertyValueContainerList);
         } catch (IOException e) {
             LogUtil.error("批量更新数据保存失败，事务已回滚", e);
         }

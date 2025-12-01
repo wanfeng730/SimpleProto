@@ -5,6 +5,7 @@ import cn.wanfeng.proto.record.ProtoRecord;
 import cn.wanfeng.proto.record.ProtoRecordFactory;
 import cn.wanfeng.sp.api.dataobject.SpDataObjectDO;
 import cn.wanfeng.sp.api.enums.SystemTag;
+import cn.wanfeng.sp.api.model.SpPropertyValue;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.exception.SpObjectNotFoundException;
@@ -214,10 +215,10 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
         recordContainer.putRecord(parentPathRecord);
 
         //放入propertyValueContainer，生成高级搜索保存的数据
-        propertyValueContainer.put(TAG_FIELD, this.systemTag);
-        propertyValueContainer.put(PATH_FIELD, this.path);
-        propertyValueContainer.put(PARENT_ID_FIELD, this.parentId);
-        propertyValueContainer.put(PARENT_PATH_FIELD, this.parentPath);
+        propertyValueContainer.put(TAG_FIELD, SpPropertyValue.build(String.class, this.systemTag));
+        propertyValueContainer.put(PATH_FIELD, SpPropertyValue.build(String.class, this.path));
+        propertyValueContainer.put(PARENT_ID_FIELD, SpPropertyValue.build(Long.class, this.parentId));
+        propertyValueContainer.put(PARENT_PATH_FIELD, SpPropertyValue.build(String.class, this.parentPath));
     }
 
 

@@ -2,6 +2,7 @@ package cn.wanfeng.sp.storage.search;
 
 
 import cn.wanfeng.proto.constants.SpExceptionMessage;
+import cn.wanfeng.sp.api.model.SpPropertyValue;
 import cn.wanfeng.sp.elastic.ElasticDateTimePattern;
 import cn.wanfeng.sp.exception.SimpleExceptionCode;
 import cn.wanfeng.sp.exception.SpException;
@@ -46,24 +47,30 @@ public class OpenSearchStorageClient implements SearchStorageClient{
 
 
     @Override
-    public void insertObject(String tableName, Map<String, Object> objectData) throws Exception {
+    public void insertObject(String tableName, Map<String, SpPropertyValue> propertyValueContainer) throws Exception {
         //根据参数类型自动创建mapping
-        autoAdaptCreateMappingByObjectData(tableName, objectData);
+        autoAdaptCreateMappingByObjectData(tableName, propertyValueContainer);
+        //转换为保存opensearch的map
+        Map<String, Object> document = convertPropertyValueContainerToDocument(propertyValueContainer);
         //将日期的值更换为格式化字符串，以便es查看
-        Map<String, Object> dataMap = generateSearchDataDocument(objectData);
+        document = generateSearchDataDocument(document);
 
-        String id = String.valueOf(dataMap.get(OBJECT_ID_KEY));
-        IndexRequest<Map<String, Object>> indexRequest = IndexRequest.of(b -> b.index(tableName).id(id).document(dataMap));
+        String id = String.valueOf(document.get(OBJECT_ID_KEY));
+        Map<String, Object> finalDocument = document;
+        IndexRequest<Map<String, Object>> indexRequest = IndexRequest.of(b -> b.index(tableName).id(id).document(finalDocument));
         openSearchClient.index(indexRequest);
     }
 
     @Override
-    public void updateObject(String tableName, Map<String, Object> objectData) throws Exception {
+    public void updateObject(String tableName, Map<String, SpPropertyValue> propertyValueContainer) throws Exception {
+        //转换为保存opensearch的map
+        Map<String, Object> document = convertPropertyValueContainerToDocument(propertyValueContainer);
         //将日期的值更换为格式化字符串，以便es查看
-        Map<String, Object> dataMap = generateSearchDataDocument(objectData);
+        document = generateSearchDataDocument(document);
 
-        String id = String.valueOf(dataMap.get(OBJECT_ID_KEY));
-        UpdateRequest<Map, Map> updateRequest = UpdateRequest.of(req -> req.index(tableName).id(id).doc(dataMap));
+        String id = String.valueOf(document.get(OBJECT_ID_KEY));
+        Map<String, Object> finalDocument = document;
+        UpdateRequest<Map, Map> updateRequest = UpdateRequest.of(req -> req.index(tableName).id(id).doc(finalDocument));
         openSearchClient.update(updateRequest, Map.class);
     }
 
@@ -77,15 +84,19 @@ public class OpenSearchStorageClient implements SearchStorageClient{
      * 批量新建对象数据
      *
      * @param tableName      对象数据表名、索引
-     * @param objectDataList 对象数据列表
+     * @param propertyValueContainerList 对象数据列表
      */
     @Override
-    public void bulkInsertObject(String tableName, List<Map<String, Object>> objectDataList) throws IOException {
+    public void bulkInsertObject(String tableName, List<Map<String, SpPropertyValue>> propertyValueContainerList) throws IOException {
         List<BulkOperation> bulkOperationList = new ArrayList<>();
-        for (Map<String, Object> objectData : objectDataList) {
-            Long id = (Long) objectData.get(OBJECT_ID_KEY);
-            LinkedHashMap<String, Object> document = generateSearchDataDocument(objectData);
-            CreateOperation<Map<String, Object>> createOperation = CreateOperation.of(b -> b.index(tableName).id(String.valueOf(id)).document(document));
+        for (Map<String, SpPropertyValue> propertyValueContainer : propertyValueContainerList) {
+            Long id = (Long) propertyValueContainer.get(OBJECT_ID_KEY).getValue();
+            //转换为保存opensearch的map
+            Map<String, Object> document = convertPropertyValueContainerToDocument(propertyValueContainer);
+            document = generateSearchDataDocument(document);
+            Map<String, Object> finalDocument = document;
+
+            CreateOperation<Map<String, Object>> createOperation = CreateOperation.of(b -> b.index(tableName).id(String.valueOf(id)).document(finalDocument));
             BulkOperation bulkOperation = BulkOperation.of(b -> b.create(createOperation));
             bulkOperationList.add(bulkOperation);
         }
@@ -97,15 +108,19 @@ public class OpenSearchStorageClient implements SearchStorageClient{
      * 批量更新对象数据
      *
      * @param tableName      对象数据表名、索引
-     * @param objectDataList 对象数据列表
+     * @param propertyValueContainerList 对象数据列表
      */
     @Override
-    public void bulkUpdateObject(String tableName, List<Map<String, Object>> objectDataList) throws IOException {
+    public void bulkUpdateObject(String tableName, List<Map<String, SpPropertyValue>> propertyValueContainerList) throws IOException {
         List<BulkOperation> bulkOperationList = new ArrayList<>();
-        for (Map<String, Object> objectData : objectDataList) {
-            Long id = (Long) objectData.get(OBJECT_ID_KEY);
-            LinkedHashMap<String, Object> document = generateSearchDataDocument(objectData);
-            UpdateOperation<Map<String, Object>> updateOperation = UpdateOperation.of(b -> b.index(tableName).id(String.valueOf(id)).document(document));
+        for (Map<String, SpPropertyValue> propertyValueContainer : propertyValueContainerList) {
+            Long id = (Long) propertyValueContainer.get(OBJECT_ID_KEY).getValue();
+            //转换为保存opensearch的map
+            Map<String, Object> document = convertPropertyValueContainerToDocument(propertyValueContainer);
+            document = generateSearchDataDocument(document);
+            Map<String, Object> finalDocument = document;
+
+            UpdateOperation<Map<String, Object>> updateOperation = UpdateOperation.of(b -> b.index(tableName).id(String.valueOf(id)).document(finalDocument));
             BulkOperation bulkOperation = BulkOperation.of(b -> b.update(updateOperation));
             bulkOperationList.add(bulkOperation);
         }
@@ -134,20 +149,21 @@ public class OpenSearchStorageClient implements SearchStorageClient{
     /**
      * 根据属性名和值自动创建mapping
      */
-    private void autoAdaptCreateMappingByObjectData(String tableName, Map<String, Object> objectData){
+    private void autoAdaptCreateMappingByObjectData(String tableName, Map<String, SpPropertyValue> objectData){
         boolean needCreateMapping = false;
 
         PutMappingRequest.Builder requestBuilder = new PutMappingRequest.Builder();
         requestBuilder.index(tableName);
 
-        for (Map.Entry<String, Object> entry : objectData.entrySet()) {
+        for (Map.Entry<String, SpPropertyValue> entry : objectData.entrySet()) {
             String fieldName = entry.getKey();
-            Object value = entry.getValue();
+            Class<?> fieldClass = entry.getValue().getClazz();
             //缓存中已存在，则不用新增该mapping
             if(OpenSearchMappingCache.checkFieldExistInCache(fieldName)){
                 continue;
             }
-            requestBuilder.properties(fieldName, ob -> handlePropertyBuilderByValue(ob, value));
+            requestBuilder.properties(fieldName, ob -> handlePropertyBuilderByClass(ob, fieldClass));
+
             needCreateMapping = true;
         }
 
@@ -169,22 +185,37 @@ public class OpenSearchStorageClient implements SearchStorageClient{
      */
     private static ObjectBuilder<Property> handlePropertyBuilderByValue(Property.Builder builder, Object value){
         Class<?> valueClass = value.getClass();
-        if(valueClass == String.class){
+        return handlePropertyBuilderByClass(builder, valueClass);
+    }
+
+    private static ObjectBuilder<Property> handlePropertyBuilderByClass(Property.Builder builder, Class<?> clazz){
+        if(clazz == String.class){
             return builder.keyword(t -> t);
         }
-        if(valueClass == Integer.class || valueClass == Long.class){
+        if(clazz == Integer.class || clazz == Long.class){
             return builder.long_(t -> t);
         }
-        if(valueClass == Boolean.class){
+        if(clazz == Boolean.class){
             return builder.boolean_(t -> t);
         }
-        if(valueClass == Date.class || valueClass == LocalDate.class || valueClass == LocalDateTime.class){
+        if(clazz == Date.class || clazz == LocalDate.class || clazz == LocalDateTime.class){
             return builder.date(t -> t.format(DEFAULT_DATE_FORMAT));
         }
-        if(valueClass == Double.class){
+        if(clazz == Double.class){
             return builder.double_(t -> t);
         }
-        throw new SpException(SimpleExceptionCode.AUTO_ADAPT_CREATE_MAPPING_NO_MATCH_CLASS, valueClass.getName());
+        throw new SpException(SimpleExceptionCode.AUTO_ADAPT_CREATE_MAPPING_NO_MATCH_CLASS, clazz.getName());
+    }
+
+
+    private static Map<String, Object> convertPropertyValueContainerToDocument(Map<String, SpPropertyValue> propertyValueContainer){
+        Map<String, Object> document = new LinkedHashMap<>(propertyValueContainer.size());
+        for (Map.Entry<String, SpPropertyValue> entry : propertyValueContainer.entrySet()) {
+            String fieldName = entry.getKey();
+            SpPropertyValue spPropertyValue = entry.getValue();
+            document.put(fieldName, spPropertyValue.getValue());
+        }
+        return document;
     }
 
     /**
@@ -194,6 +225,9 @@ public class OpenSearchStorageClient implements SearchStorageClient{
         LinkedHashMap<String, Object> convertData = new LinkedHashMap<>();
         for (String key : objectData.keySet()) {
             Object value = objectData.get(key);
+            if(Objects.isNull(value)){
+                continue;
+            }
             Class<?> valueClass = value.getClass();
             if (valueClass == Date.class) {
                 String formatDate = SIMPLE_DATE_FORMAT.format((Date) objectData.get(key));

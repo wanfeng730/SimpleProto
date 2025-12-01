@@ -1,6 +1,7 @@
 package cn.wanfeng.sp.api.domain;
 
 import cn.wanfeng.sp.api.dataobject.SpDataObjectDO;
+import cn.wanfeng.sp.api.model.SpPropertyValue;
 
 import java.util.Date;
 import java.util.Map;
@@ -67,7 +68,7 @@ public interface ISpBaseObject {
     /**
      * 获取高级搜索存储数据
      */
-    Map<String, Object> getDocument();
+    Map<String, SpPropertyValue> getDocument();
 
     /**
      * 保存对象前的操作

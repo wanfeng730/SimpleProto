@@ -2,6 +2,7 @@ package cn.wanfeng.sp.session;
 
 import cn.wanfeng.sp.api.dataobject.SpDataObjectDO;
 import cn.wanfeng.sp.api.dataobject.SpSettingsDO;
+import cn.wanfeng.sp.api.model.SpPropertyValue;
 import cn.wanfeng.sp.cache.CacheOperator;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.storage.file.FileStorageClient;
@@ -59,19 +60,19 @@ public class SpSession {
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void createObjectToStorage(SpDataObjectDO dataObjectDO, Map<String, Object> documentList) throws Exception {
+    public void createObjectToStorage(SpDataObjectDO dataObjectDO, Map<String, SpPropertyValue> document) throws Exception {
         //该对象保存到数据库存储
         databaseStorageMapper.insertObject(SimpleProtoConfig.dataTable, dataObjectDO);
         //该对象保存到高级搜索存储
-        searchStorageClient.insertObject(SimpleProtoConfig.dataTable, documentList);
+        searchStorageClient.insertObject(SimpleProtoConfig.dataTable, document);
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void updateObjectToStorage(SpDataObjectDO sysObjectDO, Map<String, Object> documentList) throws Exception{
+    public void updateObjectToStorage(SpDataObjectDO sysObjectDO, Map<String, SpPropertyValue> document) throws Exception{
         //更新数据库存储
         databaseStorageMapper.updateObject(SimpleProtoConfig.dataTable, sysObjectDO);
         //更新高级搜索存储
-        searchStorageClient.updateObject(SimpleProtoConfig.dataTable, documentList);
+        searchStorageClient.updateObject(SimpleProtoConfig.dataTable, document);
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -102,15 +103,15 @@ public class SpSession {
 
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void bulkCreateObjectToStorage(List<SpDataObjectDO> dataObjectDOList, List<Map<String, Object>> documentList) throws IOException {
+    public void bulkCreateObjectToStorage(List<SpDataObjectDO> dataObjectDOList, List<Map<String, SpPropertyValue>> propertyValueContainerList) throws IOException {
         databaseStorageMapper.batchInsertObject(SimpleProtoConfig.dataTable, dataObjectDOList);
-        searchStorageClient.bulkInsertObject(SimpleProtoConfig.dataTable, documentList);
+        searchStorageClient.bulkInsertObject(SimpleProtoConfig.dataTable, propertyValueContainerList);
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void bulkUpdateObjectToStorage(List<SpDataObjectDO> dataObjectDOList, List<Map<String, Object>> documentList) throws IOException {
+    public void bulkUpdateObjectToStorage(List<SpDataObjectDO> dataObjectDOList, List<Map<String, SpPropertyValue>> propertyValueContainerList) throws IOException {
         databaseStorageMapper.batchUpdateObject(SimpleProtoConfig.dataTable, dataObjectDOList);
-        searchStorageClient.bulkUpdateObject(SimpleProtoConfig.dataTable, documentList);
+        searchStorageClient.bulkUpdateObject(SimpleProtoConfig.dataTable, propertyValueContainerList);
     }
 
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -118,5 +119,4 @@ public class SpSession {
         databaseStorageMapper.batchRemoveObject(SimpleProtoConfig.dataTable, idList);
         searchStorageClient.bulkRemoveObject(SimpleProtoConfig.dataTable, idList);
     }
-
 }

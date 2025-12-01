@@ -5,6 +5,7 @@ import cn.wanfeng.proto.record.ProtoRecord;
 import cn.wanfeng.proto.record.ProtoRecordFactory;
 import cn.wanfeng.sp.api.enums.FileTag;
 import cn.wanfeng.sp.api.enums.SystemTag;
+import cn.wanfeng.sp.api.model.SpPropertyValue;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.exception.SpFileStorageException;
 import cn.wanfeng.sp.exception.SpObjectStoreException;
@@ -173,10 +174,10 @@ public class SpFile extends SpSysObject implements ISpFile {
         ProtoRecord fileStorageKeyRecord = ProtoRecordFactory.buildProtoRecordByIndexAndValue(FILE_STORAGE_KEY_INDEX, fileStorageKey);
         recordContainer.putRecord(fileStorageKeyRecord);
 
-        propertyValueContainer.put(FILE_TAG_FIELD, fileTag);
-        propertyValueContainer.put(SUFFIX_FIELD, suffix);
-        propertyValueContainer.put(FILE_SIZE_FIELD, fileSize);
-        propertyValueContainer.put(FILE_STORAGE_KEY_FIELD, fileStorageKey);
+        propertyValueContainer.put(FILE_TAG_FIELD, SpPropertyValue.build(String.class, fileTag));
+        propertyValueContainer.put(SUFFIX_FIELD, SpPropertyValue.build(String.class, suffix));
+        propertyValueContainer.put(FILE_SIZE_FIELD, SpPropertyValue.build(Long.class, fileSize));
+        propertyValueContainer.put(FILE_STORAGE_KEY_FIELD, SpPropertyValue.build(String.class, fileStorageKey));
     }
 
     private void assertFileExist(File file){
