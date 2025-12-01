@@ -343,9 +343,7 @@ public class SpBaseObject implements ISpBaseObject{
                 ProtoRecord record = ProtoRecordFactory.buildProtoRecordByIndexAndValue(indexNo, fieldClass, value);
                 recordContainer.putRecord(record);
                 //放入propertyValueContainer
-                if(Objects.nonNull(value)){
-                    propertyValueContainer.put(fieldName, value);
-                }
+                propertyValueContainer.put(fieldName, value);
             } catch (Exception e) {
                 LogUtil.error("Get Property[index={}, name={}] Unknown Exception", indexNo, fieldName, e);
                 throw new SpException(e);
