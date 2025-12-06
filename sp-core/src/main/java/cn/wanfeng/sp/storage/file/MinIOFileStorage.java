@@ -1,6 +1,7 @@
 package cn.wanfeng.sp.storage.file;
 
 
+import cn.wanfeng.sp.exception.SimpleExceptionCode;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.exception.SpFileStorageException;
 import cn.wanfeng.sp.util.DateUtils;
@@ -60,7 +61,7 @@ public class MinIOFileStorage implements FileStorageClient {
             BucketExistsArgs bucketExistsArgs = BucketExistsArgs.builder().bucket(bucketName).build();
             boolean exists = client.bucketExists(bucketExistsArgs);
             if(!exists){
-                throw new SpFileStorageException("桶[%s]不存在, 请检查MinIO配置是否正确", bucketName);
+                throw new SpException(SimpleExceptionCode.FILE_STORAGE_BUCKET_NOT_FOUND, bucketName);
             }
         } catch (Exception e) {
             throw new SpFileStorageException(e, "判断桶[%s]是否存在 出现异常", bucketName);

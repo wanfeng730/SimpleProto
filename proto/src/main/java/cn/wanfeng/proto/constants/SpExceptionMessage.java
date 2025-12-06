@@ -33,8 +33,4 @@ public class SpExceptionMessage {
     public static String objectTypeNotEqualsDefine(Long id, String actualType, String defineType) {
         return String.format(OBJECT_TYPE_NOT_EQUALS_DEFINE, id, actualType, defineType);
     }
-
-
-
-    public static final String AUTO_CREATE_MAPPING_ERROR = "自动创建Mapping出现未知异常";
 }

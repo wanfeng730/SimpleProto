@@ -2,6 +2,7 @@ package cn.wanfeng.proto.record;
 
 import cn.wanfeng.proto.constant.ProtoConstants;
 import cn.wanfeng.proto.constants.SpExceptionMessage;
+import cn.wanfeng.sp.exception.SimpleExceptionCode;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.proto.serial.DeserializeMethodContainer;
 import cn.wanfeng.proto.serial.DeserializeUtils;
@@ -335,7 +336,7 @@ public class ProtoRecordFactory {
     private static void assertClassMappingProtoType(Class<?> clazz, Object value){
         Class<?> assertClass = Objects.nonNull(value) ? value.getClass() : clazz;
         if(!CLASS_PROTO_TYPE_MAP.containsKey(assertClass)){
-            throw new SpException("类型[%s]不支持SimpleProto序列化", assertClass.getName());
+            throw new SpException(SimpleExceptionCode.CLASS_NOT_SUPPORT_PROTO_SERIALIZE, assertClass.getName());
         }
     }
 }

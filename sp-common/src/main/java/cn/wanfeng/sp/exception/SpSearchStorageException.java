@@ -9,18 +9,6 @@ package cn.wanfeng.sp.exception;
  */
 public class SpSearchStorageException extends SpException{
 
-    public SpSearchStorageException(String message) {
-        super(message);
-    }
-
-    public SpSearchStorageException(String format, Object... args) {
-        super(format, args);
-    }
-
-    public SpSearchStorageException(Throwable cause) {
-        super(cause);
-    }
-
     public SpSearchStorageException(Throwable cause, String message) {
         super(cause, message);
     }

@@ -24,19 +24,20 @@ public class SpException extends RuntimeException {
 
     public SpException(Throwable cause) {
         super(cause);
+        this.code = SimpleExceptionCode.UNKNOWN_EXCEPTION.getCode();
+        this.message = SimpleExceptionCode.UNKNOWN_EXCEPTION.getMessage();
     }
 
     public SpException(Throwable cause, String message) {
         super(message, cause);
+        this.code = SimpleExceptionCode.UNKNOWN_EXCEPTION.getCode();
+        this.message = message;
     }
 
     public SpException(Throwable cause, String format, Object... args){
         super(String.format(format, args), cause);
-    }
-
-    public SpException(String code, String message) {
-        this.code = code;
-        this.message = message;
+        this.code = SimpleExceptionCode.UNKNOWN_EXCEPTION.getCode();
+        this.message = String.format(format, args);
     }
 
     public SpException(String code, String message, Object[] args) {

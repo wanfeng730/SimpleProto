@@ -1,6 +1,7 @@
 package cn.wanfeng.sp.util;
 
 
+import cn.wanfeng.sp.exception.SimpleExceptionCode;
 import cn.wanfeng.sp.exception.SpException;
 
 import java.security.SecureRandom;
@@ -30,7 +31,7 @@ public class RandomPasswordUtil {
      */
     public static String generatePassword(int length) {
         if (length <= 0) {
-            throw new SpException("RANDOM_PASSWORD_LENGTH_LOWER_ZERO", "生成随机密码的位数不能小于等于0 length: %d", length);
+            throw new SpException(SimpleExceptionCode.RANDOM_PASSWORD_LENGTH_LOWER_ZERO, length);
         }
         // 确保密码包含至少一个数字、一个大写字母和一个小写字母
         char[] password = new char[length];

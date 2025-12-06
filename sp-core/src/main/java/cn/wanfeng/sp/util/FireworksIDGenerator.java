@@ -1,5 +1,6 @@
 package cn.wanfeng.sp.util;
 
+import cn.wanfeng.sp.exception.SimpleExceptionCode;
 import cn.wanfeng.sp.exception.SpException;
 import org.slf4j.Logger;
 
@@ -51,15 +52,15 @@ public class FireworksIDGenerator {
     public static long generate_1(int type){
         // 校验类型数字
         if(type < 100 || type > 921){
-            throw new SpException("烟花ID生成失败 type = {}, 不在合法范围 100~921 中", type);
+            throw new SpException(SimpleExceptionCode.FIREWORKS_ID_GENERATE_FAILED_TYPE_OUT_OF_RANGE, type);
         }
 
         long secondOffset = (System.currentTimeMillis() - START_TIME) / 1000;
         if(secondOffset <= 0){
-            throw new SpException("烟花ID生成失败 startTime = {}，开始时间不能大于等于当前时间", type);
+            throw new SpException(SimpleExceptionCode.FIREWORKS_ID_GENERATE_FAILED_START_TIME_GT_END, type);
         }
         if(secondOffset > MAX_SECOND_OFFSET){
-            throw new SpException("烟花ID生成失败 secondOffset = {}，时间偏移量超过最大值 9999999999", secondOffset);
+            throw new SpException(SimpleExceptionCode.FIREWORKS_ID_GENERATE_FAILED_OFFSET_GT_MAX, secondOffset);
         }
 
         //若与上次生成的id为同一秒钟，则进行序列号自增

@@ -1,7 +1,6 @@
 package cn.wanfeng.sp.storage.search;
 
 
-import cn.wanfeng.proto.constants.SpExceptionMessage;
 import cn.wanfeng.sp.api.model.SpPropertyValue;
 import cn.wanfeng.sp.elastic.ElasticDateTimePattern;
 import cn.wanfeng.sp.exception.SimpleExceptionCode;
@@ -173,7 +172,7 @@ public class OpenSearchStorageClient implements SearchStorageClient{
                 PutMappingRequest request = requestBuilder.build();
                 acknowledged = openSearchClient.indices().putMapping(request).acknowledged();
             } catch (IOException e) {
-                throw new SpException(SpExceptionMessage.AUTO_CREATE_MAPPING_ERROR, e);
+                throw new SpException(e, "自动创建Mapping出现未知异常");
             }
         }
     }

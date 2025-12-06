@@ -6,6 +6,7 @@ import cn.wanfeng.proto.record.ProtoRecordFactory;
 import cn.wanfeng.sp.api.enums.FileTag;
 import cn.wanfeng.sp.api.enums.SystemTag;
 import cn.wanfeng.sp.api.model.SpPropertyValue;
+import cn.wanfeng.sp.exception.SimpleExceptionCode;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.exception.SpFileStorageException;
 import cn.wanfeng.sp.exception.SpObjectStoreException;
@@ -185,13 +186,13 @@ public class SpFile extends SpSysObject implements ISpFile {
             throw new SpObjectStoreException("file为空");
         }
         if(!file.exists()){
-            throw new SpObjectStoreException("文件[%s]不存在", file.getAbsolutePath());
+            throw new SpException(SimpleExceptionCode.LOCAL_FILE_NOT_EXIST, file.getAbsolutePath());
         }
     }
 
     private void assertNameIsFile(){
         if(!this.name.contains(".")){
-            throw new SpObjectStoreException("name[%s]不是一个文件名", this.name);
+            throw new SpException(SimpleExceptionCode.FILE_NAME_FORMAT_INVALID, this.name);
         }
     }
 

@@ -9,21 +9,10 @@ package cn.wanfeng.sp.exception;
  */
 public class SpFileStorageException extends SpException{
 
-    public SpFileStorageException(Throwable cause) {
-        super(cause);
-    }
-
     public SpFileStorageException(Throwable cause, String format, Object... args) {
         super(cause, format, args);
     }
 
-    public SpFileStorageException(Throwable cause, String message) {
-        super(cause, message);
-    }
-
-    public SpFileStorageException(String format, Object... args) {
-        super(format, args);
-    }
 
     public SpFileStorageException(String message) {
         super(message);

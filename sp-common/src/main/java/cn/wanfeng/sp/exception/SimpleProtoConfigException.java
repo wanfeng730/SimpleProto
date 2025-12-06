@@ -9,22 +9,6 @@ package cn.wanfeng.sp.exception;
  */
 public class SimpleProtoConfigException extends SpException{
 
-    public SimpleProtoConfigException(Throwable cause) {
-        super(cause);
-    }
-
-    public SimpleProtoConfigException(Throwable cause, String format, Object... args) {
-        super(cause, format, args);
-    }
-
-    public SimpleProtoConfigException(Throwable cause, String message) {
-        super(cause, message);
-    }
-
-    public SimpleProtoConfigException(String format, Object... args) {
-        super(format, args);
-    }
-
     public SimpleProtoConfigException(String message) {
         super(message);
     }

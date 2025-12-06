@@ -7,6 +7,7 @@ import cn.wanfeng.sp.api.dataobject.SpDataObjectDO;
 import cn.wanfeng.sp.api.enums.SystemTag;
 import cn.wanfeng.sp.api.model.SpPropertyValue;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
+import cn.wanfeng.sp.exception.SimpleExceptionCode;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.exception.SpObjectStoreException;
 import cn.wanfeng.sp.session.SpSession;
@@ -248,7 +249,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
     private void assertPathUnique(){
         SpDataObjectDO existPathObject = session.databaseStorage().findObjectByPath(SimpleProtoConfig.dataTable, this.path);
         if(Objects.nonNull(existPathObject)){
-            throw new SpException("路径已存在[%s]，保存到数据表[%s]失败", path, SimpleProtoConfig.dataTable);
+            throw new SpException(SimpleExceptionCode.OBJECT_PATH_EXIST_STORE_FAILED, path, SimpleProtoConfig.dataTable);
         }
     }
 
@@ -261,7 +262,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
     protected static SpDataObjectDO findObjectDOByIdAssertExist(SpSession session, Long id){
         SpDataObjectDO objectDO = session.databaseStorage().findObjectById(SimpleProtoConfig.dataTable, id);
         if(Objects.isNull(objectDO)){
-            throw new SpException("id(%s)不存在，请确认对象是否已被删除", id);
+            throw new SpException(SimpleExceptionCode.OBJECT_ID_NOT_FOUND, id);
         }
         return objectDO;
     }
@@ -319,7 +320,7 @@ public class SpSysObject extends SpBaseObject implements ISpSysObject{
 
     private void assertPathFoundFromDatabase(String path, SpDataObjectDO objectDO){
         if(Objects.isNull(objectDO)){
-            throw new SpObjectNotFoundException("Not Found Path[%s] from Database", path);
+            throw new SpException(SimpleExceptionCode.OBJECT_PATH_NOT_FOUND, path);
         }
     }
 }

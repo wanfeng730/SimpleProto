@@ -9,22 +9,6 @@ package cn.wanfeng.sp.exception;
  */
 public class SpObjectStoreException extends SpException{
 
-    public SpObjectStoreException(Throwable cause) {
-        super(cause);
-    }
-
-    public SpObjectStoreException(Throwable cause, String format, Object... args) {
-        super(cause, format, args);
-    }
-
-    public SpObjectStoreException(Throwable cause, String message) {
-        super(cause, message);
-    }
-
-    public SpObjectStoreException(String format, Object... args) {
-        super(format, args);
-    }
-
     public SpObjectStoreException(String message) {
         super(message);
     }

@@ -40,6 +40,26 @@ public enum SimpleExceptionCode implements ExceptionInfoGetter {
 
     OBJECT_ID_NOT_FOUND("00013", "对象id（%s）不存在"),
 
+    OBJECT_PATH_EXIST_STORE_FAILED("00014", "路径已存在[%s]，保存到数据表[%s]失败"),
+
+    OBJECT_PATH_NOT_FOUND("00015", "对象路径（%s）不存在"),
+
+    FILE_STORAGE_BUCKET_NOT_FOUND("00016", "桶[%s]不存在, 请检查MinIO配置是否正确"),
+
+    RANDOM_PASSWORD_LENGTH_LOWER_ZERO("00017", "生成随机密码的位数不能小于等于0 length: %d"),
+
+    CLASS_NOT_SUPPORT_PROTO_SERIALIZE("00018", "类型[%s]不支持SimpleProto序列化"),
+
+    LOCAL_FILE_NOT_EXIST("00019", "文件[%s]不存在"),
+
+    FILE_NAME_FORMAT_INVALID("00020", "name[%s]不是一个文件名"),
+
+    FIREWORKS_ID_GENERATE_FAILED_TYPE_OUT_OF_RANGE("00021", "烟花ID生成失败 type = {}, 不在合法范围 100~921 中"),
+    FIREWORKS_ID_GENERATE_FAILED_START_TIME_GT_END("00022", "烟花ID生成失败 startTime = {}，开始时间不能大于等于当前时间"),
+    FIREWORKS_ID_GENERATE_FAILED_OFFSET_GT_MAX("00023", "烟花ID生成失败 secondOffset = {}，时间偏移量超过最大值 9999999999"),
+
+
+
     /**
      * 未知异常，请根据日志排查原因
      */
