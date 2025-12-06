@@ -22,13 +22,6 @@ public class SpException extends RuntimeException {
         this.message = message;
     }
 
-    @Deprecated
-    public SpException(String message, Object... args){
-        super(String.format(message, args));
-        this.message = String.format(message, args);
-        this.args = args;
-    }
-
     public SpException(Throwable cause) {
         super(cause);
     }

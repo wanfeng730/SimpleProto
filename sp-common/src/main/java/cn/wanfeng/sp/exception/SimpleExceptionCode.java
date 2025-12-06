@@ -16,6 +16,8 @@ public enum SimpleExceptionCode implements ExceptionInfoGetter {
     BULK_STORE_NOT_SUPPORT_FILE_OBJECT("00002", "批量保存暂不支持文件类型的对象，请检查"),
 
 
+
+
     QUERY_MODEL_TO_WRAPPER_HAS_BLANK_FIELD_NAME("00003", "查询参数中不允许存在空的字段名，请检查"),
 
     QUERY_MODEL_TO_WRAPPER_OPERATOR_ERROR("00004", "查询参数中查询字段[%s]的操作符不为可选项（1~16），请检查"),
@@ -36,6 +38,7 @@ public enum SimpleExceptionCode implements ExceptionInfoGetter {
 
     AUTO_ADAPT_CREATE_MAPPING_NO_MATCH_CLASS("00012", "自动添加OpenSearch mapping失败，未找到适配的Class类型：%s"),
 
+    OBJECT_ID_NOT_FOUND("00013", "对象id（%s）不存在"),
 
     /**
      * 未知异常，请根据日志排查原因

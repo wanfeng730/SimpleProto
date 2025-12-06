@@ -8,7 +8,6 @@ import cn.wanfeng.sp.api.enums.SystemTag;
 import cn.wanfeng.sp.api.model.SpPropertyValue;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.exception.SpException;
-import cn.wanfeng.sp.exception.SpObjectNotFoundException;
 import cn.wanfeng.sp.exception.SpObjectStoreException;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.LogUtil;

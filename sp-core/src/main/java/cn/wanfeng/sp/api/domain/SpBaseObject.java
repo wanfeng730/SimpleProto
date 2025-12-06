@@ -12,7 +12,6 @@ import cn.wanfeng.sp.api.model.SpPropertyValue;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.exception.SimpleExceptionCode;
 import cn.wanfeng.sp.exception.SpException;
-import cn.wanfeng.sp.exception.SpObjectNotFoundException;
 import cn.wanfeng.sp.exception.SpObjectStoreException;
 import cn.wanfeng.sp.session.SpSession;
 import cn.wanfeng.sp.util.*;
@@ -393,7 +392,7 @@ public class SpBaseObject implements ISpBaseObject{
                     session.databaseStorage().updateSettings(SimpleProtoConfig.settingsTable, settingsDO);
                 }
             } catch (Exception e) {
-                throw new SpException("生成自增id时出现未知异常", e);
+                throw new SpException(e, "生成自增id时出现未知异常");
             } finally {
                 session.cacheOperator().unLock(OBJECT_ID_INCREASE_NAME);
             }
@@ -507,7 +506,7 @@ public class SpBaseObject implements ISpBaseObject{
 
     protected static void assertIdFoundFromDatabase(Long id, SpDataObjectDO dataObjectDO) {
         if (Objects.isNull(dataObjectDO)) {
-            throw new SpObjectNotFoundException("Not Found id[%d] from Database", id);
+            throw new SpException(SimpleExceptionCode.OBJECT_ID_NOT_FOUND, id);
         }
     }
 }
