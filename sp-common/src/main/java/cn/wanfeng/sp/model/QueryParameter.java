@@ -11,10 +11,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -33,6 +33,7 @@ public class QueryParameter {
     private List<FilterColumn> filterList;
 
     @Schema(description = "分页信息")
+    @NotNull
     private PageInfo pageInfo;
 
     @Schema(description = "排序字段列表")
@@ -47,7 +48,7 @@ public class QueryParameter {
         this.sortList = sortList;
     }
 
-    public void addFilterColumn(@NotNull FilterColumn filterColumn) {
+    public void addFilterColumn(FilterColumn filterColumn) {
         assertFilterListNotNull();
         filterList.add(filterColumn);
     }

@@ -9,11 +9,11 @@ import cn.wanfeng.sp.storage.file.FileStorageClient;
 import cn.wanfeng.sp.storage.mapper.postgres.DatabaseStorageMapper;
 import cn.wanfeng.sp.storage.search.SearchStorageClient;
 import jakarta.annotation.Resource;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;

@@ -6,12 +6,17 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
 import org.springframework.boot.web.servlet.filter.OrderedHiddenHttpMethodFilter;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -86,5 +91,43 @@ public class SimpleWebMvcConfiguration extends WebMvcConfigurationSupport {
 
         // 转换器放在第二个位置，保证swagger正常访问，时间格式可以正常转换
         converters.add(1, converter);
+    }
+
+
+    /**
+     * 配置校验消息源（国际化/自定义提示）
+     */
+    @Bean
+    public MessageSource validationMessageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("classpath:messages");
+        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setCacheSeconds(3600);
+        return messageSource;
+    }
+
+    /**
+     * 配置 Validator 核心Bean（整合Hibernate Validator + 自定义消息源）
+     */
+    @Bean
+    public Validator validator() {
+        LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
+        validator.setValidationMessageSource(validationMessageSource());
+        // validator.getValidationPropertyMap().put(
+        //         "hibernate.validator.fail_fast", "true"
+        // );
+        // 可选：指定 Hibernate Validator 提供商
+        validator.setProviderClass(HibernateValidator.class);
+
+        return validator;
+    }
+
+    /**
+     * 重写 WebMvcConfigurationSupport 的 getValidator 方法
+     * 让 Spring MVC 接管此 Validator 进行参数校验
+     */
+    @Override
+    protected Validator getValidator() {
+        return validator();
     }
 }
