@@ -3,6 +3,8 @@ package cn.wanfeng.sp.config.opensearch;
 import cn.hutool.core.thread.ThreadFactoryBuilder;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.util.LogUtil;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Resource;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -48,7 +50,11 @@ public class OpenSearchClientConfiguration {
                 .setHttpClientConfigCallback(httpClientBuilder -> initOpenSearchHttpClient(httpClientBuilder, credentialsProvider))
                 .build();
 
-        final OpenSearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        // 保存opensearch的数据时序列化所有字段（包括 null）
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
+        final OpenSearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper(objectMapper));
+
         OpenSearchClient openSearchClient = new OpenSearchClient(transport);
         log.info("初始化 OpenSearch客户端完成");
         return openSearchClient;

@@ -52,11 +52,10 @@ public class OpenSearchStorageClient implements SearchStorageClient{
         //转换为保存opensearch的map
         Map<String, Object> document = convertPropertyValueContainerToDocument(propertyValueContainer);
         //将日期的值更换为格式化字符串，以便es查看
-        document = generateSearchDataDocument(document);
+        convertDateValue(document);
 
         String id = String.valueOf(document.get(OBJECT_ID_KEY));
-        Map<String, Object> finalDocument = document;
-        IndexRequest<Map<String, Object>> indexRequest = IndexRequest.of(b -> b.index(tableName).id(id).document(finalDocument));
+        IndexRequest<Map<String, Object>> indexRequest = IndexRequest.of(b -> b.index(tableName).id(id).document(document));
         openSearchClient.index(indexRequest);
     }
 
@@ -65,11 +64,10 @@ public class OpenSearchStorageClient implements SearchStorageClient{
         //转换为保存opensearch的map
         Map<String, Object> document = convertPropertyValueContainerToDocument(propertyValueContainer);
         //将日期的值更换为格式化字符串，以便es查看
-        document = generateSearchDataDocument(document);
+        convertDateValue(document);
 
         String id = String.valueOf(document.get(OBJECT_ID_KEY));
-        Map<String, Object> finalDocument = document;
-        UpdateRequest<Map, Map> updateRequest = UpdateRequest.of(req -> req.index(tableName).id(id).doc(finalDocument));
+        UpdateRequest<Map, Map> updateRequest = UpdateRequest.of(req -> req.index(tableName).id(id).doc(document));
         openSearchClient.update(updateRequest, Map.class);
     }
 
@@ -92,10 +90,9 @@ public class OpenSearchStorageClient implements SearchStorageClient{
             Long id = (Long) propertyValueContainer.get(OBJECT_ID_KEY).getValue();
             //转换为保存opensearch的map
             Map<String, Object> document = convertPropertyValueContainerToDocument(propertyValueContainer);
-            document = generateSearchDataDocument(document);
-            Map<String, Object> finalDocument = document;
+            convertDateValue(document);
 
-            CreateOperation<Map<String, Object>> createOperation = CreateOperation.of(b -> b.index(tableName).id(String.valueOf(id)).document(finalDocument));
+            CreateOperation<Map<String, Object>> createOperation = CreateOperation.of(b -> b.index(tableName).id(String.valueOf(id)).document(document));
             BulkOperation bulkOperation = BulkOperation.of(b -> b.create(createOperation));
             bulkOperationList.add(bulkOperation);
         }
@@ -116,10 +113,9 @@ public class OpenSearchStorageClient implements SearchStorageClient{
             Long id = (Long) propertyValueContainer.get(OBJECT_ID_KEY).getValue();
             //转换为保存opensearch的map
             Map<String, Object> document = convertPropertyValueContainerToDocument(propertyValueContainer);
-            document = generateSearchDataDocument(document);
-            Map<String, Object> finalDocument = document;
+            convertDateValue(document);
 
-            UpdateOperation<Map<String, Object>> updateOperation = UpdateOperation.of(b -> b.index(tableName).id(String.valueOf(id)).document(finalDocument));
+            UpdateOperation<Map<String, Object>> updateOperation = UpdateOperation.of(b -> b.index(tableName).id(String.valueOf(id)).document(document));
             BulkOperation bulkOperation = BulkOperation.of(b -> b.update(updateOperation));
             bulkOperationList.add(bulkOperation);
         }
@@ -220,8 +216,7 @@ public class OpenSearchStorageClient implements SearchStorageClient{
     /**
      * 将日期数据转换为yyyy-MM-dd HH:mm:ss.SSS进行es创建，以便Kibana显示对应的日期格式
      */
-    private static LinkedHashMap<String, Object> generateSearchDataDocument(Map<String, Object> objectData){
-        LinkedHashMap<String, Object> convertData = new LinkedHashMap<>();
+    private static void convertDateValue(Map<String, Object> objectData){
         for (String key : objectData.keySet()) {
             Object value = objectData.get(key);
             if(Objects.isNull(value)){
@@ -230,22 +225,20 @@ public class OpenSearchStorageClient implements SearchStorageClient{
             Class<?> valueClass = value.getClass();
             if (valueClass == Date.class) {
                 String formatDate = SIMPLE_DATE_FORMAT.format((Date) objectData.get(key));
-                convertData.put(key, formatDate);
+                objectData.put(key, formatDate);
                 continue;
             }
             if (valueClass == LocalDateTime.class) {
                 String formatDate = DATE_TIME_FORMATTER.format((LocalDateTime) objectData.get(key));
-                convertData.put(key, formatDate);
+                objectData.put(key, formatDate);
                 continue;
             }
             if (valueClass == LocalDate.class) {
                 String formatDate = DATE_TIME_FORMATTER.format((LocalDate) value);
-                convertData.put(key, formatDate);
+                objectData.put(key, formatDate);
                 continue;
             }
-            convertData.put(key, value);
         }
-        return convertData;
     }
 
 }
