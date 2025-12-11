@@ -89,6 +89,7 @@ public class OpenSearchStorageClient implements SearchStorageClient{
         for (Map<String, SpPropertyValue> propertyValueContainer : propertyValueContainerList) {
             Long id = (Long) propertyValueContainer.get(OBJECT_ID_KEY).getValue();
             //转换为保存opensearch的map
+            autoAdaptCreateMappingByObjectData(tableName, propertyValueContainer);
             Map<String, Object> document = convertPropertyValueContainerToDocument(propertyValueContainer);
             convertDateValue(document);
 
