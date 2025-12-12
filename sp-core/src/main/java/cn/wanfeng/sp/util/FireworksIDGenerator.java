@@ -9,11 +9,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * FireworksIDGenerator: 烟花id生成算法.
- * 格式组成为
+ * long类型十进制数字从左到右的格式组成为
  *  3位  自定义的对象类型数值（100~921）
  *  10位 秒数偏移量的掩码加密数字
  *  3位  同一秒内的并发序列号（000~999）
- *  3位  随机数
+ *  3位  随机数（必要时将3位随机数改为 1位节点id + 2位随机数）
  *
  * @date: 2025-11-22 19:49
  * @author: luozh.wanfeng
