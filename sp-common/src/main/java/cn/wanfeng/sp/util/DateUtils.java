@@ -16,9 +16,9 @@ import java.util.Date;
  */
 public class DateUtils extends DateUtil {
 
-    private static final String DEFAULT_CURRENT_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String DEFAULT_FORMAT_DATE_TIME = "yyyy-MM-dd HH:mm:ss";
 
-    private static final String DEFAULT_CURRENT_MILLIS_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
+    private static final String DEFAULT_FORMAT_DATE_TIME_MILLIS = "yyyy-MM-dd HH:mm:ss.SSS";
 
     /**
      * 用于当前时间显示的格式，不使用空格避免不兼容
@@ -40,11 +40,11 @@ public class DateUtils extends DateUtil {
     }
 
     public static String currentDateTime() {
-        return format(new Date(), DEFAULT_CURRENT_FORMAT);
+        return format(new Date(), DEFAULT_FORMAT_DATE_TIME);
     }
 
     public static String currentDateTimeMillis() {
-        return format(new Date(), DEFAULT_CURRENT_MILLIS_FORMAT);
+        return format(new Date(), DEFAULT_FORMAT_DATE_TIME_MILLIS);
     }
 
     /**
@@ -59,5 +59,7 @@ public class DateUtils extends DateUtil {
         return Date.from(zonedDateTime.toInstant());
     }
 
-
+    public static String formatWithMillis(Date date){
+        return format(date, DEFAULT_FORMAT_DATE_TIME_MILLIS);
+    }
 }

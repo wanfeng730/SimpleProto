@@ -6,6 +6,7 @@ import cn.wanfeng.sp.util.LogUtil;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -22,6 +23,7 @@ public class SimpleProtoConfig {
     public static String appName;
     public static String appPort;
     public static String appContextPath;
+    public static String[] corsAllowedOriginPatterns;
 
     public static String currentScheme;
     public static String dataTable;
@@ -141,6 +143,10 @@ public class SimpleProtoConfig {
         swaggerAuthorEmail = environment.getProperty("simpleproto.swaggerAuthorEmail");
         swaggerDescription = environment.getProperty("simpleproto.swaggerDescription");
         swaggerVersion = environment.getProperty("simpleproto.swaggerVersion");
+
+        String patternsStr = environment.getProperty("simpleproto.corsAllowedOriginPatterns");
+        boolean isManyPatterns = StringUtils.isNotBlank(patternsStr) && patternsStr.contains(",");
+        corsAllowedOriginPatterns = isManyPatterns ? patternsStr.replace(" ", "").split(",") : new String[]{};
 
         log.info("初始化 SimpleProtoConfig配置完成");
     }

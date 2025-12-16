@@ -1,11 +1,15 @@
 package cn.wanfeng.sp.config.webmvc;
 
 
+import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.util.LogUtil;
+import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import jakarta.annotation.Resource;
+import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
 import org.springframework.boot.web.servlet.filter.OrderedHiddenHttpMethodFilter;
@@ -38,6 +42,9 @@ public class SimpleWebMvcConfiguration extends WebMvcConfigurationSupport {
     // 一天
     private static final long MAX_AGE = 24 * 60 * 60;
 
+    @Resource
+    private SimpleProtoConfig simpleProtoConfig;
+
     @Bean
     public OrderedHiddenHttpMethodFilter hiddenHttpMethodFilter() {
         return new OrderedHiddenHttpMethodFilter();
@@ -45,16 +52,22 @@ public class SimpleWebMvcConfiguration extends WebMvcConfigurationSupport {
 
     /**
      * 解决跨域问题
+     *  前端配置了withCredentials: true 就不允许配置allowedOriginPatterns = *
      */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        String[] allowedOriginPatterns = SimpleProtoConfig.corsAllowedOriginPatterns;
+        if(ArrayUtils.isEmpty(allowedOriginPatterns)){
+            allowedOriginPatterns = new String[]{"http://localhost:*"};
+        }
         registry.addMapping("/**")         // 对当前路径下的所有请求都应用当前的跨域配置
-                .allowedOriginPatterns("*")         // 替换这个
+                .allowedOriginPatterns(allowedOriginPatterns)         // 替换这个
                 .allowedMethods("*")                // 允许的请求方法，可以指定具体的，如："GET"、"POST"、"PUT"、"DELETE"
                 .allowedHeaders("*")                // 允许的请求头类型，可以指定具体的，如："Content-Type", "Authorization
                 .allowCredentials(true)             // 允许凭证
                 .maxAge(MAX_AGE);                   // 设置请求最大有效时长，在这个时长内，重复的请求就不会发送预检请求
-        log.info("初始化 CORS配置解决跨域问题");
+
+        log.info("初始化 CORS配置解决跨域问题\n    AllowOriginPatterns: {}", JSON.toJSONString(allowedOriginPatterns));
     }
 
     /**

@@ -1,6 +1,10 @@
 # SimpleProto启动配置模版
 
 simpleproto:
+
+  # CORS 允许跨域的域名通配符
+  corsAllowedOriginPatterns: http://localhost:*
+
   # 数据库连接配置(PostgreSQL）
   dataSourceDriver: org.postgresql.Driver
   dataSourceUrl: jdbc:postgresql://...
