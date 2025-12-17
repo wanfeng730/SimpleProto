@@ -48,6 +48,11 @@ public class SimpleProtoConfig {
     public static Long dataSourceConnectionTimeout;
     public static Long dataSourceIdleTimeout;
     public static Long dataSourceMaxLifetime;
+    public static Long dataSourceKeepAliveTime;
+    public static String dataSourceConnectionTestQuery;
+    public static Long dataSourceValidationTimeout;
+    public static Long dataSourceLeakDetectionThreshold;
+
 
 
     public static String opensearchJdbcDriver;
@@ -120,6 +125,10 @@ public class SimpleProtoConfig {
         dataSourceConnectionTimeout = environment.getProperty("simpleproto.dataSourceConnectionTimeout", Long.class);
         dataSourceIdleTimeout = environment.getProperty("simpleproto.dataSourceIdleTimeout", Long.class);
         dataSourceMaxLifetime = environment.getProperty("simpleproto.dataSourceMaxLifetime", Long.class);
+        dataSourceKeepAliveTime = environment.getProperty("simpleproto.dataSourceKeepAliveTime", Long.class);
+        dataSourceConnectionTestQuery = environment.getProperty("simpleproto.dataSourceConnectionTestQuery", String.class);
+        dataSourceValidationTimeout = environment.getProperty("simpleproto.dataSourceValidationTimeout", Long.class);
+        dataSourceLeakDetectionThreshold = environment.getProperty("simpleproto.dataSourceLeakDetectionThreshold", Long.class);
 
         opensearchJdbcDriver = environment.getProperty("simpleproto.opensearchJdbcDriver");
         opensearchJdbcUrl = environment.getProperty("simpleproto.opensearchJdbcUrl");

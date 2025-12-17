@@ -41,6 +41,7 @@ public class MybatisPlusPostgresDataSourceConfiguration {
 
     private static final String POSTGRES_MAPPER_LOCATION = "classpath*:mapper/postgres/*.xml";
 
+
     @Bean("postgresDataSource")
     public DataSource getDataSource() {
         HikariConfig config = new HikariConfig();
@@ -48,12 +49,20 @@ public class MybatisPlusPostgresDataSourceConfiguration {
         config.setJdbcUrl(SimpleProtoConfig.dataSourceUrl);
         config.setUsername(SimpleProtoConfig.dataSourceUsername);
         config.setPassword(SimpleProtoConfig.dataSourcePassword);
-
+        // size...
         config.setMaximumPoolSize(SimpleProtoConfig.dataSourceMaximumPoolSize);
         config.setMinimumIdle(SimpleProtoConfig.dataSourceMinimumIdle);
+
         config.setConnectionTimeout(SimpleProtoConfig.dataSourceConnectionTimeout);
-        config.setIdleTimeout(SimpleProtoConfig.dataSourceIdleTimeout);
         config.setMaxLifetime(SimpleProtoConfig.dataSourceMaxLifetime);
+        config.setIdleTimeout(SimpleProtoConfig.dataSourceIdleTimeout);
+
+        config.setKeepaliveTime(SimpleProtoConfig.dataSourceKeepAliveTime);
+        config.setConnectionTestQuery(SimpleProtoConfig.dataSourceConnectionTestQuery);
+        config.setValidationTimeout(SimpleProtoConfig.dataSourceValidationTimeout);
+
+        config.setLeakDetectionThreshold(SimpleProtoConfig.dataSourceLeakDetectionThreshold);
+
         return new HikariDataSource(config);
     }
 
