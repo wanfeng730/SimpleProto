@@ -34,6 +34,13 @@ public class SpBulkOperator {
      * 1. 批量创建
      * 2. 批量更新
      *
+     * OpenSearch批量操作可能会有延迟，导致后续业务没法获取到更新后的数据，使用该方法在批量操作执行完成后等待一会儿
+     * 默认等待 1100ms
+     * 默认情况下，写入操作会先写入内存缓冲区，每隔 1 秒才会刷新到分段（Segment）供查询可见，批量写入也遵循这一机制。
+     * 通过修改refresh参数，有解决数据查询不到的三种方案
+     *      true：写入后立即刷新索引
+     *      wait_for: 等待当前写入的分片完成刷新（不立即刷新，而是等待已有刷新周期，性能更优）
+     *      false: 不刷新（默认值）
      * @param baseObjectList 基础对象列表
      */
     public void bulkStore(List<? extends ISpBaseObject> baseObjectList){
@@ -60,7 +67,6 @@ public class SpBulkOperator {
             bulkUpdateObject(updateList);
         }
 
-        waitOpenSearchCompleteBulkRequest();
     }
 
     public void bulkRemove(List<? extends ISpBaseObject> objectList){
@@ -82,7 +88,6 @@ public class SpBulkOperator {
             }
         }
 
-        waitOpenSearchCompleteBulkRequest();
     }
 
     private void bulkCreateObject(List<? extends ISpBaseObject> baseObjectList){
@@ -137,12 +142,9 @@ public class SpBulkOperator {
         }
     }
 
-    /**
-     * OpenSearch批量操作可能会有延迟，导致后续业务没法获取到更新后的数据，使用该方法在批量操作执行完成后等待一会儿
-     * 默认等待 0.5s
-     */
+    @Deprecated
     private static void waitOpenSearchCompleteBulkRequest() {
-        ThreadUtil.sleepQuietly(500);
+        ThreadUtil.sleepQuietly(1100);
     }
 
 

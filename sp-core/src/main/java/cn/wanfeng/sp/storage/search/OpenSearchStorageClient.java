@@ -8,6 +8,7 @@ import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.localcache.OpenSearchMappingCache;
 import jakarta.annotation.Resource;
 import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.opensearch._types.Refresh;
 import org.opensearch.client.opensearch._types.mapping.Property;
 import org.opensearch.client.opensearch.core.BulkRequest;
 import org.opensearch.client.opensearch.core.DeleteRequest;
@@ -44,7 +45,13 @@ public class OpenSearchStorageClient implements SearchStorageClient{
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern());
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern());
 
-
+    /**
+     * 新增对象
+     * 设置请求refresh参数为wait_for（opensearch存在每隔1秒才刷新索引数据的机制，需要等待刷新后再返回请求，保证数据能被正常读取）
+     *
+     * @param tableName 对象数据表名、索引
+     * @param propertyValueContainer 对象数据
+     */
     @Override
     public void insertObject(String tableName, Map<String, SpPropertyValue> propertyValueContainer) throws Exception {
         //根据参数类型自动创建mapping
@@ -55,10 +62,22 @@ public class OpenSearchStorageClient implements SearchStorageClient{
         convertDateValue(document);
 
         String id = String.valueOf(document.get(OBJECT_ID_KEY));
-        IndexRequest<Map<String, Object>> indexRequest = IndexRequest.of(b -> b.index(tableName).id(id).document(document));
+        IndexRequest<Map<String, Object>> indexRequest = IndexRequest.of(b -> b
+                .index(tableName)
+                .id(id)
+                .document(document)
+                .refresh(Refresh.WaitFor)
+        );
         openSearchClient.index(indexRequest);
     }
 
+    /**
+     * 更新对象
+     * 设置请求refresh参数为wait_for（opensearch存在每隔1秒才刷新索引数据的机制，需要等待刷新后再返回请求，保证数据能被正常读取）
+     *
+     * @param tableName 对象数据表名、索引
+     * @param propertyValueContainer 对象数据
+     */
     @Override
     public void updateObject(String tableName, Map<String, SpPropertyValue> propertyValueContainer) throws Exception {
         //转换为保存opensearch的map
@@ -67,18 +86,35 @@ public class OpenSearchStorageClient implements SearchStorageClient{
         convertDateValue(document);
 
         String id = String.valueOf(document.get(OBJECT_ID_KEY));
-        UpdateRequest<Map, Map> updateRequest = UpdateRequest.of(req -> req.index(tableName).id(id).doc(document));
+        UpdateRequest<Map, Map> updateRequest = UpdateRequest.of(builder -> builder
+                .index(tableName)
+                .id(id)
+                .doc(document)
+                .refresh(Refresh.WaitFor)
+        );
         openSearchClient.update(updateRequest, Map.class);
     }
 
+    /**
+     * 删除对象
+     * 设置请求refresh参数为wait_for（opensearch存在每隔1秒才刷新索引数据的机制，需要等待刷新后再返回请求，保证数据能被正常读取）
+     *
+     * @param tableName 对象数据表名、索引
+     * @param id 对象id
+     */
     @Override
     public void removeObject(String tableName, Long id) throws  Exception{
-        DeleteRequest deleteRequest = DeleteRequest.of(req -> req.index(tableName).id(String.valueOf(id)));
+        DeleteRequest deleteRequest = DeleteRequest.of(req -> req
+                .index(tableName)
+                .id(String.valueOf(id))
+                .refresh(Refresh.WaitFor)
+        );
         openSearchClient.delete(deleteRequest);
     }
 
     /**
      * 批量新建对象数据
+     * 设置请求refresh参数为wait_for（opensearch存在每隔1秒才刷新索引数据的机制，需要等待刷新后再返回请求，保证数据能被正常读取）
      *
      * @param tableName      对象数据表名、索引
      * @param propertyValueContainerList 对象数据列表
@@ -97,12 +133,17 @@ public class OpenSearchStorageClient implements SearchStorageClient{
             BulkOperation bulkOperation = BulkOperation.of(b -> b.create(createOperation));
             bulkOperationList.add(bulkOperation);
         }
-        BulkRequest bulkRequest = BulkRequest.of(builder -> builder.index(tableName).operations(bulkOperationList));
+        BulkRequest bulkRequest = BulkRequest.of(builder -> builder
+                .index(tableName)
+                .operations(bulkOperationList)
+                .refresh(Refresh.WaitFor)
+        );
         openSearchClient.bulk(bulkRequest);
     }
 
     /**
      * 批量更新对象数据
+     * 设置请求refresh参数为wait_for（opensearch存在每隔1秒才刷新索引数据的机制，需要等待刷新后再返回请求，保证数据能被正常读取）
      *
      * @param tableName      对象数据表名、索引
      * @param propertyValueContainerList 对象数据列表
@@ -120,12 +161,17 @@ public class OpenSearchStorageClient implements SearchStorageClient{
             BulkOperation bulkOperation = BulkOperation.of(b -> b.update(updateOperation));
             bulkOperationList.add(bulkOperation);
         }
-        BulkRequest bulkRequest = BulkRequest.of(builder -> builder.index(tableName).operations(bulkOperationList));
+        BulkRequest bulkRequest = BulkRequest.of(builder -> builder
+                .index(tableName)
+                .operations(bulkOperationList)
+                .refresh(Refresh.WaitFor)
+        );
         openSearchClient.bulk(bulkRequest);
     }
 
     /**
      * 批量删除对象数据
+     * 设置请求refresh参数为wait_for（opensearch存在每隔1秒才刷新索引数据的机制，需要等待刷新后再返回请求，保证数据能被正常读取）
      *
      * @param tableName 对象数据表名、索引
      * @param idList    对象id列表
@@ -138,7 +184,11 @@ public class OpenSearchStorageClient implements SearchStorageClient{
             BulkOperation bulkOperation = BulkOperation.of(b -> b.delete(deleteOperation));
             bulkOperationList.add(bulkOperation);
         }
-        BulkRequest bulkRequest = BulkRequest.of(builder -> builder.index(tableName).operations(bulkOperationList));
+        BulkRequest bulkRequest = BulkRequest.of(builder -> builder
+                .index(tableName)
+                .operations(bulkOperationList)
+                .refresh(Refresh.WaitFor)
+        );
         openSearchClient.bulk(bulkRequest);
     }
 
