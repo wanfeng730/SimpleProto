@@ -32,13 +32,13 @@ public class DatabaseInitExecutor {
         List<String> tableNameList = spSession.databaseStorage().listAllTable(SimpleProtoConfig.currentScheme);
         if(!tableNameList.contains(SimpleProtoConfig.dataTable)){
             spSession.databaseStorage().createDataTable(SimpleProtoConfig.dataTable);
-            log.info("初始化 创建对象数据表[{}]", SimpleProtoConfig.dataTable);
+            log.info("初始化 >>> 创建对象数据表[{}]", SimpleProtoConfig.dataTable);
         }
         if(!tableNameList.contains(SimpleProtoConfig.settingsTable)){
             spSession.databaseStorage().createSettingsTable(SimpleProtoConfig.settingsTable);
             spSession.databaseStorage().initSettingsTableData(SimpleProtoConfig.settingsTable);
-            log.info("初始化 创建设置表[{}]", SimpleProtoConfig.settingsTable);
+            log.info("初始化 >>> 创建设置表[{}]", SimpleProtoConfig.settingsTable);
         }
-        log.info("初始化 数据库存储表完成");
+        log.info("初始化 >>> 数据库存储表");
     }
 }

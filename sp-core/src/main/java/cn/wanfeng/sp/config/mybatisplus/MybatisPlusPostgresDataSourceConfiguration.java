@@ -63,6 +63,8 @@ public class MybatisPlusPostgresDataSourceConfiguration {
 
         config.setLeakDetectionThreshold(SimpleProtoConfig.dataSourceLeakDetectionThreshold);
 
+        log.info("初始化 >>> Postgres Hikari连接池配置\n    ConnectionTimeout: {}\n    IdleTimeout: {}\n    KeepAliveTime: {}\n    ValidationTimeout: {}\n    LeakDetectionThreshold: {}",
+                config.getConnectionTimeout(), config.getIdleTimeout(), config.getKeepaliveTime(), config.getValidationTimeout(), config.getLeakDetectionThreshold());
         return new HikariDataSource(config);
     }
 
@@ -96,7 +98,9 @@ public class MybatisPlusPostgresDataSourceConfiguration {
         factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(POSTGRES_MAPPER_LOCATION));
         factoryBean.setPlugins(mybatisPlusInterceptor);
         SqlSessionFactory sqlSessionFactory = factoryBean.getObject();
-        log.info("初始化 Postgres数据源完成");
+        log.info("初始化 >>> Postgres数据源");
+
+
         return sqlSessionFactory;
     }
 

@@ -157,7 +157,7 @@ public class SimpleProtoConfig {
         boolean isManyPatterns = StringUtils.isNotBlank(patternsStr) && patternsStr.contains(",");
         corsAllowedOriginPatterns = isManyPatterns ? patternsStr.replace(" ", "").split(",") : new String[]{};
 
-        log.info("初始化 SimpleProtoConfig配置完成");
+        log.info("初始化 >>> SimpleProtoConfig配置");
     }
 
 }

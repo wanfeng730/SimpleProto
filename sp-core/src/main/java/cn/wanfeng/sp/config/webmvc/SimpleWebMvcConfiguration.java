@@ -67,7 +67,7 @@ public class SimpleWebMvcConfiguration extends WebMvcConfigurationSupport {
                 .allowCredentials(true)             // 允许凭证
                 .maxAge(MAX_AGE);                   // 设置请求最大有效时长，在这个时长内，重复的请求就不会发送预检请求
 
-        log.info("初始化 CORS配置解决跨域问题\n    AllowOriginPatterns: {}", JSON.toJSONString(allowedOriginPatterns));
+        log.info("初始化 >>> CORS配置解决跨域问题\n    AllowOriginPatterns: {}", JSON.toJSONString(allowedOriginPatterns));
     }
 
     /**
@@ -76,13 +76,13 @@ public class SimpleWebMvcConfiguration extends WebMvcConfigurationSupport {
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
-        log.info("初始化 Resources资源文件路径映射配置 doc.html -> classpath:/META-INF/resources/doc.html");
+        log.info("初始化 >>> Resources资源文件路径映射配置 doc.html -> classpath:/META-INF/resources/doc.html");
 
         registry.addResourceHandler("favicon.ico").addResourceLocations("classpath:/static/");
-        log.info("初始化 Resources资源文件路径映射配置 favicon.ico -> classpath:/static/favicon.ico");
+        log.info("初始化 >>> Resources资源文件路径映射配置 favicon.ico -> classpath:/static/favicon.ico");
 
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-        log.info("初始化 Resources资源文件路径映射配置 /webjars/** -> classpath:/META-INF/resources/webjars/**");
+        log.info("初始化 >>> Resources资源文件路径映射配置 /webjars/** -> classpath:/META-INF/resources/webjars/**");
 
         super.addResourceHandlers(registry);
     }
