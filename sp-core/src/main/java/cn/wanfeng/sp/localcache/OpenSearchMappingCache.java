@@ -2,11 +2,13 @@ package cn.wanfeng.sp.localcache;
 
 
 import cn.wanfeng.sp.exception.SpSearchStorageException;
+import cn.wanfeng.sp.util.LogUtil;
 import org.apache.commons.collections4.MapUtils;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.mapping.Property;
 import org.opensearch.client.opensearch.indices.GetMappingResponse;
 import org.opensearch.client.opensearch.indices.get_mapping.IndexMappingRecord;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.util.Map;
@@ -19,6 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since: 1.0
  */
 public class OpenSearchMappingCache {
+
+    private static final Logger log = LogUtil.getSimpleProtoLogger();
 
     private static final Map<String, Property.Kind> propertyKindCache = new ConcurrentHashMap<>(32);
 
@@ -44,6 +48,7 @@ public class OpenSearchMappingCache {
         Map<String, IndexMappingRecord> indexMappingRecordMap = getMappingResponse.result();
         Map<String, Property> propertyMap = indexMappingRecordMap.get(indexName).mappings().properties();
         if(MapUtils.isEmpty(propertyMap)){
+            log.debug("索引[{}]中没有mapping", indexName);
             return;
         }
         propertyKindCache.clear();
@@ -52,5 +57,6 @@ public class OpenSearchMappingCache {
             Property property = propertyEntry.getValue();
             putFieldMappingToCache(fieldName, property._kind());
         }
+        log.debug("已从索引[{}]获取{}条Mapping加入缓存", indexName, propertyKindCache.size());
     }
 }

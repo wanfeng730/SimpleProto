@@ -61,4 +61,11 @@ public interface SearchStorageClient {
      * @param idList 对象id列表
      */
     void bulkRemoveObject(String tableName, List<Long> idList) throws IOException;
+
+    /**
+     * 将某个类中的ProtoField注解字段的类型同步更到mapping
+     * @param tableName 对象数据表名、索引
+     * @param clazz 类
+     */
+    void syncProtoFieldToMapping(String tableName, Class<? extends ISpBaseObject> clazz);
 }

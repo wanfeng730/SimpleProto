@@ -1,11 +1,15 @@
 package cn.wanfeng.sp.storage.search;
 
 
+import cn.wanfeng.sp.anno.ProtoField;
+import cn.wanfeng.sp.api.domain.ISpBaseObject;
 import cn.wanfeng.sp.api.model.SpPropertyValue;
 import cn.wanfeng.sp.elastic.ElasticDateTimePattern;
 import cn.wanfeng.sp.exception.SimpleExceptionCode;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.localcache.OpenSearchMappingCache;
+import cn.wanfeng.sp.util.LogUtil;
+import cn.wanfeng.sp.util.SimpleReflectUtils;
 import jakarta.annotation.Resource;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Refresh;
@@ -20,9 +24,12 @@ import org.opensearch.client.opensearch.core.bulk.DeleteOperation;
 import org.opensearch.client.opensearch.core.bulk.UpdateOperation;
 import org.opensearch.client.opensearch.indices.PutMappingRequest;
 import org.opensearch.client.util.ObjectBuilder;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,6 +44,8 @@ import java.util.*;
  */
 @Component
 public class OpenSearchStorageClient implements SearchStorageClient{
+
+    private static final Logger log = LogUtil.getSimpleProtoLogger();
 
     @Resource
     private OpenSearchClient openSearchClient;
@@ -193,6 +202,30 @@ public class OpenSearchStorageClient implements SearchStorageClient{
     }
 
     /**
+     * 将某个类中的ProtoField注解字段的类型同步更到mapping
+     *
+     * @param tableName 对象数据表名、索引
+     * @param clazz     类
+     */
+    @Override
+    public void syncProtoFieldToMapping(String tableName, Class<? extends ISpBaseObject> clazz) {
+        List<Field> protoFieldList = Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(ProtoField.class)).toList();
+        Map<String, SpPropertyValue> emptyData = new LinkedHashMap<>();
+        for (Field field : protoFieldList) {
+            String protoFieldName = field.getAnnotation(ProtoField.class).name();
+            Class<?> fieldTypeClass = field.getType();
+            //如果是枚举类，替换成枚举类中定义的ProtoEnumValue方法返回的类型
+            if(fieldTypeClass.isEnum()){
+                Method enumValueMethod = SimpleReflectUtils.getProtoEnumValueMethod(fieldTypeClass);
+                assert enumValueMethod != null;
+                fieldTypeClass = enumValueMethod.getReturnType();
+            }
+            emptyData.put(protoFieldName, SpPropertyValue.build(fieldTypeClass, null));
+        }
+        autoAdaptCreateMappingByObjectData(tableName, emptyData);
+    }
+
+    /**
      * 根据属性名和值自动创建mapping
      */
     private void autoAdaptCreateMappingByObjectData(String tableName, Map<String, SpPropertyValue> objectData){
@@ -218,6 +251,7 @@ public class OpenSearchStorageClient implements SearchStorageClient{
             try {
                 PutMappingRequest request = requestBuilder.build();
                 acknowledged = openSearchClient.indices().putMapping(request).acknowledged();
+                log.debug("新增索引[{}]的Mapping: ", request.properties().keySet());
             } catch (IOException e) {
                 throw new SpException(e, "自动创建Mapping出现未知异常");
             }
