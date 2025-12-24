@@ -83,4 +83,17 @@ public interface FileStorageClient {
      */
     void removeObject(String storageKey);
 
+    /**
+     * 复制文件对象到新路径
+     * @param sourceKey 原文件存储路径
+     * @param targetKey 目标存储路径
+     */
+    void copyObject(String sourceKey, String targetKey);
+
+    /**
+     * 移动文件对象到新路径
+     * @param sourceKey 原文件存储路径
+     * @param targetKey 目标存储路径
+     */
+    void moveObject(String sourceKey, String targetKey);
 }

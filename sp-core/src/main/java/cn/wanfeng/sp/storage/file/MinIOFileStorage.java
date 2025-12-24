@@ -184,7 +184,40 @@ public class MinIOFileStorage implements FileStorageClient {
             RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder().bucket(bucketName).object(storageKey).build();
             client.removeObject(removeObjectArgs);
         } catch (Exception e) {
-            LogUtil.error("从MinIO删除文件失败[bucketName={}, storageKey={}]", bucketName, storageKey);
+            throw new SpFileStorageException(e, "从MinIO删除文件失败[bucketName=%s, storageKey=%s]", bucketName, storageKey);
+        }
+    }
+
+    /**
+     * 复制文件对象到新路径
+     *
+     * @param sourceKey 原文件存储路径
+     * @param targetKey 复制目标存储路径
+     */
+    @Override
+    public void copyObject(String sourceKey, String targetKey) {
+        try {
+            CopySource copySource = CopySource.builder().bucket(bucketName).object(sourceKey).build();
+            CopyObjectArgs copyObjectArgs = CopyObjectArgs.builder().source(copySource).bucket(bucketName).object(targetKey).build();
+            client.copyObject(copyObjectArgs);
+        } catch (Exception e) {
+            throw new SpFileStorageException(e, "MinIO复制文件失败[bucketName=%s, sourceKey=%s, targetKey=%s]", bucketName, sourceKey, targetKey);
+        }
+    }
+
+    /**
+     * 移动文件对象到新路径
+     *
+     * @param sourceKey 原文件存储路径
+     * @param targetKey 目标存储路径
+     */
+    @Override
+    public void moveObject(String sourceKey, String targetKey) {
+        try {
+            copyObject(sourceKey, targetKey);
+            removeObject(sourceKey);
+        } catch (Exception e) {
+            throw new SpFileStorageException(e, "MinIO移动文件失败[bucketName=%s, sourceKey=%s, targetKey=%s]", bucketName, sourceKey, targetKey);
         }
     }
 }
