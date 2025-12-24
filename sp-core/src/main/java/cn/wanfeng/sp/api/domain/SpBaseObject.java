@@ -157,7 +157,13 @@ public class SpBaseObject implements ISpBaseObject{
                     Method constructorMethod = SimpleReflectUtils.getProtoEnumConstructorMethod(fieldClass);
                     value = Objects.isNull(constructorMethod) ? null : constructorMethod.invoke(null, value);
                 }
-                declaredField.set(this, value);
+                // 如果有set方法，优先调用set方法，这样可以在领域对象中执行到重写的set方法便于一些字段的同步更新（例如json和List的转换）
+                Method setter = SimpleReflectUtils.getSetterMethodByField(this.getClass(), declaredField);
+                if(Objects.isNull(setter)){
+                    declaredField.set(this, value);
+                }else{
+                    setter.invoke(this, value);
+                }
                 LogUtil.debug("Set DeclaredField Property: {}={}", declaredField.getName(), declaredField.get(this));
             } catch (Exception e) {
                 LogUtil.error("Set Property[index={}, name={}] Unknown Exception", indexNo, fieldName, e);

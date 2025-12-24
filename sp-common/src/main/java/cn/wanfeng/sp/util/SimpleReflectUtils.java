@@ -4,12 +4,10 @@ import cn.wanfeng.sp.anno.ProtoEnumConstructor;
 import cn.wanfeng.sp.anno.ProtoEnumValue;
 import cn.wanfeng.sp.anno.ProtoField;
 import cn.wanfeng.sp.exception.SimpleReflectException;
+import cn.wanfeng.sp.exception.SpException;
 import org.apache.commons.lang3.reflect.TypeUtils;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,6 +63,38 @@ public class SimpleReflectUtils {
             fieldList.addAll(getFieldsWithSuperClass(superclass));
         }
         return fieldList;
+    }
+
+    /**
+     * 获取类中某个属性的setter方法
+     * @param clazz 类
+     * @param field 属性
+     * @return Method
+     */
+    public static Method getSetterMethodByField(Class<?> clazz, Field field){
+        if(Objects.isNull(clazz) || Objects.isNull(field)){
+            return null;
+        }
+        try {
+            // 获取属性的类型（先通过属性名拿到Field，再取类型）
+            Class<?> fieldType = field.getType();
+            String fieldName = field.getName();
+            // 拼接set方法名：set + 首字母大写 + 剩余属性名
+            String methodName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+            // 获取set方法（参数为属性类型，无返回值）
+            Method setMethod = clazz.getMethod(methodName, fieldType);
+
+            // 可选：校验是否为public的set方法
+            if (Modifier.isPublic(setMethod.getModifiers())) {
+                return setMethod;
+            }
+            LogUtil.warn("方法[{}]不为public修饰，不返回", setMethod.getName());
+            return null;
+        } catch (NoSuchMethodException e1){
+            return null;
+        }catch (Exception e) {
+            throw new SpException(e, "获取类[%s]中属性[%s]的setter方法异常", clazz.getName(), field.getName());
+        }
     }
 
     /**
