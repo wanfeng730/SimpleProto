@@ -251,7 +251,7 @@ public class OpenSearchStorageClient implements SearchStorageClient{
             try {
                 PutMappingRequest request = requestBuilder.build();
                 acknowledged = openSearchClient.indices().putMapping(request).acknowledged();
-                log.debug("新增索引[{}]的Mapping: ", request.properties().keySet());
+                log.debug("新增索引[{}]的Mapping: {}", tableName, request.properties().keySet());
             } catch (IOException e) {
                 throw new SpException(e, "自动创建Mapping出现未知异常");
             }
