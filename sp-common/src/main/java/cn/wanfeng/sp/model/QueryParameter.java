@@ -89,6 +89,7 @@ public class QueryParameter {
         QueryWrapper<M> queryWrapper = new QueryWrapper<>();
         resolveFilterList(queryWrapper);
         resolveSortList(queryWrapper);
+        queryWrapper.checkSqlInjection();
         return queryWrapper;
     }
 
