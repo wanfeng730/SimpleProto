@@ -1,5 +1,6 @@
 package cn.wanfeng.sp.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,8 +22,11 @@ public class LogUtil {
 
 
     public static Logger getCurrentThreadClassLogger() {
-        //从当前堆栈的第4个可以获取到调用日志工具方法的当前类名称
+        // 从当前堆栈的第4个可以获取到调用日志工具方法的当前类名称
         String className = Thread.currentThread().getStackTrace()[3].getClassName();
+        // 去除包名，只保留类自己的名字
+        className = excludePackageClassName(className);
+        // 以类名作为名称获取logger对象
         return getOrInitLoggerCache(className);
     }
 
@@ -35,6 +39,14 @@ public class LogUtil {
             LOGGER_CACHE.put(loggerName, LoggerFactory.getLogger(loggerName));
         }
         return LOGGER_CACHE.get(loggerName);
+    }
+
+    protected static String excludePackageClassName(String fullClassName){
+        if(StringUtils.isBlank(fullClassName) || !fullClassName.contains(".")){
+            return fullClassName;
+        }
+        int start = fullClassName.lastIndexOf(".") + 1;
+        return fullClassName.substring(start);
     }
 
     public static void debug(String message) {

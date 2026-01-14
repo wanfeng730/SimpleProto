@@ -3,11 +3,9 @@ package cn.wanfeng.sp.util;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @date: 2024-12-22 12:24
@@ -61,18 +59,5 @@ public class ListUtil {
             pc = (pc + 1) % subListCount;
         }
         return partitionList;
-    }
-
-    /**
-     * 列表转换为字符串，指定分隔符
-     * @param list 列表
-     * @param separator 分隔符
-     * @return String
-     */
-    public static String toStringWithSep(List<Integer> list, String separator){
-        if(CollectionUtils.isEmpty(list) || Objects.isNull(separator)){
-            return null;
-        }
-        return String.join(separator, list.stream().map(Object::toString).toList());
     }
 }

@@ -3,7 +3,6 @@ package cn.wanfeng.sp.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * ArrayUtil: desc.
@@ -24,16 +23,4 @@ public class ArrayUtil {
         return list;
     }
 
-    /**
-     * 列表转换为字符串，指定分隔符
-     * @param arr 列表
-     * @param separator 分隔符
-     * @return String
-     */
-    public static String toStringWithSep(Integer[] arr, String separator){
-        if(cn.hutool.core.util.ArrayUtil.isEmpty(arr) || Objects.isNull(separator)){
-            return null;
-        }
-        return String.join(separator, Arrays.stream(arr).map(Object::toString).toList());
-    }
 }
