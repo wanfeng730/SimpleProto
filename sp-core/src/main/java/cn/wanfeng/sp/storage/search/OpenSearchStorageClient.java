@@ -241,7 +241,7 @@ public class OpenSearchStorageClient implements SearchStorageClient{
             if(OpenSearchMappingCache.checkFieldExistInCache(fieldName)){
                 continue;
             }
-            requestBuilder.properties(fieldName, ob -> handlePropertyBuilderByClass(ob, fieldClass));
+            requestBuilder.properties(fieldName, ob -> handlePropertyBuilderByClass(fieldName, ob, fieldClass));
 
             needCreateMapping = true;
         }
@@ -258,19 +258,14 @@ public class OpenSearchStorageClient implements SearchStorageClient{
         }
     }
 
-    /**
-     * 根据值的类型构建默认的mapping配置
-     * @param builder mapping
-     * @param value 值
-     */
-    private static ObjectBuilder<Property> handlePropertyBuilderByValue(Property.Builder builder, Object value){
-        Class<?> valueClass = value.getClass();
-        return handlePropertyBuilderByClass(builder, valueClass);
-    }
-
-    private static ObjectBuilder<Property> handlePropertyBuilderByClass(Property.Builder builder, Class<?> clazz){
+    private static ObjectBuilder<Property> handlePropertyBuilderByClass(String fieldName, Property.Builder builder, Class<?> clazz){
         if(clazz == String.class){
-            return builder.keyword(t -> t);
+            // 字段名以text或json结尾的字段用text类型存储
+            if(fieldName.endsWith("json") || fieldName.endsWith("text")){
+                return  builder.text(t -> t);
+            }else{
+                return builder.keyword(t -> t);
+            }
         }
         if(clazz == Integer.class || clazz == Long.class){
             return builder.long_(t -> t);
