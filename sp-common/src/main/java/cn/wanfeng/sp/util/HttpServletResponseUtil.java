@@ -18,22 +18,43 @@ import java.util.Objects;
  */
 public class HttpServletResponseUtil {
 
+    /**
+     * 将文件流写入响应体
+     * @param request 请求体
+     * @param response 响应体
+     * @param file 本地文件
+     */
     public static void stream(HttpServletRequest request, HttpServletResponse response, File file){
-        try (InputStream fileStream = InputStreamUtils.getByteArrayInputStreamFromFile(file)) {
+        stream(request, response, file.getName(), InputStreamUtils.getByteArrayInputStreamFromFile(file));
+    }
+
+    /**
+     * 将文件流写入响应体
+     * @param request 请求体
+     * @param response 响应体
+     * @param filename 文件名
+     * @param inputStream 文件流
+     */
+    public static void stream(HttpServletRequest request, HttpServletResponse response, String filename, InputStream inputStream){
+        try {
             //设置响应头类型、文件名
-            String filename = encodeFilename(request, file.getName());
+            String encodeFilename = encodeFilename(request, filename);
             response.setContentType("application/octet-stream");
-            response.setHeader("Content-Disposition", String.format("attachment; filename=%s", filename)); // filename是你的文件名
+            response.setHeader("Content-Disposition", String.format("attachment; filename=%s", encodeFilename));
+
             ServletOutputStream out = response.getOutputStream();
             byte[] buffer = new byte[4096]; // 缓冲区大小
             int bytesRead; // 读取的字节数
-            while ((bytesRead = fileStream.read(buffer)) != -1) { // 读取并写入输出流
+            while ((bytesRead = inputStream.read(buffer)) != -1) { // 读取并写入输出流
                 out.write(buffer, 0, bytesRead);
             }
             out.flush(); // 刷新输出流，确保所有数据都被发送
         } catch (Exception e) {
-            LogUtil.error("文件写入response失败 file: {}", e);
+            LogUtil.error("文件写入response失败 file: {}", filename, e);
             throw new RuntimeException(e);
+        } finally {
+            //关闭流
+            InputStreamUtils.closeQuietly(inputStream);
         }
     }
 

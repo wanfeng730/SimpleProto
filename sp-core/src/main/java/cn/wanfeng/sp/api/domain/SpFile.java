@@ -248,6 +248,10 @@ public class SpFile extends SpSysObject implements ISpFile {
         setStorage(InputStreamUtils.getByteArrayInputStreamFromFile(file));
     }
 
+    /**
+     * 如果使用fileStorageKey设置，则文件流已经在minio中，只需要修改绑定的storageKey即可，无需重新上传
+     * @param fileStorageKey 文件公共存储路径
+     */
     @Override
     public void setStorage(String fileStorageKey) {
         this.fileStorageKey = fileStorageKey;
@@ -256,6 +260,10 @@ public class SpFile extends SpSysObject implements ISpFile {
         this.isNeedUploadFile = false;
     }
 
+    /**
+     * 如果使用文件流设置，则一般为修改过的外部文件，需要重新上传，fileStorageKey不变
+     * @param inputStream 文件流
+     */
     @Override
     public void setStorage(InputStream inputStream) {
         this.inputStream = inputStream;
