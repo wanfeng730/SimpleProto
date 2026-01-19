@@ -24,8 +24,6 @@ public class LogUtil {
     public static Logger getCurrentThreadClassLogger() {
         // 从当前堆栈的第4个可以获取到调用日志工具方法的当前类名称
         String className = Thread.currentThread().getStackTrace()[3].getClassName();
-        // 去除包名，只保留类自己的名字
-        className = excludePackageClassName(className);
         // 以类名作为名称获取logger对象
         return getOrInitLoggerCache(className);
     }
