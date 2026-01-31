@@ -34,9 +34,21 @@ public class CacheOperator {
 
     /**
      * 设置值
+     * @param key key
+     * @param value value
      */
     public void set(String key, Object value){
         redisTemplate.opsForValue().set(key, value);
+    }
+
+    /**
+     * 设置值、有效期（秒）
+     * @param key key
+     * @param value value
+     * @param aliveSeconds 有效期（秒）
+     */
+    public void set(String key, Object value, int aliveSeconds){
+        redisTemplate.opsForValue().set(key, value, aliveSeconds, TimeUnit.SECONDS);
     }
 
     /**
