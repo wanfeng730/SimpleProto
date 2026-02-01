@@ -63,6 +63,14 @@ public class SimpleProtoConfig {
     public static String redisPort;
     public static String redisPassword;
     public static String redisDatabase;
+    public static Integer redisPoolMaxTotal = 8;
+    public static Integer redisPoolMaxIdle = 8;
+    public static Integer redisPoolMinIdle = 2;
+    public static Long redisPoolMaxWait = 10000L;
+    public static Long redisPoolMinEvictableIdle = 280000L;
+    public static Long redisPoolTimeBetweenEvictionRuns = 60000L;
+    public static Long redisPoolCommandTimeout = 5000L;
+    public static Long redisPoolShutdownTimeout = 200L;
 
     public static final Long rootSysObjectId = -1L;
     public static String rootSysObjectPath = ISpSysObject.pathSeparator;
@@ -138,6 +146,15 @@ public class SimpleProtoConfig {
         redisPort = environment.getProperty("simpleproto.redisPort");
         redisPassword = environment.getProperty("simpleproto.redisPassword");
         redisDatabase = environment.getProperty("simpleproto.redisDatabase");
+
+        redisPoolMaxTotal = environment.getProperty("simpleproto.redisPoolMaxTotal", Integer.class);
+        redisPoolMaxIdle = environment.getProperty("simpleproto.redisPoolMaxIdle", Integer.class);
+        redisPoolMinIdle = environment.getProperty("simpleproto.redisPoolMinIdle", Integer.class);
+        redisPoolMaxWait = environment.getProperty("simpleproto.redisPoolMaxWait", Long.class);
+        redisPoolMinEvictableIdle = environment.getProperty("simpleproto.redisPoolMinEvictableIdle", Long.class);
+        redisPoolTimeBetweenEvictionRuns = environment.getProperty("simpleproto.redisPoolTimeBetweenEvictionRuns", Long.class);
+        redisPoolCommandTimeout = environment.getProperty("simpleproto.redisPoolCommandTimeout", Long.class);
+        redisPoolShutdownTimeout = environment.getProperty("simpleproto.redisPoolShutdownTimeout", Long.class);
 
         fileStorageType = environment.getProperty("simpleproto.fileStorageType");
         fileStorageEndPoint = environment.getProperty("simpleproto.fileStorageEndPoint");
