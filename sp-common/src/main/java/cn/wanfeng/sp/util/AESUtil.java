@@ -1,7 +1,11 @@
 package cn.wanfeng.sp.util;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.Base64;
 
 /**
@@ -12,14 +16,10 @@ import java.util.Base64;
  */
 public class AESUtil {
 
-    /**
-     * 编码格式
-     */
-    private static final String DEFAULT_CHARSET = "UTF-8";
-    /**
-     * 填充类型
-     */
-    private static final String AES_TYPE = "AES/ECB/PKCS5Padding";
+    // AES算法标识（ECB模式 + PKCS5填充）
+    private static final String AES_ECB_ALGORITHM = "AES/ECB/PKCS5Padding";
+    // 密钥长度：128位（AES-128，无需额外JCE权限）
+    private static final int AES_KEY_SIZE = 128;
 
     /**
      * 加密字符
@@ -30,43 +30,62 @@ public class AESUtil {
      */
     public static String encrypt(String text, String aesKey) {
         try {
-            //两个参数，第一个为私钥字节数组， 第二个为加密方式 AES或者DES
-            SecretKeySpec key = new SecretKeySpec(aesKey.getBytes(), "AES");
-            //实例化加密类，参数为加密方式，要写全，PKCS5Padding比PKCS7Padding效率高，PKCS7Padding可支持IOS加解密
-            Cipher cipher = Cipher.getInstance(AES_TYPE);
-            //初始化，此方法可以采用三种方式，按加密算法要求来添加。（1）无第三个参数（2）第三个参数为SecureRandom random = new SecureRandom();中random对象，随机数。(AES不可采用这种方法)（3）采用此代码中的IVParameterSpec
-            //加密时使用:ENCRYPT_MODE;  解密时使用:DECRYPT_MODE;CBC类型的可以在第三个参数传递偏移量zeroIv,ECB没有偏移量
-            cipher.init(Cipher.ENCRYPT_MODE, key);
-            //加密操作,返回加密后的字节数组，然后需要编码。主要编解码方式有Base64, HEX, UUE,7bit等等。此处看服务器需要什么编码方式
-            byte[] encryptedBytes = cipher.doFinal(text.getBytes(DEFAULT_CHARSET));
+            // 1. Base64密钥转原始字节数组
+            byte[] keyBytes = Base64.getDecoder().decode(aesKey);
+            SecretKeySpec secretKey = new SecretKeySpec(keyBytes, "AES");
 
-            return Base64.getEncoder().encodeToString(encryptedBytes);
+            // 2. 初始化加密器（ECB模式）
+            Cipher cipher = Cipher.getInstance(AES_ECB_ALGORITHM);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+
+            // 3. 加密（明文转UTF-8字节），结果转Base64
+            byte[] encryptBytes = cipher.doFinal(text.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(encryptBytes);
         } catch (Exception e) {
-            LogUtil.error("AES加密失败 text:{}", text, e);
-            return text;
+            throw new RuntimeException("AES-ECB加密失败", e);
         }
     }
 
     /**
      * 解密 ：使用固定秘钥
      *
-     * @param encrypted 需解密的字符串
+     * @param encryptText 需解密的字符串
      * @param aesKey 密钥
      * @return 解密后的结果
      */
-    public static String decrypt(String encrypted, String aesKey) {
+    public static String decrypt(String encryptText, String aesKey) {
         try {
-            byte[] encryptedBytes = Base64.getDecoder().decode(encrypted);
-            SecretKeySpec key = new SecretKeySpec(aesKey.getBytes(), "AES");
-            Cipher cipher = Cipher.getInstance(AES_TYPE);
-            //与加密时不同MODE:Cipher.DECRYPT_MODE，CBC类型的可以在第三个参数传递偏移量zeroIv,ECB没有偏移量
-            cipher.init(Cipher.DECRYPT_MODE, key);
-            byte[] decryptedData = cipher.doFinal(encryptedBytes);
-            return new String(decryptedData, DEFAULT_CHARSET);
+            // 1. Base64密钥转原始字节数组
+            byte[] keyBytes = Base64.getDecoder().decode(aesKey);
+            SecretKeySpec secretKey = new SecretKeySpec(keyBytes, "AES");
+
+            // 2. 初始化解密器（ECB模式）
+            Cipher cipher = Cipher.getInstance(AES_ECB_ALGORITHM);
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+
+            // 3. 解密（Base64密文转字节→解密→UTF-8明文）
+            byte[] cipherBytes = Base64.getDecoder().decode(encryptText);
+            byte[] decryptBytes = cipher.doFinal(cipherBytes);
+            return new String(decryptBytes, StandardCharsets.UTF_8);
         } catch (Exception e) {
-            LogUtil.error("AES解密失败 text:{}", encrypted, e);
-            return encrypted;
+            throw new RuntimeException("AES-ECB解密失败（大概率密钥不匹配/密文篡改）", e);
         }
     }
 
+    /**
+     * 生成16字节（128位）的随机AES密钥，转Base64字符串（方便传输/保存）
+     * @return 随机密钥（Base64格式）
+     */
+    public static String generateRandomAesKey() {
+        try {
+            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+            SecureRandom secureRandom = new SecureRandom();
+            keyGenerator.init(AES_KEY_SIZE, secureRandom);
+            SecretKey secretKey = keyGenerator.generateKey();
+            // 密钥字节数组转Base64字符串（便于前端使用）
+            return Base64.getEncoder().encodeToString(secretKey.getEncoded());
+        } catch (Exception e) {
+            throw new RuntimeException("生成AES密钥失败", e);
+        }
+    }
 }
