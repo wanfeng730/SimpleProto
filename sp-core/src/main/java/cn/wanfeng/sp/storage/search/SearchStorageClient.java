@@ -20,6 +20,8 @@ public interface SearchStorageClient {
 
     String DEFAULT_DATE_FORMAT = ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern() + "||" +ElasticDateTimePattern.EPOCH_SECOND.toPattern();
 
+    void createIndexIfNotExist(String tableName);
+
     /**
      * 新建对象数据
      * @param tableName 对象数据表名、索引

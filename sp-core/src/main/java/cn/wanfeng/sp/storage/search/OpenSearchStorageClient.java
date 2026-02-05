@@ -4,6 +4,7 @@ package cn.wanfeng.sp.storage.search;
 import cn.wanfeng.sp.anno.ProtoField;
 import cn.wanfeng.sp.api.domain.ISpBaseObject;
 import cn.wanfeng.sp.api.model.SpPropertyValue;
+import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.elastic.ElasticDateTimePattern;
 import cn.wanfeng.sp.exception.SimpleExceptionCode;
 import cn.wanfeng.sp.exception.SpException;
@@ -23,6 +24,7 @@ import org.opensearch.client.opensearch.core.bulk.CreateOperation;
 import org.opensearch.client.opensearch.core.bulk.DeleteOperation;
 import org.opensearch.client.opensearch.core.bulk.UpdateOperation;
 import org.opensearch.client.opensearch.indices.PutMappingRequest;
+import org.opensearch.client.transport.endpoints.BooleanResponse;
 import org.opensearch.client.util.ObjectBuilder;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
@@ -53,6 +55,20 @@ public class OpenSearchStorageClient implements SearchStorageClient{
 
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern());
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern());
+
+    @Override
+    public void createIndexIfNotExist(String tableName) {
+        try {
+            // 索引是否存在,不存在则创建
+            BooleanResponse response = openSearchClient.indices().exists(e -> e.index(tableName));
+            if (!response.value()) {
+                openSearchClient.indices().create(c -> c.index(tableName));
+                log.info("创建OpenSearch索引[{}]", tableName);
+            }
+        } catch (IOException e) {
+            throw new SpException(e, "创建OpenSearch索引[%s]失败", SimpleProtoConfig.dataTable);
+        }
+    }
 
     /**
      * 新增对象
