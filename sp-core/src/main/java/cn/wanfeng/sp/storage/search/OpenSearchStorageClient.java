@@ -63,7 +63,7 @@ public class OpenSearchStorageClient implements SearchStorageClient{
             BooleanResponse response = openSearchClient.indices().exists(e -> e.index(tableName));
             if (!response.value()) {
                 openSearchClient.indices().create(c -> c.index(tableName));
-                log.info("创建OpenSearch索引[{}]", tableName);
+                log.debug("创建OpenSearch索引[{}]", tableName);
             }
         } catch (IOException e) {
             throw new SpException(e, "创建OpenSearch索引[%s]失败", SimpleProtoConfig.dataTable);
@@ -254,7 +254,7 @@ public class OpenSearchStorageClient implements SearchStorageClient{
             String fieldName = entry.getKey();
             Class<?> fieldClass = entry.getValue().getClazz();
             //缓存中已存在，则不用新增该mapping
-            if(OpenSearchMappingCache.checkFieldExistInCache(fieldName)){
+            if(OpenSearchMappingCache.checkFieldExistInCache(tableName, fieldName)){
                 continue;
             }
             requestBuilder.properties(fieldName, ob -> handlePropertyBuilderByClass(fieldName, ob, fieldClass));
@@ -267,7 +267,12 @@ public class OpenSearchStorageClient implements SearchStorageClient{
             try {
                 PutMappingRequest request = requestBuilder.build();
                 acknowledged = openSearchClient.indices().putMapping(request).acknowledged();
-                log.debug("新增索引[{}]的Mapping: {}", tableName, request.properties().keySet());
+                if(acknowledged){
+                    log.debug("新增索引[{}]的Mapping: {}", tableName, request.properties().keySet());
+                    //成功新增mapping后重新读取最新mapping到缓存中
+                    OpenSearchMappingCache.syncFieldMappingFromOpenSearch(openSearchClient, tableName);
+                    log.debug("更新索引[{}]的Mapping缓存 数量：{}", tableName, OpenSearchMappingCache.getPropertyKindCacheByIndexName(tableName).size());
+                }
             } catch (IOException e) {
                 throw new SpException(e, "自动创建Mapping出现未知异常");
             }

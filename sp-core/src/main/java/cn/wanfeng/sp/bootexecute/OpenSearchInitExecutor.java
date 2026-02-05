@@ -95,61 +95,61 @@ public class OpenSearchInitExecutor {
         PutMappingRequest.Builder builder = new PutMappingRequest.Builder();
         builder.index(SimpleProtoConfig.dataTable);
 
-        if (!OpenSearchMappingCache.checkFieldExistInCache(ISpBaseObject.ID_FIELD, Property.Kind.Long)) {
+        if (!OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, ISpBaseObject.ID_FIELD, Property.Kind.Long)) {
             builder.properties(ISpBaseObject.ID_FIELD, ob -> ob.long_(t -> t));
             needPutMapping = true;
         }
-        if (!OpenSearchMappingCache.checkFieldExistInCache(ISpBaseObject.TYPE_FIELD, Property.Kind.Keyword)) {
+        if (!OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, ISpBaseObject.TYPE_FIELD, Property.Kind.Keyword)) {
             builder.properties(ISpBaseObject.TYPE_FIELD, ob -> ob.keyword(t -> t));
             needPutMapping = true;
         }
-        if (!OpenSearchMappingCache.checkFieldExistInCache(ISpBaseObject.NAME_FIELD, Property.Kind.Keyword)) {
+        if (!OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, ISpBaseObject.NAME_FIELD, Property.Kind.Keyword)) {
             builder.properties(ISpBaseObject.NAME_FIELD, ob -> ob.keyword(t -> t));
             needPutMapping = true;
         }
-        if (!OpenSearchMappingCache.checkFieldExistInCache(ISpBaseObject.CREATE_DATE_FIELD, Property.Kind.Date)) {
+        if (!OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, ISpBaseObject.CREATE_DATE_FIELD, Property.Kind.Date)) {
             builder.properties(ISpBaseObject.CREATE_DATE_FIELD, ob -> ob.date(t -> t.format(SearchStorageClient.DEFAULT_DATE_FORMAT)));
             needPutMapping = true;
         }
-        if (!OpenSearchMappingCache.checkFieldExistInCache(ISpBaseObject.MODIFY_DATE_FIELD, Property.Kind.Date)) {
+        if (!OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, ISpBaseObject.MODIFY_DATE_FIELD, Property.Kind.Date)) {
             builder.properties(ISpBaseObject.MODIFY_DATE_FIELD, ob -> ob.date(t -> t.format(SearchStorageClient.DEFAULT_DATE_FORMAT)));
             needPutMapping = true;
         }
-        if (!OpenSearchMappingCache.checkFieldExistInCache(ISpBaseObject.IS_DELETE_FIELD, Property.Kind.Boolean)) {
+        if (!OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, ISpBaseObject.IS_DELETE_FIELD, Property.Kind.Boolean)) {
             builder.properties(ISpBaseObject.IS_DELETE_FIELD, ob -> ob.boolean_(t -> t));
             needPutMapping = true;
         }
 
-        if (!OpenSearchMappingCache.checkFieldExistInCache(ISpSysObject.TAG_FIELD, Property.Kind.Keyword)) {
+        if (!OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, ISpSysObject.TAG_FIELD, Property.Kind.Keyword)) {
             builder.properties(ISpSysObject.TAG_FIELD, ob -> ob.keyword(t -> t));
             needPutMapping = true;
         }
-        if (!OpenSearchMappingCache.checkFieldExistInCache(ISpSysObject.PATH_FIELD, Property.Kind.Keyword)) {
+        if (!OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, ISpSysObject.PATH_FIELD, Property.Kind.Keyword)) {
             builder.properties(ISpSysObject.PATH_FIELD, ob -> ob.keyword(t -> t));
             needPutMapping = true;
         }
-        if (!OpenSearchMappingCache.checkFieldExistInCache(ISpSysObject.PARENT_ID_FIELD, Property.Kind.Long)) {
+        if (!OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, ISpSysObject.PARENT_ID_FIELD, Property.Kind.Long)) {
             builder.properties(ISpSysObject.PARENT_ID_FIELD, ob -> ob.long_(t -> t));
             needPutMapping = true;
         }
-        if (!OpenSearchMappingCache.checkFieldExistInCache(ISpSysObject.PARENT_PATH_FIELD, Property.Kind.Keyword)) {
+        if (!OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, ISpSysObject.PARENT_PATH_FIELD, Property.Kind.Keyword)) {
             builder.properties(ISpSysObject.PARENT_PATH_FIELD, ob -> ob.keyword(t -> t));
             needPutMapping = true;
         }
 
-        if (!OpenSearchMappingCache.checkFieldExistInCache(ISpFile.FILE_TAG_FIELD, Property.Kind.Keyword)) {
+        if (!OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, ISpFile.FILE_TAG_FIELD, Property.Kind.Keyword)) {
             builder.properties(ISpFile.FILE_TAG_FIELD, ob -> ob.keyword(t -> t));
             needPutMapping = true;
         }
-        if (!OpenSearchMappingCache.checkFieldExistInCache(ISpFile.SUFFIX_FIELD, Property.Kind.Keyword)) {
+        if (!OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, ISpFile.SUFFIX_FIELD, Property.Kind.Keyword)) {
             builder.properties(ISpFile.SUFFIX_FIELD, ob -> ob.keyword(t -> t));
             needPutMapping = true;
         }
-        if (!OpenSearchMappingCache.checkFieldExistInCache(ISpFile.FILE_SIZE_FIELD, Property.Kind.Long)) {
+        if (!OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, ISpFile.FILE_SIZE_FIELD, Property.Kind.Long)) {
             builder.properties(ISpFile.FILE_SIZE_FIELD, ob -> ob.long_(t -> t));
             needPutMapping = true;
         }
-        if (!OpenSearchMappingCache.checkFieldExistInCache(ISpFile.FILE_STORAGE_KEY_FIELD, Property.Kind.Keyword)) {
+        if (!OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, ISpFile.FILE_STORAGE_KEY_FIELD, Property.Kind.Keyword)) {
             builder.properties(ISpFile.FILE_STORAGE_KEY_FIELD, ob -> ob.keyword(t -> t));
             needPutMapping = true;
         }
@@ -193,23 +193,23 @@ public class OpenSearchInitExecutor {
                 continue;
             }
 
-            if (OpenSearchPropertyType.type_keyword.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Keyword)) {
+            if (OpenSearchPropertyType.type_keyword.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, fieldName, Property.Kind.Keyword)) {
                 builder.properties(fieldName, ob -> ob.keyword(t -> t));
                 log.info("初始化 >>> OpenSearch自定义Mapping配置[{}]：{} -> {}", CUSTOM_MAPPINGS_RESOURCE_FILE_PATH, fieldName, fieldType);
             }
-            if (OpenSearchPropertyType.type_integer.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Integer)) {
+            if (OpenSearchPropertyType.type_integer.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, fieldName, Property.Kind.Integer)) {
                 builder.properties(fieldName, ob -> ob.integer(t -> t));
                 log.info("初始化 >>> OpenSearch自定义Mapping配置[{}]：{} -> {}", CUSTOM_MAPPINGS_RESOURCE_FILE_PATH, fieldName, fieldType);
             }
-            if (OpenSearchPropertyType.type_long.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Long)) {
+            if (OpenSearchPropertyType.type_long.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, fieldName, Property.Kind.Long)) {
                 builder.properties(fieldName, ob -> ob.long_(t -> t));
                 log.info("初始化 >>> OpenSearch自定义Mapping配置[{}]：{} -> {}", CUSTOM_MAPPINGS_RESOURCE_FILE_PATH, fieldName, fieldType);
             }
-            if (OpenSearchPropertyType.type_boolean.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Boolean)) {
+            if (OpenSearchPropertyType.type_boolean.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, fieldName, Property.Kind.Boolean)) {
                 builder.properties(fieldName, ob -> ob.boolean_(t -> t));
                 log.info("初始化 >>> OpenSearch自定义Mapping配置[{}]：{} -> {}", CUSTOM_MAPPINGS_RESOURCE_FILE_PATH, fieldName, fieldType);
             }
-            if (OpenSearchPropertyType.type_date.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(fieldName, Property.Kind.Date)) {
+            if (OpenSearchPropertyType.type_date.equals(fieldType) && !OpenSearchMappingCache.checkFieldExistInCache(SimpleProtoConfig.dataTable, fieldName, Property.Kind.Date)) {
                 builder.properties(fieldName, ob -> ob.date(t -> t.format(SearchStorageClient.DEFAULT_DATE_FORMAT)));
                 log.info("初始化 >>> OpenSearch自定义Mapping配置[{}]：{} -> {}", CUSTOM_MAPPINGS_RESOURCE_FILE_PATH, fieldName, fieldType);
             }

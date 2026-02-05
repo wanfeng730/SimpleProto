@@ -1,6 +1,7 @@
 package cn.wanfeng.sp.util;
 
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -25,6 +26,10 @@ public class ApplicationContextUtil implements ApplicationContextAware {
 
     public static <S> S getBean(Class<S> clazz) {
         return applicationContext.getBean(clazz);
+    }
+
+    public static <S> S getBean(Class<S> clazz, @NotNull String name){
+        return applicationContext.getBean(name, clazz);
     }
 
     @Override

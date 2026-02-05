@@ -24,20 +24,35 @@ public class OpenSearchMappingCache {
 
     private static final Logger log = LogUtil.getSimpleProtoLogger();
 
-    private static final Map<String, Property.Kind> propertyKindCache = new ConcurrentHashMap<>(32);
+    private static final Map<String, Map<String, Property.Kind>> indexPropertyKindCache = new ConcurrentHashMap<>(32);
 
-    public static boolean checkFieldExistInCache(String fieldName, Property.Kind kind) {
+    public static boolean checkFieldExistInCache(String indexName, String fieldName, Property.Kind kind) {
+        Map<String, Property.Kind> propertyKindCache = getPropertyKindCacheByIndexName(indexName);
         return propertyKindCache.containsKey(fieldName) && propertyKindCache.get(fieldName) == kind;
     }
 
-    public static boolean checkFieldExistInCache(String fieldName) {
+    public static boolean checkFieldExistInCache(String indexName, String fieldName) {
+        Map<String, Property.Kind> propertyKindCache = getPropertyKindCacheByIndexName(indexName);
         return propertyKindCache.containsKey(fieldName);
     }
 
-    public static void putFieldMappingToCache(String fieldName, Property.Kind kind){
+    public static void putFieldMappingToCache(String indexName, String fieldName, Property.Kind kind){
+        Map<String, Property.Kind> propertyKindCache = getPropertyKindCacheByIndexName(indexName);
         propertyKindCache.put(fieldName, kind);
     }
 
+    public static Map<String, Property.Kind> getPropertyKindCacheByIndexName(String indexName){
+        if(!indexPropertyKindCache.containsKey(indexName)){
+            indexPropertyKindCache.put(indexName, new ConcurrentHashMap<>(32));
+        }
+        return indexPropertyKindCache.get(indexName);
+    }
+
+    /**
+     * 从opensearch中获取某个索引的mapping配置
+     * @param openSearchClient 客户端
+     * @param indexName 索引名
+     */
     public static void syncFieldMappingFromOpenSearch(OpenSearchClient openSearchClient, String indexName){
         GetMappingResponse getMappingResponse;
         try {
@@ -51,11 +66,12 @@ public class OpenSearchMappingCache {
             log.debug("索引[{}]中没有mapping", indexName);
             return;
         }
+        Map<String, Property.Kind> propertyKindCache = getPropertyKindCacheByIndexName(indexName);
         propertyKindCache.clear();
         for (Map.Entry<String, Property> propertyEntry : propertyMap.entrySet()) {
             String fieldName = propertyEntry.getKey();
             Property property = propertyEntry.getValue();
-            putFieldMappingToCache(fieldName, property._kind());
+            putFieldMappingToCache(indexName, fieldName, property._kind());
         }
         log.debug("已从索引[{}]获取{}条Mapping加入缓存", indexName, propertyKindCache.size());
     }

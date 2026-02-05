@@ -41,7 +41,7 @@ public interface SupportSearchStorage {
                 }
 
                 if(document.containsKey(propertyName)){
-                    log.error("存储字段重复 Field({})，Class({})", field.getName(), this.getClass().getName());
+                    log.error("存储字段重复 propertyName({}) Field({})，Class({})", propertyName, field.getName(), this.getClass().getName());
                 }
 
                 field.setAccessible(true);
