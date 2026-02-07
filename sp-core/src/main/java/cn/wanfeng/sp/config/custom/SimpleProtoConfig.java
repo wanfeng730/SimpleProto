@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 
+import java.util.Objects;
+
 /**
  * @date: 2024-10-27 13:40
  * @author: luozh.wanfeng
@@ -34,8 +36,9 @@ public class SimpleProtoConfig {
     public static Integer opensearchPort;
     public static String opensearchUsername;
     public static String opensearchPassword;
-    public static Integer opensearchConnectTimeout;
-    public static Integer opensearchSocketTimeout;
+    public static Integer opensearchConnectTimeout = 60000;
+    public static Integer opensearchSocketTimeout = 30000;
+    public static long opensearchRequestTimeout;
     public static String opensearchDomainClassBasePackage;
     public static String[] opensearchDomainClassBasePackages;
 
@@ -123,6 +126,8 @@ public class SimpleProtoConfig {
         opensearchPassword = environment.getProperty("simpleproto.opensearchPassword");
         opensearchConnectTimeout = environment.getProperty("simpleproto.opensearchConnectTimeout", Integer.class);
         opensearchSocketTimeout = environment.getProperty("simpleproto.opensearchSocketTimeout", Integer.class);
+        // opensearch请求超时时间 < 客户端传输时间SocketTimeout
+        opensearchRequestTimeout = Objects.isNull(opensearchSocketTimeout) ? 30000L : opensearchSocketTimeout - 5000;
 
         dataSourceDriver = environment.getProperty("simpleproto.dataSourceDriver");
         dataSourceUrl = environment.getProperty("simpleproto.dataSourceUrl");

@@ -16,6 +16,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import jakarta.annotation.Resource;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Refresh;
+import org.opensearch.client.opensearch._types.Time;
 import org.opensearch.client.opensearch._types.mapping.Property;
 import org.opensearch.client.opensearch.core.BulkRequest;
 import org.opensearch.client.opensearch.core.DeleteRequest;
@@ -54,9 +55,14 @@ public class OpenSearchStorageClient implements SearchStorageClient{
     @Resource
     private OpenSearchClient openSearchClient;
 
+    @Resource
+    private SimpleProtoConfig simpleProtoConfig;
+
 
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern());
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(ElasticDateTimePattern.DATE_TIME_MILLIS.toPattern());
+
+    private static final Time requestTimeout = Time.of(builder -> builder.time(SimpleProtoConfig.opensearchRequestTimeout + "ms"));
 
     @Override
     public void createIndexIfNotExist(String tableName) {
@@ -105,6 +111,7 @@ public class OpenSearchStorageClient implements SearchStorageClient{
         String id = String.valueOf(document.get(OBJECT_ID_KEY));
         IndexRequest<Map<String, Object>> indexRequest = IndexRequest.of(b -> b
                 .index(tableName)
+                .timeout(requestTimeout)
                 .id(id)
                 .document(document)
                 .refresh(Refresh.WaitFor)
@@ -129,6 +136,7 @@ public class OpenSearchStorageClient implements SearchStorageClient{
         String id = String.valueOf(document.get(OBJECT_ID_KEY));
         UpdateRequest<Map, Map> updateRequest = UpdateRequest.of(builder -> builder
                 .index(tableName)
+                .timeout(requestTimeout)
                 .id(id)
                 .doc(document)
                 .refresh(Refresh.WaitFor)
@@ -147,6 +155,7 @@ public class OpenSearchStorageClient implements SearchStorageClient{
     public void removeObject(String tableName, Long id) throws  Exception{
         DeleteRequest deleteRequest = DeleteRequest.of(req -> req
                 .index(tableName)
+                .timeout(requestTimeout)
                 .id(String.valueOf(id))
                 .refresh(Refresh.WaitFor)
         );
@@ -176,6 +185,7 @@ public class OpenSearchStorageClient implements SearchStorageClient{
         }
         BulkRequest bulkRequest = BulkRequest.of(builder -> builder
                 .index(tableName)
+                .timeout(requestTimeout)
                 .operations(bulkOperationList)
                 .refresh(Refresh.WaitFor)
         );
@@ -204,6 +214,7 @@ public class OpenSearchStorageClient implements SearchStorageClient{
         }
         BulkRequest bulkRequest = BulkRequest.of(builder -> builder
                 .index(tableName)
+                .timeout(requestTimeout)
                 .operations(bulkOperationList)
                 .refresh(Refresh.WaitFor)
         );
@@ -227,6 +238,7 @@ public class OpenSearchStorageClient implements SearchStorageClient{
         }
         BulkRequest bulkRequest = BulkRequest.of(builder -> builder
                 .index(tableName)
+                .timeout(requestTimeout)
                 .operations(bulkOperationList)
                 .refresh(Refresh.WaitFor)
         );

@@ -52,6 +52,6 @@ public enum QueryFieldType {
         convertFuncMap.put(LONG, value -> Long.parseLong(value));
         convertFuncMap.put(STRING, value -> value);
         convertFuncMap.put(BOOL, value -> Boolean.parseBoolean(value));
-        convertFuncMap.put(DATE, value -> DateUtil.parse(value));
+        convertFuncMap.put(DATE, value -> DateUtil.parse(value).toJdkDate());
     }
 }

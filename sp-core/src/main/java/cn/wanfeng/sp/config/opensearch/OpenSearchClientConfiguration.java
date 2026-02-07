@@ -67,9 +67,9 @@ public class OpenSearchClientConfiguration {
         RequestConfig requestConfig = buildOpenSearchRequestConfig();
         builder.setDefaultRequestConfig(requestConfig);
         // 最大总连接数
-        builder.setMaxConnTotal(100);
+        builder.setMaxConnTotal(200);
         // 每个路由（目标主机）的最大连接数
-        builder.setMaxConnPerRoute(20);
+        builder.setMaxConnPerRoute(50);
         // 空闲连接存活时间（毫秒）
         builder.setKeepAliveStrategy((response, context) -> 300000);
         // IO线程
