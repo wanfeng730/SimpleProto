@@ -11,6 +11,8 @@ import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.localcache.OpenSearchMappingCache;
 import cn.wanfeng.sp.util.LogUtil;
 import cn.wanfeng.sp.util.SimpleReflectUtils;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import jakarta.annotation.Resource;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Refresh;
@@ -79,8 +81,22 @@ public class OpenSearchStorageClient implements SearchStorageClient{
      */
     @Override
     public void insertObject(String tableName, Map<String, SpPropertyValue> propertyValueContainer) throws Exception {
+        insertObject(tableName, propertyValueContainer, true);
+    }
+
+    /**
+     * 新建对象数据
+     *
+     * @param tableName    对象数据表名、索引
+     * @param propertyValueContainer   对象数据
+     * @param checkMapping 是否检查mapping字段是否存在
+     */
+    @Override
+    public void insertObject(String tableName, Map<String, SpPropertyValue> propertyValueContainer, boolean checkMapping) throws Exception {
         //根据参数类型自动创建mapping
-        autoAdaptCreateMappingByObjectData(tableName, propertyValueContainer);
+        if(checkMapping){
+            autoAdaptCreateMappingByObjectData(tableName, propertyValueContainer);
+        }
         //转换为保存opensearch的map
         Map<String, Object> document = convertPropertyValueContainerToDocument(propertyValueContainer);
         //将日期的值更换为格式化字符串，以便es查看
@@ -242,9 +258,42 @@ public class OpenSearchStorageClient implements SearchStorageClient{
     }
 
     /**
+     * 将某个类中的TableField、TableId注解字段同步到mapping
+     *
+     * @param tableName 对象数据表名、索引
+     * @param clazz     类
+     */
+    @Override
+    public void syncTableFieldToMapping(String tableName, Class<?> clazz, boolean updateMappingCache) {
+        Map<String, SpPropertyValue> emptyData = new LinkedHashMap<>();
+
+        List<Field> tableFieldList = Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(TableField.class)).toList();
+        for (Field field : tableFieldList) {
+            String fieldName = field.getAnnotation(TableField.class).value();
+            Class<?> fieldTypeClass = field.getType();
+            emptyData.put(fieldName, SpPropertyValue.build(fieldTypeClass, null));
+        }
+
+        List<Field> tableIdList = Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(TableId.class)).toList();
+        for (Field field : tableIdList) {
+            String fieldName = field.getAnnotation(TableId.class).value();
+            Class<?> fieldTypeClass = field.getType();
+            emptyData.put(fieldName, SpPropertyValue.build(fieldTypeClass, null));
+        }
+        autoAdaptCreateMappingByObjectData(tableName, emptyData, updateMappingCache);
+    }
+
+    /**
      * 根据属性名和值自动创建mapping
      */
     private void autoAdaptCreateMappingByObjectData(String tableName, Map<String, SpPropertyValue> objectData){
+        autoAdaptCreateMappingByObjectData(tableName, objectData, true);
+    }
+
+    /**
+     * 根据属性名和值自动创建mapping
+     */
+    private void autoAdaptCreateMappingByObjectData(String tableName, Map<String, SpPropertyValue> objectData, boolean updateMappingCache){
         boolean needCreateMapping = false;
 
         PutMappingRequest.Builder requestBuilder = new PutMappingRequest.Builder();
@@ -267,7 +316,7 @@ public class OpenSearchStorageClient implements SearchStorageClient{
             try {
                 PutMappingRequest request = requestBuilder.build();
                 acknowledged = openSearchClient.indices().putMapping(request).acknowledged();
-                if(acknowledged){
+                if(acknowledged && updateMappingCache){
                     log.debug("新增索引[{}]的Mapping: {}", tableName, request.properties().keySet());
                     //成功新增mapping后重新读取最新mapping到缓存中
                     OpenSearchMappingCache.syncFieldMappingFromOpenSearch(openSearchClient, tableName);

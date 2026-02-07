@@ -25,16 +25,23 @@ public interface SearchStorageClient {
     /**
      * 新建对象数据
      * @param tableName 对象数据表名、索引
-     * @param objectData 对象数据
+     * @param propertyValueContainer 对象数据
      */
-    void insertObject(String tableName, Map<String, SpPropertyValue> objectData) throws Exception;
+    void insertObject(String tableName, Map<String, SpPropertyValue> propertyValueContainer) throws Exception;
+
+    /**
+     * 新建对象数据
+     * @param tableName 对象数据表名、索引
+     * @param propertyValueContainer 对象数据
+     */
+    void insertObject(String tableName, Map<String, SpPropertyValue> propertyValueContainer, boolean checkMapping) throws Exception;
 
     /**
      * 更新对象数据
      * @param tableName 对象数据表名、索引
-     * @param objectData 对象数据
+     * @param propertyValueContainer 对象数据
      */
-    void updateObject(String tableName, Map<String, SpPropertyValue> objectData) throws Exception;
+    void updateObject(String tableName, Map<String, SpPropertyValue> propertyValueContainer) throws Exception;
 
     /**
      * 删除对象数据
@@ -70,4 +77,12 @@ public interface SearchStorageClient {
      * @param clazz 类
      */
     void syncProtoFieldToMapping(String tableName, Class<? extends ISpBaseObject> clazz);
+
+    /**
+     * 将某个类中的TableField、TableId注解字段同步到mapping
+     * @param tableName 对象数据表名、索引
+     * @param clazz 类
+     * @param updateMappingCache 是否在同步完mapping后更新到本地缓存
+     */
+    void syncTableFieldToMapping(String tableName, Class<?> clazz, boolean updateMappingCache);
 }
