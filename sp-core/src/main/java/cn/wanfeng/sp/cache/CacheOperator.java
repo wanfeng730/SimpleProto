@@ -5,6 +5,7 @@ import cn.wanfeng.proto.exception.RedisLockNotGetException;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.util.LogUtil;
+import io.lettuce.core.RedisCommandTimeoutException;
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -56,7 +57,7 @@ public class CacheOperator {
      * 获取值
      * 对超时异常进行重试
      */
-    @Retryable(retryFor = {QueryTimeoutException.class}, maxAttempts = 3, backoff = @Backoff(delay = 200))
+    @Retryable(retryFor = {QueryTimeoutException.class, RedisCommandTimeoutException.class}, maxAttempts = 3, backoff = @Backoff(delay = 200))
     public Object get(String key){
         return redisTemplate.opsForValue().get(key);
     }
