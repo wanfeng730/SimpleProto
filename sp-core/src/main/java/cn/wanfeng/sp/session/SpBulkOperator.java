@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -67,6 +68,10 @@ public class SpBulkOperator {
             bulkUpdateObject(updateList);
         }
 
+    }
+
+    public void bulkStore(ISpBaseObject... baseObjects){
+        bulkStore(Arrays.stream(baseObjects).toList());
     }
 
     public void bulkRemove(List<? extends ISpBaseObject> objectList){
