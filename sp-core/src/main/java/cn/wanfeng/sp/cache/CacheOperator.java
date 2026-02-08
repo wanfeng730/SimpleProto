@@ -6,14 +6,15 @@ import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.util.LogUtil;
 import jakarta.annotation.Resource;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.dao.QueryTimeoutException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -53,7 +54,9 @@ public class CacheOperator {
 
     /**
      * 获取值
+     * 对超时异常进行重试
      */
+    @Retryable(retryFor = {QueryTimeoutException.class}, maxAttempts = 3, backoff = @Backoff(delay = 200))
     public Object get(String key){
         return redisTemplate.opsForValue().get(key);
     }
