@@ -7,6 +7,7 @@ import cn.wanfeng.sp.util.LogUtil;
 import jakarta.annotation.Resource;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -34,7 +35,7 @@ public class RedisConfiguration {
     private SimpleProtoConfig simpleProtoConfig;
 
     @Bean
-    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<Object, Object> redisTemplate(@Qualifier("lettuceConnectionFactory") RedisConnectionFactory connectionFactory) {
         RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
