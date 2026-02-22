@@ -22,6 +22,8 @@ public interface SearchStorageClient {
 
     void createIndexIfNotExist(String tableName);
 
+    void deleteIndexIfExist(String tableName);
+
     /**
      * 新建对象数据
      * @param tableName 对象数据表名、索引

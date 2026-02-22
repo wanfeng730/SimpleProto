@@ -67,11 +67,25 @@ public class OpenSearchStorageClient implements SearchStorageClient{
             // 索引是否存在,不存在则创建
             BooleanResponse response = openSearchClient.indices().exists(e -> e.index(tableName));
             if (!response.value()) {
-                openSearchClient.indices().create(c -> c.index(tableName));
+                openSearchClient.indices().create(b -> b.index(tableName));
                 log.debug("创建OpenSearch索引[{}]", tableName);
             }
         } catch (IOException e) {
-            throw new SpException(e, "创建OpenSearch索引[%s]失败", SimpleProtoConfig.dataTable);
+            throw new SpException(e, "创建OpenSearch索引[%s]失败", tableName);
+        }
+    }
+
+    @Override
+    public void deleteIndexIfExist(String tableName) {
+        try {
+            // 索引是否存在,存在则删除
+            BooleanResponse response = openSearchClient.indices().exists(e -> e.index(tableName));
+            if (response.value()) {
+                openSearchClient.indices().delete(b -> b.index(tableName));
+                log.debug("删除OpenSearch索引[{}]", tableName);
+            }
+        } catch (IOException e) {
+            throw new SpException(e, "删除OpenSearch索引[%s]失败", tableName);
         }
     }
 
