@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 public class CacheOperator {
 
     @Resource
-    private RedisTemplate<String, Object> redisTemplate;
+    private RedissonClient redissonClient;
 
     private static final String LOCK_KEY = "Lock";
 
@@ -39,261 +39,139 @@ public class CacheOperator {
      * @param key key
      * @param value value
      */
-    public void set(String key, Object value){
-        redisTemplate.opsForValue().set(key, value);
+    public void set(String key, String value){
+        RBucket<String> bucket = redissonClient.getBucket(key);
+        bucket.set(value);
     }
 
     /**
      * 设置值、有效期（秒）
      * @param key key
      * @param value value
-     * @param aliveSeconds 有效期（秒）
+     * @param expireMillis 有效期（毫秒）
      */
-    public void set(String key, Object value, int aliveSeconds){
-        redisTemplate.opsForValue().set(key, value, aliveSeconds, TimeUnit.SECONDS);
+    public void setWithExpire(String key, String value, int expireMillis){
+        RBucket<String> bucket = redissonClient.getBucket(key);
+        bucket.set(value, Duration.ofMillis(expireMillis));
     }
 
     /**
      * 获取值
      * 对超时异常进行重试
      */
-    @Retryable(retryFor = {QueryTimeoutException.class, RedisCommandTimeoutException.class}, maxAttempts = 3, backoff = @Backoff(delay = 200))
-    public Object get(String key){
-        return redisTemplate.opsForValue().get(key);
+    public String get(String key){
+        RBucket<String> bucket = redissonClient.getBucket(key);
+        return bucket.get();
     }
 
     /**
      * 删除键
      */
-    public void del(String key){
-        redisTemplate.delete(key);
+    public boolean del(String key){
+        return redissonClient.getBucket(key).delete();
     }
 
     /**
      * 键值自增1
      */
     public Long incr(String key){
-        return incr(key, 1);
+        RAtomicLong atomicLong = redissonClient.getAtomicLong(key);
+        return atomicLong.incrementAndGet();
     }
 
     /**
      * 键值自增step
      */
     public Long incr(String key, long step){
-        return redisTemplate.opsForValue().increment(key, step);
+        if (step <= 0) {
+            throw new SpException("Redission incr 步长step必须为正整数");
+        }
+        RAtomicLong atomicLong = redissonClient.getAtomicLong(key);
+        return atomicLong.addAndGet(step);
     }
 
     /**
      * 键值自减1
      */
     public Long decr(String key){
-        return decr(key, 1);
+        RAtomicLong atomicLong = redissonClient.getAtomicLong(key);
+        return atomicLong.decrementAndGet();
     }
 
     /**
      * 键值自减step
      */
     public Long decr(String key, long step){
-        return redisTemplate.opsForValue().decrement(key, step);
-    }
-
-    /**
-     * 列表（双向队列）左侧添加元素
-     */
-    public void listLeftPush(String key, Object value){
-        redisTemplate.opsForList().leftPush(key, value);
-    }
-
-    /**
-     * 列表（双向队列）右侧添加元素
-     */
-    public void listRightPush(String key, Object value){
-        redisTemplate.opsForList().rightPush(key, value);
-    }
-
-    /**
-     * 列表（双向队列）左侧弹出元素
-     */
-    public Object listLeftPop(String key){
-        return redisTemplate.opsForList().leftPop(key);
-    }
-
-    /**
-     * 列表（双向队列）右侧弹出元素
-     */
-    public Object listRightPop(String key){
-        return redisTemplate.opsForList().rightPop(key);
+        if (step <= 0) {
+            throw new SpException("Redission decr 步长step必须为正整数");
+        }
+        RAtomicLong atomicLong = redissonClient.getAtomicLong(key);
+        return atomicLong.addAndGet(-step);
     }
 
     /**
      * 集合添加元素
      */
     public void setAdd(String key, Object... values){
-        redisTemplate.opsForSet().add(key, values);
+        RSet<Object> set = redissonClient.getSet(key);
+        set.addAll(Arrays.stream(values).toList());
     }
 
     /**
      * 获取集合的所有元素
      */
     public Set<Object> setMembers(String key){
-        return redisTemplate.opsForSet().members(key);
+        RSet<Object> set = redissonClient.getSet(key);
+        return set.readAll();
     }
 
     /**
      * 是否为集合内的元素
      */
-    public Boolean isMember(String key, Object value){
-        return redisTemplate.opsForSet().isMember(key, value);
+    public boolean isMember(String key, Object value){
+        RSet<Object> set = redissonClient.getSet(key);
+        return set.contains(value);
     }
 
     /**
      * 集合移除元素
      */
-    public void setRemove(String key, Object value){
-        redisTemplate.opsForSet().remove(key, value);
+    public boolean setRemove(String key, Object value){
+        RSet<Object> set = redissonClient.getSet(key);
+        return set.remove(value);
     }
 
     /**
      * 有序集合添加元素、该元素的分数
      */
-    public void zsetAdd(String key, Object value, double score){
-        redisTemplate.opsForZSet().add(key, value, score);
+    public boolean zsetAdd(String key, Object value, double score){
+        RScoredSortedSet<Object> zSet = redissonClient.getScoredSortedSet(key);
+        return zSet.add(score, value);
     }
 
     /**
-     * 有序集合获取指定位置的元素(包含start位置和end位置的元素）
+     * 获取分布式锁（阻塞：带等待/超时时间）
+     * @param lockKey 锁名
+     * @param waitTimeout 获取锁超时时间，毫秒
+     * @param leaseTimeout 持有锁超时时间，毫秒（超时自动释放）
+     * @return RLock
      */
-    public Set<Object> zsetRangeByIndex(String key, long start, long end){
-        return redisTemplate.opsForZSet().range(key, start, end);
-    }
-
-    /**
-     * 有序集合获取指定分数范围元素（包含minScore分数和maxScore分数的元素）
-     */
-    public Set<Object> zsetRangeByScore(String key, double minScore, double maxScore){
-        return redisTemplate.opsForZSet().rangeByScore(key, minScore, maxScore);
-    }
-
-    /**
-     *有序集合指定元素增加分数
-     */
-    public Double zsetIncrScore(String key, Object value, double incrScore){
-        return redisTemplate.opsForZSet().incrementScore(key, value, incrScore);
-    }
-
-    /**
-     * 有序集合统计分数范围的元素个数
-     */
-    public Long zsetCountByScore(String key, double minScore, double maxScore){
-        return redisTemplate.opsForZSet().count(key, minScore, maxScore);
-    }
-
-    /**
-     * 有序集合元素的排名（升序，第一名返回的是0）
-     */
-    public Long zsetRankAsc(String key, Object value){
-        return redisTemplate.opsForZSet().rank(key, value);
-    }
-
-    /**
-     * 有序集合元素的排名（降序，第一名返回的是0）
-     */
-    public Long zsetRankDesc(String key, Object value){
-        return redisTemplate.opsForZSet().reverseRank(key, value);
-    }
-
-    /**
-     * 有序集合根据位置删除元素
-     */
-    public void zsetRemoveByIndex(String key, long start, long end){
-        redisTemplate.opsForZSet().removeRange(key, start, end);
-    }
-
-    /**
-     * 有序集合根据分数范围删除元素
-     */
-    public void zsetRemoveByScore(String key, double minScore, double maxScore){
-        redisTemplate.opsForZSet().removeRangeByScore(key, minScore, maxScore);
-
-    }
-
-    /**
-     * 加锁（永久）
-     * @param lockName 锁名称
-     * @return 是否加锁成功
-     */
-    public boolean lock(@NotBlank String lockName){
-        if(StringUtils.isBlank(lockName)){
-            throw new SpException("Cache Lock Failed, [lockName] must Not Blank!");
-        }
-        String lockKey = generateThisAppLockKey(lockName);
-        String lockValue = generateThisAppLockValue(lockName);
-        return Optional.ofNullable(
-                redisTemplate.opsForValue().setIfAbsent(lockKey, lockValue)
-        ).orElse(false);
-    }
-
-    /**
-     * 加锁（若没有获取到锁反复尝试获取，最大尝试300次，每次间隔100ms）
-     * @param lockName 锁名称
-     * @return 是否加锁成功
-     */
-    @Retryable(retryFor = RedisLockNotGetException.class, maxAttempts = 300, backoff = @Backoff(delay = 100))
-    public boolean lockRetryable(@NotBlank String lockName){
-        boolean locked = lock(lockName);
-        if(!locked){
-            throw new RedisLockNotGetException();
-        }
-        return true;
-    }
-
-
-    /**
-     * 加锁
-     * @param lockName 锁名称
-     * @param expireSeconds 锁的有效时间（秒）
-     * @return 是否加锁成功
-     */
-    public boolean lock(@NotBlank String lockName, @NotNull long expireSeconds){
-        String lockKey = generateThisAppLockKey(lockName);
-        String lockValue = generateThisAppLockValue(lockName);
-        return Optional.ofNullable(
-                redisTemplate.opsForValue().setIfAbsent(lockKey, lockValue, expireSeconds, TimeUnit.SECONDS)
-        ).orElse(false);
-    }
-
-    /**
-     * 释放锁
-     * @param lockName 锁名称
-     */
-    public void unLock(@NotBlank String lockName){
-        String lockKey = generateThisAppLockKey(lockName);
-        Boolean success = Optional.ofNullable(
-                redisTemplate.delete(lockKey)
-        ).orElse(false);
-        if(success){
-            LogUtil.debug("锁[{}]释放成功", lockKey);
-        }
-    }
-
-
-    // @应用名称:Lock:锁名称
-    private static String generateThisAppLockKey(String lockName){
-        return "@" + String.join(":", SimpleProtoConfig.appName, LOCK_KEY, lockName);
-    }
-
-    private static String generateThisAppLockValue(String lockName){
-        return String.format("[%s] is locked!", lockName);
-    }
-
-    /**
-     * 等待半秒
-     */
-    private static void sleepHalfSecond(){
+    public RLock lock(String lockKey, long waitTimeout, long leaseTimeout) {
         try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            RLock lock = redissonClient.getLock(lockKey);
+            return lock.tryLock(waitTimeout, leaseTimeout, TimeUnit.MILLISECONDS) ? lock : null;
+        } catch (Exception e) {
+            log.error("获取Redission锁异常 lockKey={}", lockKey, e);
+            throw new SpException(e, "获取Redission锁异常");
+        }
+    }
+
+    /**
+     * 释放分布式锁（安全解锁：校验当前线程持有锁）
+     */
+    public void unlock(RLock lock) {
+        if (lock != null && lock.isHeldByCurrentThread()) {
+            lock.unlock();
         }
     }
 }

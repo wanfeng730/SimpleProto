@@ -7,7 +7,6 @@ import cn.wanfeng.proto.record.ProtoRecordFactory;
 import cn.wanfeng.sp.anno.ProtoField;
 import cn.wanfeng.sp.anno.Type;
 import cn.wanfeng.sp.api.dataobject.SpDataObjectDO;
-import cn.wanfeng.sp.api.dataobject.SpSettingsDO;
 import cn.wanfeng.sp.api.model.SpPropertyValue;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.exception.SimpleExceptionCode;
@@ -375,33 +374,6 @@ public class SpBaseObject implements ISpBaseObject{
         } catch (Exception e) {
             LogUtil.error("对象更新失败，数据已回滚，失败原因", e);
             throw new SpException(SimpleExceptionCode.UNKNOWN_EXCEPTION);
-        }
-    }
-
-
-
-    private void generateIncreaseId() {
-        //从redis获取当前自增的id值，若没有则从数据库加载
-        boolean locked = session.cacheOperator().lockRetryable(OBJECT_ID_INCREASE_NAME);
-        if(locked){
-            try {
-                SpSettingsDO idIncreaseDO = session.databaseStorage().findSettingsByName(SimpleProtoConfig.settingsTable, OBJECT_ID_INCREASE_NAME);
-                this.id = Objects.isNull(idIncreaseDO) ? 1L : idIncreaseDO.getIncreaseLong() + 1;
-                // 自增后的id保存到数据库
-                SpSettingsDO settingsDO = new SpSettingsDO();
-                settingsDO.setName(OBJECT_ID_INCREASE_NAME);
-                settingsDO.setIncreaseLong(this.id);
-                //更新设置表
-                if(Objects.isNull(idIncreaseDO)){
-                    session.databaseStorage().insertSettings(SimpleProtoConfig.settingsTable, settingsDO);
-                }else {
-                    session.databaseStorage().updateSettings(SimpleProtoConfig.settingsTable, settingsDO);
-                }
-            } catch (Exception e) {
-                throw new SpException(e, "生成自增id时出现未知异常");
-            } finally {
-                session.cacheOperator().unLock(OBJECT_ID_INCREASE_NAME);
-            }
         }
     }
 
