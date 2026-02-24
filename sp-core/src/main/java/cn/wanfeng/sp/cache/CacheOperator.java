@@ -1,22 +1,16 @@
 package cn.wanfeng.sp.cache;
 
 
-import cn.wanfeng.proto.exception.RedisLockNotGetException;
-import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.exception.SpException;
 import cn.wanfeng.sp.util.LogUtil;
-import io.lettuce.core.RedisCommandTimeoutException;
+import jakarta.annotation.Nullable;
 import jakarta.annotation.Resource;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.dao.QueryTimeoutException;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
+import org.redisson.api.*;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import java.time.Duration;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -44,6 +38,17 @@ public class CacheOperator {
     public void set(String key, String value){
         RBucket<String> bucket = redissonClient.getBucket(key);
         bucket.set(value);
+    }
+
+    /**
+     * 设置值，如果不存在
+     * @param key key
+     * @param value value
+     * @return 是否更新成功
+     */
+    public boolean setIfAbsent(String key, String value){
+        RBucket<String> bucket = redissonClient.getBucket(key);
+        return bucket.setIfAbsent(value);
     }
 
     /**
@@ -156,12 +161,28 @@ public class CacheOperator {
      * @param lockKey 锁名
      * @param waitTimeout 获取锁超时时间，毫秒
      * @param leaseTimeout 持有锁超时时间，毫秒（超时自动释放）
-     * @return RLock
+     * @return RLock（锁获取失败时为null）
      */
-    public RLock lock(String lockKey, long waitTimeout, long leaseTimeout) {
+    public @Nullable RLock lock(String lockKey, long waitTimeout, long leaseTimeout) {
         try {
             RLock lock = redissonClient.getLock(lockKey);
             return lock.tryLock(waitTimeout, leaseTimeout, TimeUnit.MILLISECONDS) ? lock : null;
+        } catch (Exception e) {
+            log.error("获取Redission锁异常 lockKey={}", lockKey, e);
+            throw new SpException(e, "获取Redission锁异常");
+        }
+    }
+
+    /**
+     * 获取分布式锁 看门狗自动续期，需要手动释放（阻塞：带等待/超时时间）
+     * @param lockKey 锁名
+     * @param waitTimeout 获取锁超时时间，毫秒
+     * @return RLock（锁获取失败时为null）
+     */
+    public @Nullable RLock lockWithWatchDog(String lockKey, long waitTimeout){
+        try {
+            RLock lock = redissonClient.getLock(lockKey);
+            return lock.tryLock(waitTimeout, TimeUnit.MILLISECONDS) ? lock : null;
         } catch (Exception e) {
             log.error("获取Redission锁异常 lockKey={}", lockKey, e);
             throw new SpException(e, "获取Redission锁异常");
