@@ -29,6 +29,8 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class CacheOperator {
 
+    private static final Logger log = LogUtil.getSimpleProtoLogger();
+
     @Resource
     private RedissonClient redissonClient;
 

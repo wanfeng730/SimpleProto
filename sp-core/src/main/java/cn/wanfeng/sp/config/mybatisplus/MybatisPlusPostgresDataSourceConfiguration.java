@@ -4,6 +4,8 @@ package cn.wanfeng.sp.config.mybatisplus;
 import cn.wanfeng.sp.config.custom.SimpleProtoConfig;
 import cn.wanfeng.sp.util.LogUtil;
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
@@ -71,7 +73,19 @@ public class MybatisPlusPostgresDataSourceConfiguration {
     @Bean(name = "postgresSqlSessionFactory")
     @Primary
     public SqlSessionFactory postgresSqlSessionFactory(@Qualifier("postgresDataSource") DataSource datasource) throws Exception {
+        // 1. 配置MyBatis-Plus全局策略
+        GlobalConfig globalConfig = new GlobalConfig();
+        GlobalConfig.DbConfig dbConfig = new GlobalConfig.DbConfig();
+
+        // 核心：将更新策略设置为 IGNORED，允许更新为 null
+        dbConfig.setUpdateStrategy(FieldStrategy.ALWAYS);
+        // 可选：如果需要插入 null，也可以设置插入策略
+        // dbConfig.setInsertStrategy(FieldStrategy.IGNORED);
+
+        globalConfig.setDbConfig(dbConfig);
+
         MybatisSqlSessionFactoryBean factoryBean = new MybatisSqlSessionFactoryBean();
+        factoryBean.setGlobalConfig(globalConfig);
         //configuration配置bean
         //MybatisConfiguration configuration = new MybatisConfiguration();
         //configuration.setMapUnderscoreToCamelCase(true);
