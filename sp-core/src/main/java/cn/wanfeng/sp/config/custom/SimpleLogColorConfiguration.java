@@ -21,8 +21,8 @@ public class SimpleLogColorConfiguration extends ForegroundCompositeConverterBas
             case Level.ERROR_INT -> ANSIConstants.RED_FG;
             //WARN等级为黄色
             case Level.WARN_INT -> ANSIConstants.YELLOW_FG;
-            //INFO等级为蓝色
-            case Level.INFO_INT -> ANSIConstants.GREEN_FG;
+            //INFO等级为默认颜色
+            // case Level.INFO_INT -> ANSIConstants.GREEN_FG;
             //DEBUG等级为绿色
             case Level.DEBUG_INT -> ANSIConstants.CYAN_FG;
             //其他为默认颜色

@@ -87,7 +87,7 @@ public class TestController {
     @Operation(summary = "测试获取minio永久预览链接")
     @PostMapping("/testGetObjectPreviewUrl")
     public String testGetObjectPreviewUrl(@RequestBody String storageKey) {
-        return fileStorageClient.getObjectPreviewUrl(storageKey);
+        return fileStorageClient.getObjectPreviewUrl(storageKey, false);
     }
 
     @Operation(summary = "测试获取minio文件列表")
