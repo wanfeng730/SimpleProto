@@ -159,8 +159,9 @@ public class MinIOFileStorage implements FileStorageClient {
      * @return url
      */
     @Override
-    public String getObjectPreviewUrl(String storageKey) {
-        return endPoint + "/" + bucketName + "/" + StringUtils.removeStart(storageKey, '/');
+    public String getObjectPreviewUrl(String storageKey, boolean proxyHost) {
+        String host = proxyHost ? "/minio" : endPoint;
+        return host + "/" + bucketName + "/" + StringUtils.removeStart(storageKey, '/');
     }
 
     @Override

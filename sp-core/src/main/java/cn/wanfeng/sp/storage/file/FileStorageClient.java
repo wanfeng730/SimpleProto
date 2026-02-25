@@ -58,9 +58,10 @@ public interface FileStorageClient {
      * 获取文件预览链接（永久）
      *
      * @param storageKey 文件存储路径
+     * @param proxyHost 是否使用代理地址，若为true 真实ip地址会被替换为/minio
      * @return url
      */
-    String getObjectPreviewUrl(String storageKey);
+    String getObjectPreviewUrl(String storageKey, boolean proxyHost);
 
     /**
      * 下载文件对象到本地
