@@ -23,6 +23,7 @@ import java.util.Objects;
 public class SimpleProtoConfig {
 
     public static String appName;
+    public static String appProfile;
     public static String appPort;
     public static String appContextPath;
     public static String[] corsAllowedOriginPatterns;
@@ -108,6 +109,7 @@ public class SimpleProtoConfig {
     @PostConstruct
     public void init() {
         appName = environment.getProperty("spring.application.name");
+        appProfile = environment.getProperty("spring.profiles.active");
         appPort = environment.getProperty("server.port");
         appContextPath = environment.getProperty("server.servlet.context-path");
 

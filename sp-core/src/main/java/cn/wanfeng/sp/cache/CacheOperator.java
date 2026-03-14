@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -41,6 +42,16 @@ public class CacheOperator {
     }
 
     /**
+     * 设置值（long类型）
+     * @param key key
+     * @param value value
+     */
+    public void setLong(String key, Long value){
+        RBucket<Long> bucket = redissonClient.getBucket(key);
+        bucket.set(value);
+    }
+
+    /**
      * 设置值，如果不存在
      * @param key key
      * @param value value
@@ -52,14 +63,36 @@ public class CacheOperator {
     }
 
     /**
-     * 设置值、有效期（秒）
+     * 设置值、有效期（毫秒）
      * @param key key
      * @param value value
      * @param expireMillis 有效期（毫秒）
      */
-    public void setWithExpire(String key, String value, int expireMillis){
+    public void setWithExpire(String key, String value, long expireMillis){
         RBucket<String> bucket = redissonClient.getBucket(key);
         bucket.set(value, Duration.ofMillis(expireMillis));
+    }
+
+    /**
+     * 设置值、有效期（毫秒）
+     * @param key key
+     * @param value value
+     * @param duration 有效期
+     */
+    public void setLongWithExpire(String key, Long value, Duration duration){
+        RBucket<Long> bucket = redissonClient.getBucket(key);
+        bucket.set(value, duration);
+    }
+
+    /**
+     * 设置值 带有效期
+     * @param key key
+     * @param value value
+     * @param duration 时间
+     */
+    public void setWithExpire(String key, String value, Duration duration){
+        RBucket<String> bucket = redissonClient.getBucket(key);
+        bucket.set(value, duration);
     }
 
     /**
@@ -69,6 +102,31 @@ public class CacheOperator {
     public String get(String key){
         RBucket<String> bucket = redissonClient.getBucket(key);
         return bucket.get();
+    }
+
+    /**
+     * 获取值
+     * 对超时异常进行重试
+     */
+    public String getOrDefault(String key, String defaultValue){
+        String value = get(key);
+        return Optional.ofNullable(value).orElse(defaultValue);
+    }
+
+    /**
+     * 获取值（long类型）
+     */
+    public Long getLong(String key) {
+        RBucket<Long> bucket = redissonClient.getBucket(key);
+        return bucket.get();
+    }
+
+    /**
+     * 获取值（long类型） 为null时指定默认值
+     */
+    public Long getLongOrDefault(String key, Long defaultValue) {
+        Long value = getLong(key);
+        return Optional.ofNullable(value).orElse(defaultValue);
     }
 
     /**
